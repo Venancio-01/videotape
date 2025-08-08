@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { FilterOptions } from '../../app/types';
-import { useStore } from '../../store/store';
+import { FilterOptions } from '@/types';
+import { useStore } from '@/stores/store/store';
 
 interface FilterBarProps {
   filterOptions?: FilterOptions;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
-import { Video as VideoType } from '../../app/types';
+import { Video as VideoType } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '../../store/store';
+import { useStore } from '@/stores/store/store';
 
 interface VideoThumbnailProps {
   video: VideoType;

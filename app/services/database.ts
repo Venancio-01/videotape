@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Video, Playlist, Folder, PlayHistory, AppSettings } from '../types';
+import { Video, Playlist, Folder, PlayHistory, AppSettings } from '@/types';
 
 /**
  * 数据库接口定义

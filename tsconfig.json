@@ -7,6 +7,27 @@
     "paths": {
       "~/*": [
         "./*"
+      ],
+      "@/*": [
+        "app/*"
+      ],
+      "@/components/*": [
+        "app/components/*"
+      ],
+      "@/screens/*": [
+        "app/screens/*"
+      ],
+      "@/services/*": [
+        "app/services/*"
+      ],
+      "@/types/*": [
+        "app/types/*"
+      ],
+      "@/utils/*": [
+        "app/utils/*"
+      ],
+      "@/stores/*": [
+        "app/stores/*"
       ]
     }
   },

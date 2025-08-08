@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Video, Playlist, Folder, PlayerState, AppSettings, FilterOptions } from '../app/types';
+import { Video, Playlist, Folder, PlayerState, AppSettings, FilterOptions } from '@/types';
 
 /**
  * 应用状态管理

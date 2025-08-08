@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Dimensions, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { VideoPlayer } from '../video/VideoPlayer';
-import { Video as VideoType } from '../../app/types';
-import { useStore } from '../../store/store';
-import { videoService } from '../../app/services/videoService';
+import { VideoPlayer } from '@/components/video/VideoPlayer';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
+import { videoService } from '@/services/videoService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -94,7 +94,7 @@ export const TikTokStyleFeed: React.FC<TikTokStyleFeedProps> = ({
     if (!propVideos && storeVideos.length === 0) {
       loadVideos();
     }
-  }, []);
+  }, [propVideos, storeVideos.length, loadVideos]);
 
   const styles = StyleSheet.create({
     container: {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '../store/store';
+import { useStore } from '@/stores/store/store';
 
 /**
  * 发现屏幕

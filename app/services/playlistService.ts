@@ -1,5 +1,5 @@
 import db from './database';
-import { Playlist, DatabaseResult } from '../types';
+import { Playlist, DatabaseResult } from '@/types';
 
 /**
  * 播放列表管理服务

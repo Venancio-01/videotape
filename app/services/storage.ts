@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as Asset from 'expo-asset';
 import { Platform } from 'react-native';
-import { Video } from '../types';
+import { Video } from '@/types';
 
 /**
  * 存储管理服务

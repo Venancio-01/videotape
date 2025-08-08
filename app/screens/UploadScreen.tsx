@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import { useStore } from '../store/store';
-import { videoService } from '../services/videoService';
+import { useStore } from '@/stores/store/store';
+import { videoService } from '@/services/videoService';
 
 /**
  * 上传屏幕
@@ -80,8 +80,9 @@ export const UploadScreen: React.FC = () => {
         copyToCacheDirectory: true,
       });
 
-      if (result.type === 'success') {
-        await handleVideoUpload(result.uri, result.name);
+      if (result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        await handleVideoUpload(asset.uri, asset.name || 'video');
       }
     } catch (error) {
       console.error('Failed to pick file:', error);
@@ -101,6 +102,8 @@ export const UploadScreen: React.FC = () => {
         duration: 0,
         size: 0,
         mimeType: 'video/mp4',
+        likeCount: 0,
+        tags: [],
       };
 
       const result = await videoService.addVideo(videoData);

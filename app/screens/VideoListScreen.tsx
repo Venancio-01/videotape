@@ -1,23 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { VideoList } from '../components/common/VideoList';
-import { SearchBar } from '../components/common/SearchBar';
-import { FilterBar } from '../components/common/FilterBar';
-import { Video as VideoType } from '../app/types';
-import { useStore } from '../store/store';
+import { useRouter } from 'expo-router';
+import { VideoList } from '@/components/common/VideoList';
+import { SearchBar } from '@/components/common/SearchBar';
+import { FilterBar } from '@/components/common/FilterBar';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
 
 /**
  * 视频列表屏幕
  */
 export const VideoListScreen: React.FC = () => {
-  const { videos, currentFilter, setCurrentFilter } = useStore();
+  const router = useRouter();
+  const { videos } = useStore();
   const [showSearch, setShowSearch] = React.useState(false);
   const [showFilter, setShowFilter] = React.useState(false);
 
   // 处理视频点击
   const handleVideoPress = (video: VideoType) => {
-    // 导航到视频播放器
+    router.push(`/video/${video.id}`);
   };
 
   // 处理视频长按

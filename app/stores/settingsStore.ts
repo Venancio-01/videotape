@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { AppSettings } from '../app/types';
+import { AppSettings } from '@/types';
 
 /**
  * 设置状态管理

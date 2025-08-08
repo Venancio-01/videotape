@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '../../store/store';
+import { useStore } from '@/stores/store/store';
 
 interface SearchBarProps {
   placeholder?: string;

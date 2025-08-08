@@ -1,6 +1,6 @@
-import db from './database';
-import { storageService } from './storage';
-import { Video, Playlist, Folder, PlayHistory, FilterOptions, DatabaseResult, PaginatedData } from '../types';
+import db from '@/services/database';
+import { storageService } from '@/services/storage';
+import { Video, Playlist, Folder, PlayHistory, FilterOptions, DatabaseResult, PaginatedData } from '@/types';
 
 /**
  * 视频管理服务
@@ -73,7 +73,7 @@ export class VideoService {
   /**
    * 获取所有视频
    */
-  async getAllVideos(): Promise<DatabaseResult<Video[]>> {
+  async getVideos(): Promise<DatabaseResult<Video[]>> {
     try {
       const videos = await db.videos.toArray();
       return { success: true, data: videos };
@@ -239,8 +239,13 @@ export class VideoService {
    */
   async incrementPlayCount(id: string): Promise<DatabaseResult<void>> {
     try {
+      const video = await db.videos.get(id);
+      if (!video) {
+        return { success: false, error: 'Video not found' };
+      }
+
       await db.videos.update(id, {
-        playCount: db.videos.get(id).then(video => (video?.playCount || 0) + 1),
+        playCount: (video.playCount || 0) + 1,
         lastPlayedAt: new Date(),
       });
 

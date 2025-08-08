@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, RefreshControl, ActivityIndicator, Text } from 'react-native';
-import { VideoThumbnail } from '../video/VideoThumbnail';
-import { Video as VideoType, FilterOptions } from '../../app/types';
-import { useStore } from '../../store/store';
-import { videoService } from '../../app/services/videoService';
+import { VideoThumbnail } from '@/components/video/VideoThumbnail';
+import { Video as VideoType, FilterOptions } from '@/types';
+import { useStore } from '@/stores/store/store';
+import { videoService } from '@/services/videoService';
 
 interface VideoListProps {
   videos?: VideoType[];

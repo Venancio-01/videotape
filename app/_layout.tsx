@@ -59,9 +59,8 @@ const SCREEN_OPTIONS = {
 } as const;
 
 const INDEX_OPTIONS = {
-  headerLargeTitle: true,
-  title: 'NativeWindUI',
-  headerRight: () => <SettingsIcon />,
+  headerShown: false,
+  title: 'VideoTape',
 } as const;
 
 function SettingsIcon() {

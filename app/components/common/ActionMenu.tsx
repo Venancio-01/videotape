@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Video as VideoType } from '../../app/types';
-import { useStore } from '../../store/store';
-import { videoService } from '../../app/services/videoService';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
+import { videoService } from '@/services/videoService';
 
 interface ActionMenuProps {
   video: VideoType;

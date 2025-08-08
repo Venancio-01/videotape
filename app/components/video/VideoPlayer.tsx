@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import Video from 'react-native-video';
-import { Video as VideoType } from '../../app/types';
-import { useStore } from '../../store/store';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
 
 interface VideoPlayerProps {
   video: VideoType;

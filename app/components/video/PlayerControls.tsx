@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Slider, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '../../store/store';
-import { useSettingsStore } from '../../app/stores/settingsStore';
+import { useStore } from '@/stores/store/store';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface PlayerControlsProps {
   style?: any;

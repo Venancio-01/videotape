@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, StatusBar, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { TikTokStyleFeed } from '../components/tiktok/TikTokStyleFeed';
-import { VideoList } from '../components/common/VideoList';
-import { SearchBar } from '../components/common/SearchBar';
-import { FilterBar } from '../components/common/FilterBar';
-import { Video as VideoType } from '../app/types';
-import { useStore } from '../store/store';
+import { useRouter } from 'expo-router';
+import { TikTokStyleFeed } from '@/components/tiktok/TikTokStyleFeed';
+import { VideoList } from '@/components/common/VideoList';
+import { SearchBar } from '@/components/common/SearchBar';
+import { FilterBar } from '@/components/common/FilterBar';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
 
 /**
  * 抖音风格主屏幕
  */
 export const TikTokHomeScreen: React.FC = () => {
+  const router = useRouter();
   const { currentViewMode, setCurrentViewMode } = useStore();
   const [showSearch, setShowSearch] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
@@ -35,7 +37,7 @@ export const TikTokHomeScreen: React.FC = () => {
 
   // 处理视频点击
   const handleVideoPress = (video: VideoType) => {
-    // 可以在这里实现视频详情页面或全屏播放
+    router.push(`/video/${video.id}`);
   };
 
   // 处理视频长按
@@ -202,7 +204,10 @@ export const TikTokHomeScreen: React.FC = () => {
           <Text style={styles.tabText}>发现</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabButton}>
+        <TouchableOpacity 
+          style={styles.tabButton}
+          onPress={() => router.push('/upload')}
+        >
           <Ionicons name="add-circle" size={24} color="rgba(255, 255, 255, 0.6)" />
           <Text style={styles.tabText}>发布</Text>
         </TouchableOpacity>
@@ -224,7 +229,10 @@ export const TikTokHomeScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.tabButton}>
+        <TouchableOpacity 
+          style={styles.tabButton}
+          onPress={() => router.push('/profile')}
+        >
           <Ionicons name="person" size={24} color="rgba(255, 255, 255, 0.6)" />
           <Text style={styles.tabText}>我的</Text>
         </TouchableOpacity>

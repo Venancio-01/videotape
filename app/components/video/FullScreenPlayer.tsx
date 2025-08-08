@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, StatusBar, Dimensions, Alert, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { VideoPlayer } from './VideoPlayer';
-import { PlayerControls } from './PlayerControls';
-import { Video as VideoType } from '../../app/types';
-import { useStore } from '../../store/store';
-import { videoService } from '../../app/services/videoService';
+import { VideoPlayer } from '@/components/video/VideoPlayer';
+import { PlayerControls } from '@/components/video/PlayerControls';
+import { Video as VideoType } from '@/types';
+import { useStore } from '@/stores/store/store';
+import { videoService } from '@/services/videoService';
 
 interface FullScreenPlayerProps {
   video: VideoType;

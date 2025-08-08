@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useEventBus, useEventEmitter, AppEvents } from '../utils/eventBus';
-import { Video as VideoType } from '../types';
+import { useEventBus, useEventEmitter, AppEvents } from '@/utils/eventBus';
+import { Video as VideoType } from '@/types';
 
 /**
  * 事件总线演示组件
  */
 export const EventBusDemo: React.FC = () => {
-  const [events, setEvents] = useState<Array<{ type: string; data: any; timestamp: Date }>>([]);
+  const [events, setEvents] = useState<{ type: string; data: any; timestamp: Date }[]>([]);
   const [eventCount, setEventCount] = useState(0);
   const emit = useEventEmitter();
 

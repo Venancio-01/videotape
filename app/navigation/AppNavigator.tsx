@@ -3,11 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { TikTokHomeScreen } from '../screens/TikTokHomeScreen';
-import { VideoListScreen } from '../screens/VideoListScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
-import { UploadScreen } from '../screens/UploadScreen';
-import { DiscoverScreen } from '../screens/DiscoverScreen';
+import { TikTokHomeScreen } from '@/screens/TikTokHomeScreen';
+import { VideoListScreen } from '@/screens/VideoListScreen';
+import { ProfileScreen } from '@/screens/ProfileScreen';
+import { UploadScreen } from '@/screens/UploadScreen';
+import { DiscoverScreen } from '@/screens/DiscoverScreen';
 
 // 类型定义
 type RootStackParamList = {
