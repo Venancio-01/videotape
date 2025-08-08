@@ -6,6 +6,10 @@ import { useStore } from '@/stores/store/store';
 
 interface VideoPlayerProps {
   video: VideoType;
+  playing?: boolean;
+  muted?: boolean;
+  showControls?: boolean;
+  repeat?: boolean;
   onEnd?: () => void;
   onError?: (error: any) => void;
   onProgress?: (progress: { currentTime: number; playableDuration: number; seekableDuration: number }) => void;
@@ -18,6 +22,10 @@ interface VideoPlayerProps {
  */
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   video,
+  playing = false,
+  muted = false,
+  showControls = false,
+  repeat = false,
   onEnd,
   onError,
   onProgress,
@@ -25,7 +33,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   style,
 }) => {
   const { playerState, setPlayerState } = useStore();
-  const videoRef = React.useRef<Video>(null);
+  const videoRef = React.useRef<any>(null);
 
   const handleLoad = (load: any) => {
     setPlayerState({
@@ -83,9 +91,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         style={styles.video}
         resizeMode="contain"
         controls={false}
-        paused={!playerState.isPlaying}
-        repeat={playerState.isLooping}
-        volume={playerState.volume}
+        paused={!playing}
+        repeat={repeat}
+        volume={muted ? 0 : 1}
         rate={playerState.playbackRate}
         onEnd={handleEnd}
         onError={handleError}
@@ -97,16 +105,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         }
         onVolumeChange={({ volume }) => setPlayerState({ volume })}
         onSeek={({ currentTime }) => setPlayerState({ position: currentTime })}
-        pictureInPicture={false}
         ignoreSilentSwitch="ignore"
         playInBackground={false}
         playWhenInactive={false}
         preventsDisplaySleepDuringVideoPlayback={true}
-        preferNativeDriver={true}
         selectedVideoTrack={{
-          type: 'resolution',
-          value: 1080,
-        }}
+          type: 'auto',
+          value: 'auto',
+        } as any}
       />
     </View>
   );

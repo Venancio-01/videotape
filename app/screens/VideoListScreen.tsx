@@ -175,13 +175,7 @@ export const VideoListScreen: React.FC = () => {
           <Text style={styles.statNumber}>{videos.length}</Text>
           <Text style={styles.statLabel}>总视频</Text>
         </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>
-            {videos.filter(v => v.isFavorite).length}
-          </Text>
-          <Text style={styles.statLabel}>收藏</Text>
-        </View>
-        <View style={styles.statItem}>
+          <View style={styles.statItem}>
           <Text style={styles.statNumber}>
             {videos.reduce((sum, v) => sum + v.playCount, 0)}
           </Text>

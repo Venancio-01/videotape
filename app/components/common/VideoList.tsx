@@ -53,8 +53,8 @@ export const VideoList: React.FC<VideoListProps> = ({
           setVideos(result.data.items);
           setPage(1);
         } else {
-          setLocalVideos(prev => [...prev, ...result.data!.items]);
-          setVideos(prev => [...prev, ...result.data!.items]);
+          setLocalVideos((prev: VideoType[]) => [...prev, ...(result.data?.items || [])]);
+          setVideos([...videos, ...(result.data?.items || [])]);
           setPage(prev => prev + 1);
         }
         setHasMore(result.data.hasMore);
@@ -100,8 +100,7 @@ export const VideoList: React.FC<VideoListProps> = ({
       showTitle={true}
       showDuration={true}
       showPlayIcon={true}
-      showFavoriteIcon={true}
-      size="medium"
+        size="medium"
     />
   );
 

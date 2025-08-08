@@ -1,6 +1,5 @@
 import * as FileSystem from 'expo-file-system';
-import * as Asset from 'expo-asset';
-import { Platform } from 'react-native';
+import { Asset } from 'expo-asset';
 import { Video } from '@/types';
 
 /**
@@ -55,7 +54,7 @@ export class StorageService {
       
       // 如果是 asset URI，先下载到本地
       if (sourceUri.startsWith('asset://')) {
-        const asset = await Asset.fromURI(sourceUri);
+        const asset = Asset.fromURI(sourceUri);
         await asset.downloadAsync();
         sourceUri = asset.localUri || sourceUri;
       }

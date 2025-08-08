@@ -157,8 +157,8 @@ export function useEventBus<T extends AppEventData>(
   callbackRef.current = callback;
 
   useEffect(() => {
-    const wrappedCallback = (data: T) => {
-      callbackRef.current(data);
+    const wrappedCallback = (data: AppEventData) => {
+      callbackRef.current(data as T);
     };
 
     eventBus.on(event, wrappedCallback);
@@ -181,8 +181,8 @@ export function useEventBusOnce<T extends AppEventData>(
   callbackRef.current = callback;
 
   useEffect(() => {
-    const wrappedCallback = (data: T) => {
-      callbackRef.current(data);
+    const wrappedCallback = (data: AppEventData) => {
+      callbackRef.current(data as T);
     };
 
     eventBus.once(event, wrappedCallback);

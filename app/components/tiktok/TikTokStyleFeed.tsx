@@ -202,8 +202,8 @@ const TikTokVideoItem: React.FC<TikTokVideoItemProps> = ({
       <View style={styles.videoContainer}>
         <VideoPlayer
           video={video}
-          isPlaying={isActive && playerState.isPlaying}
-          isMuted={playerState.isMuted}
+          playing={isActive && playerState.isPlaying}
+          muted={playerState.isMuted}
           onLoad={handleVideoLoad}
           onProgress={handleProgress}
           onEnd={handleVideoEnd}
@@ -352,11 +352,7 @@ const TikTokVideoInfo: React.FC<TikTokVideoInfoProps> = ({ video }) => {
           <Ionicons name="play" size={12} color="white" />
           <Text style={styles.statText}>{video.playCount || 0}</Text>
         </View>
-        <View style={styles.statItem}>
-          <Ionicons name="heart" size={12} color="white" />
-          <Text style={styles.statText}>{video.likeCount || 0}</Text>
-        </View>
-        <View style={styles.statItem}>
+          <View style={styles.statItem}>
           <Ionicons name="time" size={12} color="white" />
           <Text style={styles.statText}>{formatDuration(video.duration)}</Text>
         </View>
@@ -375,32 +371,6 @@ interface TikTokSideActionsProps {
  */
 const TikTokSideActions: React.FC<TikTokSideActionsProps> = ({ video, isActive }) => {
   const { playerState, setPlayerState } = useStore();
-  const [isLiked, setIsLiked] = useState(video.isFavorite);
-  const [likeCount, setLikeCount] = useState(video.likeCount || 0);
-
-  // 处理点赞
-  const handleLike = async () => {
-    try {
-      const newLikedState = !isLiked;
-      setIsLiked(newLikedState);
-      setLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
-      
-      // 更新点赞数
-      if (newLikedState) {
-        await videoService.incrementLikeCount(video.id);
-      } else {
-        await videoService.decrementLikeCount(video.id);
-      }
-      
-      // 更新收藏状态
-      const result = await videoService.toggleFavorite(video.id);
-      if (result.success) {
-        // 更新本地状态
-      }
-    } catch (error) {
-      console.error('Failed to toggle like:', error);
-    }
-  };
 
   // 处理静音切换
   const handleMuteToggle = () => {
@@ -452,16 +422,6 @@ const TikTokSideActions: React.FC<TikTokSideActionsProps> = ({ video, isActive }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-        <View style={styles.actionIcon}>
-          <Ionicons 
-            name={isLiked ? "heart" : "heart-outline"} 
-            size={24} 
-            color={isLiked ? "#ff4444" : "white"} 
-          />
-        </View>
-        <Text style={styles.actionText}>{likeCount}</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
         <View style={styles.actionIcon}>

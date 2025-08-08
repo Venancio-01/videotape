@@ -249,7 +249,7 @@ export class PlaylistService {
       const playlists = await db.playlists
         .filter(playlist => 
           playlist.name.toLowerCase().includes(searchTerm) ||
-          playlist.description?.toLowerCase().includes(searchTerm)
+          (playlist.description || '').toLowerCase().includes(searchTerm)
         )
         .toArray();
 

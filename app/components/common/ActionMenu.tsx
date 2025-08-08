@@ -77,20 +77,6 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
     onDownload?.(video);
   };
 
-  // 处理切换收藏
-  const handleToggleFavorite = async () => {
-    try {
-      const result = await videoService.toggleFavorite(video.id);
-      if (result.success) {
-        updateVideo(video.id, { isFavorite: result.data.isFavorite });
-      } else {
-        Alert.alert('操作失败', result.error || '更新收藏状态时发生错误');
-      }
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error);
-      Alert.alert('操作失败', '更新收藏状态时发生错误');
-    }
-  };
 
   // 处理重命名
   const handleRename = () => {
@@ -99,7 +85,7 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
       '请输入新的视频名称',
       [
         { text: '取消', style: 'cancel' },
-        { text: '确定', onPress: confirmRename },
+        { text: '确定', onPress: (value?: string) => confirmRename(value || '') },
       ],
       'plain-text',
       video.title
@@ -139,12 +125,6 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
       label: '重命名',
       color: '#007AFF',
       onPress: handleRename,
-    },
-    {
-      icon: video.isFavorite ? 'heart' : 'heart-outline',
-      label: video.isFavorite ? '取消收藏' : '收藏',
-      color: video.isFavorite ? '#ff4444' : '#666',
-      onPress: handleToggleFavorite,
     },
     {
       icon: 'list-outline',

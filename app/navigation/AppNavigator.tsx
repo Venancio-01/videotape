@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { TikTokHomeScreen } from '@/screens/TikTokHomeScreen';
 import { VideoListScreen } from '@/screens/VideoListScreen';
-import { ProfileScreen } from '@/screens/ProfileScreen';
 import { UploadScreen } from '@/screens/UploadScreen';
 import { DiscoverScreen } from '@/screens/DiscoverScreen';
 
@@ -22,7 +21,6 @@ type MainTabParamList = {
   Discover: undefined;
   Upload: undefined;
   Library: undefined;
-  Profile: undefined;
 };
 
 // 创建导航器
@@ -53,11 +51,8 @@ const MainTabNavigator: React.FC = () => {
             case 'Library':
               iconName = focused ? 'folder' : 'folder-outline';
               break;
-            case 'Profile':
-              iconName = focused ? 'person' : 'person-outline';
-              break;
             default:
-              iconName = 'circle';
+              iconName = 'home';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -91,11 +86,6 @@ const MainTabNavigator: React.FC = () => {
         name="Library" 
         component={VideoListScreen}
         options={{ title: '文库' }}
-      />
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ title: '我的' }}
       />
     </Tab.Navigator>
   );

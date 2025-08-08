@@ -34,9 +34,6 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
 }) => {
   const { updateVideo } = useStore();
 
-  const handleToggleFavorite = () => {
-    updateVideo(video.id, { isFavorite: !video.isFavorite });
-  };
 
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -118,9 +115,8 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
     title: {
       color: '#333',
       fontWeight: '500',
-      numberOfLines: 2,
       ...sizeStyles.title,
-    },
+    } as any,
     infoContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -179,18 +175,6 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
           </View>
         )}
 
-        {showFavoriteIcon && (
-          <TouchableOpacity
-            style={styles.favoriteIcon}
-            onPress={handleToggleFavorite}
-          >
-            <Ionicons
-              name={video.isFavorite ? 'heart' : 'heart-outline'}
-              size={20}
-              color={video.isFavorite ? '#ff4444' : 'white'}
-            />
-          </TouchableOpacity>
-        )}
       </View>
 
       {showTitle && (

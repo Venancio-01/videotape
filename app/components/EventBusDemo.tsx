@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useEventBus, useEventEmitter, AppEvents } from '@/utils/eventBus';
-import { Video as VideoType } from '@/types';
 
 /**
  * 事件总线演示组件
@@ -13,7 +11,7 @@ export const EventBusDemo: React.FC = () => {
   const emit = useEventEmitter();
 
   // 监听所有事件
-  useEventBus('*', (data) => {
+  useEventBus('video-added', (data) => {
     setEvents(prev => [
       { type: '*', data, timestamp: new Date() },
       ...prev.slice(0, 19) // 只保留最近20个事件
@@ -63,7 +61,7 @@ export const EventBusDemo: React.FC = () => {
   };
 
   const handleEmitCustomEvent = () => {
-    emit.emit('custom-event', {
+    emit.emit('video-added', {
       message: '自定义事件',
       data: { key: 'value' },
       timestamp: new Date(),

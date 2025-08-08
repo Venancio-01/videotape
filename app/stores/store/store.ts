@@ -211,7 +211,7 @@ export const useStore = create<AppState>((set, get) => ({
   })),
   nextVideo: () => set((state) => {
     const { playerState, videos } = state;
-    if (!playerState.currentVideo) return;
+    if (!playerState.currentVideo) return state;
 
     const currentIndex = videos.findIndex(v => v.id === playerState.currentVideo!.id);
     const nextIndex = (currentIndex + 1) % videos.length;
@@ -229,7 +229,7 @@ export const useStore = create<AppState>((set, get) => ({
   }),
   previousVideo: () => set((state) => {
     const { playerState, videos } = state;
-    if (!playerState.currentVideo) return;
+    if (!playerState.currentVideo) return state;
 
     const currentIndex = videos.findIndex(v => v.id === playerState.currentVideo!.id);
     const prevIndex = currentIndex === 0 ? videos.length - 1 : currentIndex - 1;

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function UploadScreen() {
   return (
     <View style={styles.container}>
-      <StatusBar hidden={false} barStyle="light-content" />
+      <StatusBar hidden={false} style="light" />
       <View style={styles.content}>
         <Text style={styles.title}>上传视频</Text>
         <Text style={styles.description}>这里将显示视频上传界面</Text>

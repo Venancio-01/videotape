@@ -30,7 +30,7 @@ export class VideoService {
       
       // 获取文件信息
       const fileInfo = await storageService.getFileInfo(videoUri);
-      const fileSize = fileInfo.size || 0;
+      const fileSize = (fileInfo as any).size || 0;
 
       const video: Video = {
         id: `video_${Date.now()}`,
@@ -41,8 +41,6 @@ export class VideoService {
         createdAt: new Date(),
         updatedAt: new Date(),
         playCount: 0,
-        likeCount: 0,
-        isFavorite: false,
       };
 
       await db.videos.add(video);
@@ -96,9 +94,7 @@ export class VideoService {
       }
 
       // 应用筛选
-      if (options?.filterBy === 'favorites') {
-        query = query.filter(video => video.isFavorite);
-      } else if (options?.filterBy === 'recent') {
+      if (options?.filterBy === 'recent') {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         query = query.filter(video => video.createdAt >= oneWeekAgo);
@@ -111,7 +107,7 @@ export class VideoService {
         const searchQuery = options.searchQuery.toLowerCase();
         query = query.filter(video => 
           video.title.toLowerCase().includes(searchQuery) ||
-          video.description?.toLowerCase().includes(searchQuery)
+          (video.description || '').toLowerCase().includes(searchQuery)
         );
       }
 
@@ -209,31 +205,7 @@ export class VideoService {
     }
   }
 
-  /**
-   * 切换收藏状态
-   */
-  async toggleFavorite(id: string): Promise<DatabaseResult<Video>> {
-    try {
-      const video = await db.videos.get(id);
-      if (!video) {
-        return { success: false, error: 'Video not found' };
-      }
-
-      const updatedVideo = {
-        ...video,
-        isFavorite: !video.isFavorite,
-        updatedAt: new Date(),
-      };
-
-      await db.videos.put(updatedVideo);
-
-      return { success: true, data: updatedVideo };
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-    }
-  }
-
+  
   /**
    * 增加播放次数
    */
@@ -256,19 +228,7 @@ export class VideoService {
     }
   }
 
-  /**
-   * 获取收藏视频
-   */
-  async getFavoriteVideos(): Promise<DatabaseResult<Video[]>> {
-    try {
-      const videos = await db.videos.filter(video => video.isFavorite).toArray();
-      return { success: true, data: videos };
-    } catch (error) {
-      console.error('Failed to get favorite videos:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-    }
-  }
-
+  
   /**
    * 获取最近播放的视频
    */
@@ -325,45 +285,6 @@ export class VideoService {
     }
   }
 
-  /**
-   * 增加点赞数
-   */
-  async incrementLikeCount(id: string): Promise<DatabaseResult<number>> {
-    try {
-      const video = await db.videos.get(id);
-      if (!video) {
-        return { success: false, error: 'Video not found' };
-      }
-
-      const newLikeCount = (video.likeCount || 0) + 1;
-      await db.videos.update(id, { likeCount: newLikeCount, updatedAt: new Date() });
-
-      return { success: true, data: newLikeCount };
-    } catch (error) {
-      console.error('Failed to increment like count:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-    }
   }
-
-  /**
-   * 减少点赞数
-   */
-  async decrementLikeCount(id: string): Promise<DatabaseResult<number>> {
-    try {
-      const video = await db.videos.get(id);
-      if (!video) {
-        return { success: false, error: 'Video not found' };
-      }
-
-      const newLikeCount = Math.max(0, (video.likeCount || 0) - 1);
-      await db.videos.update(id, { likeCount: newLikeCount, updatedAt: new Date() });
-
-      return { success: true, data: newLikeCount };
-    } catch (error) {
-      console.error('Failed to decrement like count:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-    }
-  }
-}
 
 export const videoService = VideoService.getInstance();

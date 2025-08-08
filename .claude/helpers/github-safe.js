@@ -80,7 +80,7 @@ if ((command === 'issue' || command === 'pr') &&
       const ghCommand = `gh ${command} ${subcommand} ${newArgs.join(' ')}`;
       console.log(`Executing: ${ghCommand}`);
       
-      const result = execSync(ghCommand, { 
+      execSync(ghCommand, { 
         stdio: 'inherit',
         timeout: 30000 // 30 second timeout
       });
@@ -92,7 +92,7 @@ if ((command === 'issue' || command === 'pr') &&
       // Clean up
       try {
         unlinkSync(tmpFile);
-      } catch (e) {
+      } catch (cleanupError) {
         // Ignore cleanup errors
       }
     }

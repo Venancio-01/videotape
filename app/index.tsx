@@ -47,7 +47,7 @@ export default function Screen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar hidden={false} barStyle="light-content" />
+      <StatusBar hidden={false} style="light" />
       
       {/* 根据当前视图模式显示不同的屏幕 */}
       {currentViewMode === 'tiktok' ? (

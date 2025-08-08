@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Slider, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useStore } from '@/stores/store/store';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -33,7 +34,6 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
   onPrevious,
 }) => {
   const { playerState, setPlayerState, nextVideo, previousVideo } = useStore();
-  const { settings } = useSettingsStore();
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -172,7 +172,6 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           onValueChange={handleSeek}
           minimumTrackTintColor="#ffffff"
           maximumTrackTintColor="#666666"
-          thumbStyle={{ width: 12, height: 12 }}
         />
       </View>
 
@@ -237,7 +236,6 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           onValueChange={handleVolumeChange}
           minimumTrackTintColor="#ffffff"
           maximumTrackTintColor="#666666"
-          thumbStyle={{ width: 12, height: 12 }}
         />
       </View>
 
@@ -252,7 +250,6 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           onValueChange={handleSpeedChange}
           minimumTrackTintColor="#ffffff"
           maximumTrackTintColor="#666666"
-          thumbStyle={{ width: 12, height: 12 }}
         />
         <Text style={styles.speedText}>
           {playerState.playbackRate.toFixed(2)}x

@@ -12,9 +12,7 @@ export interface Video {
   mimeType: string;
   createdAt: Date;
   updatedAt: Date;
-  isFavorite: boolean;
   playCount: number;
-  likeCount: number;
   lastPlayedAt?: Date;
   folderId?: string;
   tags: string[];
@@ -102,7 +100,7 @@ export interface PlayerState {
 export interface FilterOptions {
   sortBy: 'date' | 'name' | 'duration' | 'size' | 'playCount';
   sortOrder: 'asc' | 'desc';
-  filterBy: 'all' | 'favorites' | 'recent' | 'folder';
+  filterBy: 'all' | 'recent' | 'folder';
   folderId?: string;
   searchQuery?: string;
   tags?: string[];

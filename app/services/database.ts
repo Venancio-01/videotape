@@ -18,7 +18,7 @@ export interface AppDatabase extends Dexie {
 export const db = new Dexie('VideotapeDB') as AppDatabase;
 
 // 定义数据库结构
-db.version(2).stores({
+db.version(1).stores({
   videos: `
     id,
     title,
@@ -30,9 +30,7 @@ db.version(2).stores({
     mimeType,
     createdAt,
     updatedAt,
-    isFavorite,
     playCount,
-    likeCount,
     lastPlayedAt,
     folderId,
     tags
@@ -84,21 +82,11 @@ db.version(1).upgrade(async (trans) => {
   // 初始版本，无需升级
 });
 
-db.version(2).upgrade(async (trans) => {
-  // 添加likeCount字段到现有视频记录
-  const videos = await trans.table('videos').toArray();
-  for (const video of videos) {
-    await trans.table('videos').update(video.id, { likeCount: 0 });
-  }
-});
-
 // 创建索引以提高查询性能
 db.videos.hook('creating', (primKey, obj) => {
   obj.createdAt = new Date();
   obj.updatedAt = new Date();
   obj.playCount = 0;
-  obj.likeCount = 0;
-  obj.isFavorite = false;
   obj.tags = [];
 });
 
