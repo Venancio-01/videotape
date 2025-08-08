@@ -1,10 +1,18 @@
 [
   {
-    "id": "cmd-init-1754662575298",
+    "id": "cmd-hive-mind-1754662715493",
+    "type": "hive-mind",
+    "success": true,
+    "duration": 45.686698000000035,
+    "timestamp": 1754662715539,
+    "metadata": {}
+  },
+  {
+    "id": "cmd-init-1754662983626",
     "type": "init",
     "success": true,
-    "duration": 11940.77458,
-    "timestamp": 1754662587239,
+    "duration": 14123.637325,
+    "timestamp": 1754662997750,
     "metadata": {}
   }
 ]
