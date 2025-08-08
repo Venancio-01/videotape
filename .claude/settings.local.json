@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git init:*)"
+      "mcp__ruv-swarm",
+      "mcp__claude-flow"
     ],
     "deny": []
   }
