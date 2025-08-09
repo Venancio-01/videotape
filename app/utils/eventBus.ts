@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 // 事件类型定义
-export type AppEventType = 
+export type AppEventType =
   | 'video-added'
   | 'video-deleted'
   | 'video-updated'
@@ -85,7 +85,7 @@ class EventBus {
     // 执行普通监听器
     const listeners = this.listeners.get(event);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(data);
         } catch (error) {
@@ -97,7 +97,7 @@ class EventBus {
     // 执行一次性监听器
     const onceListeners = this.onceListeners.get(event);
     if (onceListeners) {
-      onceListeners.forEach(listener => {
+      onceListeners.forEach((listener) => {
         try {
           listener(data);
         } catch (error) {

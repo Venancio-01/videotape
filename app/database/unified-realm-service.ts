@@ -4,7 +4,14 @@
  */
 
 import Realm from 'realm';
-import { Video, Playlist, Folder, PlayHistory, AppSettings, defaultAppSettings } from './realm-schema';
+import {
+  Video,
+  Playlist,
+  Folder,
+  PlayHistory,
+  AppSettings,
+  defaultAppSettings,
+} from './realm-schema';
 import { RealmTypeAdapter } from './realm-type-adapter';
 
 /**
@@ -209,14 +216,14 @@ export class UnifiedRealmService implements DatabaseOperations {
   }
 
   /**
-   * 确定视频质量
+   * 确定视频质量 - 暂时未使用
    */
-  private determineQuality(fileSize: number): string {
-    const sizeInMB = fileSize / (1024 * 1024);
-    if (sizeInMB > 100) return 'high';
-    if (sizeInMB > 20) return 'medium';
-    return 'low';
-  }
+  // private determineQuality(fileSize: number): string {
+  //   const sizeInMB = fileSize / (1024 * 1024);
+  //   if (sizeInMB > 100) return 'high';
+  //   if (sizeInMB > 20) return 'medium';
+  //   return 'low';
+  // }
 
   // 视频操作
   videos = {
@@ -293,13 +300,7 @@ export class UnifiedRealmService implements DatabaseOperations {
     },
 
     search: (query: string, options: SearchOptions = {}): Video[] => {
-      const {
-        sortBy = 'date',
-        sortOrder = 'desc',
-        limit = 50,
-        offset = 0,
-        filters = {}
-      } = options;
+      const { sortBy = 'date', sortOrder = 'desc', limit = 50, offset = 0, filters = {} } = options;
 
       let results = this.realm.objects('Video');
 
@@ -322,7 +323,7 @@ export class UnifiedRealmService implements DatabaseOperations {
         results = results.filtered('quality == $0', filters.quality);
       }
       if (filters.tags && filters.tags.length > 0) {
-        const tagFilter = filters.tags.map(tag => `tags CONTAINS[c] "${tag}"`).join(' OR ');
+        const tagFilter = filters.tags.map((tag) => `tags CONTAINS[c] "${tag}"`).join(' OR ');
         results = results.filtered(tagFilter);
       }
 
@@ -347,25 +348,30 @@ export class UnifiedRealmService implements DatabaseOperations {
       }
 
       // 分页
-      return results.slice(offset, offset + limit).map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
+      return results
+        .slice(offset, offset + limit)
+        .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getByFolder: (folderId: string): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .filtered('folderIdIndexed == $0', folderId)
         .sorted('createdAtIndexed', true)
         .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getRecent: (limit: number = 20): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .sorted('createdAtIndexed', true)
         .slice(0, limit)
         .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getMostPlayed: (limit: number = 20): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .sorted('playCount', true)
         .slice(0, limit)
         .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
@@ -569,14 +575,16 @@ export class UnifiedRealmService implements DatabaseOperations {
     },
 
     getRootFolders: (): Folder[] => {
-      return this.realm.objects('Folder')
+      return this.realm
+        .objects('Folder')
         .filtered('parentIdIndexed == ""')
         .sorted('nameIndexed', false)
         .map((f: any) => RealmTypeAdapter.fromRealmFolder(f));
     },
 
     getSubFolders: (parentId: string): Folder[] => {
-      return this.realm.objects('Folder')
+      return this.realm
+        .objects('Folder')
         .filtered('parentIdIndexed == $0', parentId)
         .sorted('nameIndexed', false)
         .map((f: any) => RealmTypeAdapter.fromRealmFolder(f));
@@ -643,14 +651,16 @@ export class UnifiedRealmService implements DatabaseOperations {
     },
 
     getByVideo: (videoId: string): PlayHistory[] => {
-      return this.realm.objects('PlayHistory')
+      return this.realm
+        .objects('PlayHistory')
         .filtered('videoIdIndexed == $0', videoId)
         .sorted('playedAtIndexed', true)
         .map((h: any) => RealmTypeAdapter.fromRealmPlayHistory(h));
     },
 
     getRecent: (limit: number = 50): PlayHistory[] => {
-      return this.realm.objects('PlayHistory')
+      return this.realm
+        .objects('PlayHistory')
         .sorted('playedAtIndexed', true)
         .slice(0, limit)
         .map((h: any) => RealmTypeAdapter.fromRealmPlayHistory(h));
@@ -675,7 +685,9 @@ export class UnifiedRealmService implements DatabaseOperations {
   settings = {
     get: (): AppSettings => {
       const settings = this.realm.objectForPrimaryKey('AppSettings', 'default');
-      return settings ? RealmTypeAdapter.fromRealmAppSettings(settings as any) : (defaultAppSettings as AppSettings);
+      return settings
+        ? RealmTypeAdapter.fromRealmAppSettings(settings as any)
+        : (defaultAppSettings as AppSettings);
     },
 
     update: async (updates: Partial<SettingsInput>): Promise<void> => {
@@ -753,15 +765,17 @@ export class UnifiedRealmService implements DatabaseOperations {
             schema: [Video, Playlist, Folder, PlayHistory, AppSettings],
             schemaVersion: 1,
             path: backupPath,
-          } as Realm.Configuration).then((realm: any) => {
-            // 将恢复的数据复制到主数据库
-            realm.writeCopyTo(this.realm.path as any);
-            realm.close();
+          } as Realm.Configuration)
+            .then((realm: any) => {
+              // 将恢复的数据复制到主数据库
+              realm.writeCopyTo(this.realm.path as any);
+              realm.close();
 
-            // 重新打开主数据库
-            this.realm = new Realm(RealmTypeAdapter.createRealmConfig());
-            resolve();
-          }).catch(reject);
+              // 重新打开主数据库
+              this.realm = new Realm(RealmTypeAdapter.createRealmConfig());
+              resolve();
+            })
+            .catch(reject);
         } catch (error) {
           reject(error);
         }

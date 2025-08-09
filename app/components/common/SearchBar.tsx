@@ -113,13 +113,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <View style={[styles.container, isFocused && styles.containerFocused, style]}>
-      <Ionicons
-        name="search"
-        size={20}
-        color="#666"
-        style={styles.searchIcon}
-      />
-      
+      <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+
       <TextInput
         style={styles.input}
         placeholder={placeholder}
@@ -132,21 +127,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         returnKeyType="search"
         onSubmitEditing={() => onSearch?.(value)}
       />
-      
+
       {showClearButton && value.length > 0 && (
-        <TouchableOpacity
-          style={styles.clearButton}
-          onPress={handleClear}
-        >
+        <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
           <Ionicons name="close-circle" size={18} color="#999" />
         </TouchableOpacity>
       )}
-      
+
       {showCancel && (
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={handleCancel}
-        >
+        <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
           <Text style={styles.cancelText}>取消</Text>
         </TouchableOpacity>
       )}

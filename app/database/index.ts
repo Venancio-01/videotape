@@ -4,8 +4,12 @@
  */
 
 // 主要数据库服务（推荐使用）
-export { default as UnifiedRealmService, getUnifiedDatabase, closeUnifiedDatabase } from './unified-realm-service';
 export {
+  default as UnifiedRealmService,
+  getUnifiedDatabase,
+  closeUnifiedDatabase,
+} from './unified-realm-service';
+export type {
   DatabaseOperations,
   VideoInput,
   PlaylistInput,
@@ -13,12 +17,12 @@ export {
   PlayHistoryInput,
   SettingsInput,
   DatabaseStats,
-  SearchOptions
+  SearchOptions,
 } from './unified-realm-service';
 
 // 兼容性导出
 export { default as RealmDatabaseService, getDatabase, closeDatabase } from './realm-service';
-export {
+export type {
   Video,
   Playlist,
   Folder,
@@ -31,11 +35,9 @@ export {
   RealmPlaylist,
   RealmFolder,
   RealmPlayHistory,
-  RealmAppSettings
+  RealmAppSettings,
 } from './realm-schema';
 
-// 数据迁移服务 - 已废弃，已删除
-// 迁移已完成，应用现在完全使用 Realm 数据库
 
 // MMKV 存储服务
 export { default as MMKVStorage, mmkvStorage, CONFIG_KEYS } from '../storage/mmkv-storage';
@@ -81,15 +83,15 @@ export class DatabaseManager {
 
     try {
       console.log('正在初始化数据库服务...');
-      
+
       // 迁移已完成，直接初始化 Realm 数据库
       const { getUnifiedDatabase } = await import('./unified-realm-service');
       const db = getUnifiedDatabase();
-      
+
       // 确保数据库连接正常
       const stats = db.utils.getStats();
       console.log(`数据库初始化完成，视频数量: ${stats.videoCount}`);
-      
+
       this.isInitialized = true;
       console.log('数据库服务初始化完成');
     } catch (error) {
@@ -114,7 +116,7 @@ export class DatabaseManager {
         history: { migrated: 0, failed: 0 },
         settings: { migrated: 0, failed: 0 },
       },
-      warnings: ['迁移已完成，应用现在使用 Realm 数据库']
+      warnings: ['迁移已完成，应用现在使用 Realm 数据库'],
     };
   }
 
@@ -169,15 +171,15 @@ export class DatabaseManager {
       // 关闭数据库连接
       const { closeUnifiedDatabase } = require('./unified-realm-service');
       closeUnifiedDatabase();
-      
+
       // 清理存储服务
       const storage = this.getStorageService();
       await storage.cleanup();
-      
+
       // 销毁配置服务
       const configService = this.getConfigService();
       configService.destroy();
-      
+
       this.isInitialized = false;
       console.log('数据库资源已清理');
     } catch (error) {
@@ -212,25 +214,21 @@ export class DatabaseManager {
   /**
    * 恢复数据
    */
-  async restore(backup: {
-    database: string;
-    config: string;
-    storage: any;
-  }): Promise<void> {
+  async restore(backup: { database: string; config: string; storage: any }): Promise<void> {
     try {
-      const db = this.getDatabase();
       const configService = this.getConfigService();
       const storage = this.getStorageService();
 
       // 恢复数据库
+      const db = this.getDatabase();
       await db.batch.restore(backup.database);
-      
+
       // 恢复配置
       await configService.importConfig(backup.config);
-      
+
       // 恢复存储
       await storage.import(backup.storage);
-      
+
       console.log('数据恢复完成');
     } catch (error) {
       console.error('恢复数据失败:', error);
@@ -243,22 +241,21 @@ export class DatabaseManager {
    */
   async reset(): Promise<void> {
     try {
-      const db = this.getDatabase();
       const configService = this.getConfigService();
       const storage = this.getStorageService();
 
       // 清空数据库
       await this.cleanup();
-      
+
       // 重置配置
       await configService.resetConfig();
-      
+
       // 清空存储
       await storage.clear();
-      
+
       // 重新初始化
       await this.initialize();
-      
+
       console.log('所有数据已重置');
     } catch (error) {
       console.error('重置数据失败:', error);

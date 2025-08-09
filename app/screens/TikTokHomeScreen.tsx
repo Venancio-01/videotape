@@ -126,7 +126,7 @@ export const TikTokHomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <StatusBar hidden={false} barStyle="light-content" />
-      
+
       {/* 顶部栏 */}
       <View style={styles.topBar}>
         <Text style={styles.logo}>VideoTape</Text>
@@ -158,9 +158,7 @@ export const TikTokHomeScreen: React.FC = () => {
       {/* 筛选覆盖层 */}
       {showFilter && (
         <View style={styles.filterOverlay}>
-          <FilterBar
-            onFilterChange={() => setShowFilter(false)}
-          />
+          <FilterBar onFilterChange={() => setShowFilter(false)} />
         </View>
       )}
 
@@ -182,19 +180,13 @@ export const TikTokHomeScreen: React.FC = () => {
 
       {/* 底部导航栏 */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity 
-          style={styles.tabButton}
-          onPress={() => handleViewModeChange('tiktok')}
-        >
-          <Ionicons 
-            name="home" 
-            size={24} 
-            color={currentViewMode === 'tiktok' ? 'white' : 'rgba(255, 255, 255, 0.6)'} 
+        <TouchableOpacity style={styles.tabButton} onPress={() => handleViewModeChange('tiktok')}>
+          <Ionicons
+            name="home"
+            size={24}
+            color={currentViewMode === 'tiktok' ? 'white' : 'rgba(255, 255, 255, 0.6)'}
           />
-          <Text style={[
-            styles.tabText,
-            currentViewMode === 'tiktok' && styles.tabTextActive
-          ]}>
+          <Text style={[styles.tabText, currentViewMode === 'tiktok' && styles.tabTextActive]}>
             首页
           </Text>
         </TouchableOpacity>
@@ -204,35 +196,23 @@ export const TikTokHomeScreen: React.FC = () => {
           <Text style={styles.tabText}>发现</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.tabButton}
-          onPress={() => router.push('/upload')}
-        >
+        <TouchableOpacity style={styles.tabButton} onPress={() => router.push('/upload')}>
           <Ionicons name="add-circle" size={24} color="rgba(255, 255, 255, 0.6)" />
           <Text style={styles.tabText}>发布</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.tabButton}
-          onPress={() => handleViewModeChange('list')}
-        >
-          <Ionicons 
-            name="folder" 
-            size={24} 
-            color={currentViewMode === 'list' ? 'white' : 'rgba(255, 255, 255, 0.6)'} 
+        <TouchableOpacity style={styles.tabButton} onPress={() => handleViewModeChange('list')}>
+          <Ionicons
+            name="folder"
+            size={24}
+            color={currentViewMode === 'list' ? 'white' : 'rgba(255, 255, 255, 0.6)'}
           />
-          <Text style={[
-            styles.tabText,
-            currentViewMode === 'list' && styles.tabTextActive
-          ]}>
+          <Text style={[styles.tabText, currentViewMode === 'list' && styles.tabTextActive]}>
             文库
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.tabButton}
-          onPress={() => router.push('/profile')}
-        >
+        <TouchableOpacity style={styles.tabButton} onPress={() => router.push('/profile' as any)}>
           <Ionicons name="person" size={24} color="rgba(255, 255, 255, 0.6)" />
           <Text style={styles.tabText}>我的</Text>
         </TouchableOpacity>

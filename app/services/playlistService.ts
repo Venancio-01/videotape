@@ -19,10 +19,12 @@ export class PlaylistService {
   /**
    * 创建播放列表
    */
-  async createPlaylist(playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt' | 'videoIds'>): Promise<DatabaseResult<Playlist>> {
+  async createPlaylist(
+    playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt' | 'videoIds'>
+  ): Promise<DatabaseResult<Playlist>> {
     try {
       const db = getUnifiedDatabase();
-      
+
       const playlistInput = {
         name: playlistData.name,
         description: playlistData.description,
@@ -135,7 +137,7 @@ export class PlaylistService {
       }
 
       const updatedVideoIds = [...playlist.videoIds, videoId];
-      await db.playlists.update(playlistId, { 
+      await db.playlists.update(playlistId, {
         videoIds: updatedVideoIds,
       });
       const updatedPlaylistResult = await db.playlists.getById(playlistId);
@@ -150,7 +152,10 @@ export class PlaylistService {
   /**
    * 从播放列表中移除视频
    */
-  async removeVideoFromPlaylist(playlistId: string, videoId: string): Promise<DatabaseResult<Playlist>> {
+  async removeVideoFromPlaylist(
+    playlistId: string,
+    videoId: string
+  ): Promise<DatabaseResult<Playlist>> {
     try {
       const db = getUnifiedDatabase();
       const playlist = await db.playlists.getById(playlistId);
@@ -158,8 +163,8 @@ export class PlaylistService {
         return { success: false, error: 'Playlist not found' };
       }
 
-      const updatedVideoIds = playlist.videoIds.filter(id => id !== videoId);
-      await db.playlists.update(playlistId, { 
+      const updatedVideoIds = playlist.videoIds.filter((id) => id !== videoId);
+      await db.playlists.update(playlistId, {
         videoIds: updatedVideoIds,
       });
       const updatedPlaylistResult = await db.playlists.getById(playlistId);
@@ -174,7 +179,10 @@ export class PlaylistService {
   /**
    * 批量添加视频到播放列表
    */
-  async addVideosToPlaylist(playlistId: string, videoIds: string[]): Promise<DatabaseResult<Playlist>> {
+  async addVideosToPlaylist(
+    playlistId: string,
+    videoIds: string[]
+  ): Promise<DatabaseResult<Playlist>> {
     try {
       const db = getUnifiedDatabase();
       const playlist = await db.playlists.getById(playlistId);
@@ -183,7 +191,7 @@ export class PlaylistService {
       }
 
       const uniqueVideoIds = Array.from(new Set([...playlist.videoIds, ...videoIds]));
-      await db.playlists.update(playlistId, { 
+      await db.playlists.update(playlistId, {
         videoIds: uniqueVideoIds,
       });
       const updatedPlaylistResult = await db.playlists.getById(playlistId);
@@ -230,7 +238,7 @@ export class PlaylistService {
         return { success: false, error: 'Playlist not found' };
       }
 
-      await db.playlists.update(playlistId, { 
+      await db.playlists.update(playlistId, {
         videoIds,
       });
       const updatedPlaylistResult = await db.playlists.getById(playlistId);
@@ -250,9 +258,10 @@ export class PlaylistService {
       const db = getUnifiedDatabase();
       const allPlaylists = await db.playlists.getAll();
       const searchTerm = query.toLowerCase();
-      const playlists = allPlaylists.filter(playlist => 
-        playlist.name.toLowerCase().includes(searchTerm) ||
-        (playlist.description || '').toLowerCase().includes(searchTerm)
+      const playlists = allPlaylists.filter(
+        (playlist) =>
+          playlist.name.toLowerCase().includes(searchTerm) ||
+          (playlist.description || '').toLowerCase().includes(searchTerm)
       );
 
       return { success: true, data: playlists as Playlist[] };
@@ -269,7 +278,7 @@ export class PlaylistService {
     try {
       const db = getUnifiedDatabase();
       const allPlaylists = await db.playlists.getAll();
-      const playlists = allPlaylists.filter(playlist => playlist.videoIds.includes(videoId));
+      const playlists = allPlaylists.filter((playlist) => playlist.videoIds.includes(videoId));
 
       return { success: true, data: playlists as Playlist[] };
     } catch (error) {

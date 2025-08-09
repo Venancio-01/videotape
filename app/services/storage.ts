@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
-import { Video } from '@/types';
+// import { Video } from '@/types'; // 保留用于将来可能的类型使用
 
 /**
  * 存储管理服务
@@ -51,7 +51,7 @@ export class StorageService {
   async saveVideoFile(sourceUri: string, fileName: string): Promise<string> {
     try {
       const destinationUri = `${this.videoDirectory}${fileName}`;
-      
+
       // 如果是 asset URI，先下载到本地
       if (sourceUri.startsWith('asset://')) {
         const asset = Asset.fromURI(sourceUri);
@@ -78,7 +78,7 @@ export class StorageService {
     try {
       const thumbnailFileName = `thumbnail_${Date.now()}.jpg`;
       const thumbnailUri = `${this.thumbnailDirectory}${thumbnailFileName}`;
-      
+
       // 这里需要使用 react-native-ffmpeg 来生成缩略图
       // 暂时返回一个占位符
       return thumbnailUri;
@@ -164,7 +164,7 @@ export class StorageService {
       // 清理临时文件
       const tempDir = `${FileSystem.cacheDirectory}temp/`;
       const tempDirInfo = await FileSystem.getInfoAsync(tempDir);
-      
+
       if (tempDirInfo.exists) {
         await FileSystem.deleteAsync(tempDir, { idempotent: true });
       }
@@ -186,11 +186,11 @@ export class StorageService {
     try {
       const freeSpace = await FileSystem.getFreeDiskStorageAsync();
       const totalSpace = 1024 * 1024 * 1024; // 1GB 假设
-      
+
       // 计算视频目录使用空间
       const videoFiles = await FileSystem.readDirectoryAsync(this.videoDirectory);
       let usedSpace = 0;
-      
+
       for (const file of videoFiles) {
         const fileInfo = await FileSystem.getInfoAsync(`${this.videoDirectory}${file}`);
         if (fileInfo.exists && fileInfo.size) {

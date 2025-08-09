@@ -55,7 +55,7 @@ export const VideoList: React.FC<VideoListProps> = ({
         } else {
           setLocalVideos((prev: VideoType[]) => [...prev, ...(result.data?.items || [])]);
           setVideos([...videos, ...(result.data?.items || [])]);
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
         setHasMore(result.data.hasMore);
       }
@@ -100,7 +100,7 @@ export const VideoList: React.FC<VideoListProps> = ({
       showTitle={true}
       showDuration={true}
       showPlayIcon={true}
-        size="medium"
+      size="medium"
     />
   );
 

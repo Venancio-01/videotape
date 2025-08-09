@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '@/stores/store/store';
+// import { useStore } from '@/stores/store/store'; // 保留用于将来可能的视频数据展示
 
 /**
  * 发现屏幕
  */
 export const DiscoverScreen: React.FC = () => {
-  const { videos } = useStore();
+  // const { videos } = useStore(); // 保留用于将来可能的视频数据展示
 
   const styles = StyleSheet.create({
     container: {
@@ -161,7 +161,16 @@ export const DiscoverScreen: React.FC = () => {
 
   // 模拟数据
   const categories = [
-    '音乐', '舞蹈', '游戏', '美食', '旅行', '运动', '教育', '科技', '搞笑', '宠物'
+    '音乐',
+    '舞蹈',
+    '游戏',
+    '美食',
+    '旅行',
+    '运动',
+    '教育',
+    '科技',
+    '搞笑',
+    '宠物',
   ];
 
   const trendingVideos = [
@@ -203,13 +212,12 @@ export const DiscoverScreen: React.FC = () => {
         <View style={styles.trending}>
           <Text style={styles.categoryTitle}>热门榜单</Text>
           {trendingVideos.map((item, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={index}
               style={[
                 styles.trendingItem,
-                index === trendingVideos.length - 1 && styles.trendingItemLast
-              ]}
-            >
+                index === trendingVideos.length - 1 && styles.trendingItemLast,
+              ]}>
               <Text style={styles.trendingNumber}>{index + 1}</Text>
               <View style={styles.trendingInfo}>
                 <Text style={styles.trendingTitle}>{item.title}</Text>
@@ -232,17 +240,18 @@ export const DiscoverScreen: React.FC = () => {
         <View style={styles.recommendations}>
           <Text style={styles.categoryTitle}>推荐视频</Text>
           {recommendations.map((item, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={index}
               style={[
                 styles.recommendationItem,
-                index === recommendations.length - 1 && styles.recommendationItemLast
-              ]}
-            >
+                index === recommendations.length - 1 && styles.recommendationItemLast,
+              ]}>
               <View style={styles.recommendationThumbnail} />
               <View style={styles.recommendationInfo}>
                 <Text style={styles.recommendationTitle}>{item.title}</Text>
-                <Text style={styles.recommendationMeta}>{item.author} · {item.duration}</Text>
+                <Text style={styles.recommendationMeta}>
+                  {item.author} · {item.duration}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}

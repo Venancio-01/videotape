@@ -27,7 +27,6 @@ export const TikTokStyleFeed: React.FC<TikTokStyleFeedProps> = ({
   const { videos: storeVideos, setVideos, setLoading } = useStore();
   const [videos, setLocalVideos] = useState<VideoType[]>(propVideos || storeVideos);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoadingLocal] = useState(false);
   const flatListRef = useRef<FlatList>(null);
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
@@ -37,9 +36,8 @@ export const TikTokStyleFeed: React.FC<TikTokStyleFeedProps> = ({
   // 加载视频数据
   const loadVideos = async () => {
     try {
-      setLoadingLocal(true);
       setLoading(true);
-      
+
       const result = await videoService.getVideos();
       if (result.success && result.data) {
         setLocalVideos(result.data);
@@ -48,10 +46,12 @@ export const TikTokStyleFeed: React.FC<TikTokStyleFeedProps> = ({
     } catch (error) {
       console.error('Failed to load videos:', error);
     } finally {
-      setLoadingLocal(false);
       setLoading(false);
     }
   };
+
+  // 使用 useCallback 包装 loadVideos 以避免依赖警告
+  const memoizedLoadVideos = React.useCallback(loadVideos, [setLoading, setVideos]);
 
   // 处理视图变化
   const handleViewableItemsChanged = useRef(({ changed }: any) => {
@@ -92,9 +92,9 @@ export const TikTokStyleFeed: React.FC<TikTokStyleFeedProps> = ({
   // 初始加载
   useEffect(() => {
     if (!propVideos && storeVideos.length === 0) {
-      loadVideos();
+      memoizedLoadVideos();
     }
-  }, [propVideos, storeVideos.length, loadVideos]);
+  }, [propVideos, storeVideos.length, memoizedLoadVideos]);
 
   const styles = StyleSheet.create({
     container: {
@@ -212,7 +212,7 @@ const TikTokVideoItem: React.FC<TikTokVideoItemProps> = ({
           repeat={true}
         />
       </View>
-      
+
       <TikTokVideoOverlay
         video={video}
         isActive={isActive}
@@ -276,8 +276,7 @@ const TikTokVideoOverlay: React.FC<TikTokVideoOverlayProps> = ({
       style={styles.container}
       onPress={handleScreenPress}
       onLongPress={handleLongPress}
-      activeOpacity={0.8}
-    >
+      activeOpacity={0.8}>
       <View style={styles.content}>
         <TikTokVideoInfo video={video} />
         <TikTokSideActions video={video} isActive={isActive} />
@@ -352,7 +351,7 @@ const TikTokVideoInfo: React.FC<TikTokVideoInfoProps> = ({ video }) => {
           <Ionicons name="play" size={12} color="white" />
           <Text style={styles.statText}>{video.playCount || 0}</Text>
         </View>
-          <View style={styles.statItem}>
+        <View style={styles.statItem}>
           <Ionicons name="time" size={12} color="white" />
           <Text style={styles.statText}>{formatDuration(video.duration)}</Text>
         </View>
@@ -422,7 +421,6 @@ const TikTokSideActions: React.FC<TikTokSideActionsProps> = ({ video, isActive }
 
   return (
     <View style={styles.container}>
-
       <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
         <View style={styles.actionIcon}>
           <Ionicons name="chatbubble-outline" size={24} color="white" />
@@ -439,15 +437,13 @@ const TikTokSideActions: React.FC<TikTokSideActionsProps> = ({ video, isActive }
 
       <TouchableOpacity style={styles.actionButton} onPress={handleMuteToggle}>
         <View style={styles.actionIcon}>
-          <Ionicons 
-            name={playerState.isMuted ? "volume-mute" : "volume-high"} 
-            size={24} 
-            color="white" 
+          <Ionicons
+            name={playerState.isMuted ? 'volume-mute' : 'volume-high'}
+            size={24}
+            color="white"
           />
         </View>
-        <Text style={styles.actionText}>
-          {playerState.isMuted ? "静音" : "音量"}
-        </Text>
+        <Text style={styles.actionText}>{playerState.isMuted ? '静音' : '音量'}</Text>
       </TouchableOpacity>
     </View>
   );

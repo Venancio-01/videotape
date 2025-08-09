@@ -100,34 +100,56 @@ export const DevTestScreen: React.FC = () => {
             <Text style={styles.testCardDescription}>
               测试完整的抖音风格视频浏览界面，包括滑动浏览、点赞、评论、分享等功能。
             </Text>
-            
+
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>全屏视频滑动浏览</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>侧边栏操作按钮</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>视频信息展示</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>点赞和收藏功能</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>搜索和筛选功能</Text>
               </View>
             </View>
 
-            <TouchableOpacity 
-              style={styles.testButton}
-              onPress={() => setShowTikTok(true)}
-            >
+            <TouchableOpacity style={styles.testButton} onPress={() => setShowTikTok(true)}>
               <Text style={styles.testButtonText}>启动抖音界面</Text>
             </TouchableOpacity>
           </View>
@@ -137,34 +159,69 @@ export const DevTestScreen: React.FC = () => {
             <Text style={styles.testCardDescription}>
               项目已实现完整的视频管理功能，包括数据库、存储、播放器等核心模块。
             </Text>
-            
+
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>数据库管理 (Realm)</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>文件存储管理</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>视频播放器 (react-native-video)</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>状态管理 (Zustand)</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>搜索和筛选</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>播放列表管理</Text>
               </View>
               <View style={styles.featureItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color="#4CAF50"
+                  style={styles.featureIcon}
+                />
                 <Text style={styles.featureText}>缩略图生成</Text>
               </View>
             </View>

@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react'; // 在新版本中可能不需要显式导入
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Link } from 'expo-router';

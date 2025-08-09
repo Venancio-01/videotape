@@ -12,7 +12,11 @@ interface VideoPlayerProps {
   repeat?: boolean;
   onEnd?: () => void;
   onError?: (error: any) => void;
-  onProgress?: (progress: { currentTime: number; playableDuration: number; seekableDuration: number }) => void;
+  onProgress?: (progress: {
+    currentTime: number;
+    playableDuration: number;
+    seekableDuration: number;
+  }) => void;
   onLoad?: (load: { duration: number; naturalSize: { width: number; height: number } }) => void;
   style?: any;
 }
@@ -100,19 +104,19 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         onProgress={handleProgress}
         onLoad={handleLoad}
         onBuffer={({ isBuffering }) => handleBuffer(isBuffering)}
-        onPlaybackRateChange={({ playbackRate }) => 
-          setPlayerState({ playbackRate })
-        }
+        onPlaybackRateChange={({ playbackRate }) => setPlayerState({ playbackRate })}
         onVolumeChange={({ volume }) => setPlayerState({ volume })}
         onSeek={({ currentTime }) => setPlayerState({ position: currentTime })}
         ignoreSilentSwitch="ignore"
         playInBackground={false}
         playWhenInactive={false}
         preventsDisplaySleepDuringVideoPlayback={true}
-        selectedVideoTrack={{
-          type: 'auto',
-          value: 'auto',
-        } as any}
+        selectedVideoTrack={
+          {
+            type: 'auto',
+            value: 'auto',
+          } as any
+        }
       />
     </View>
   );

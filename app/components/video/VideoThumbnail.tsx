@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
 import { Video as VideoType } from '@/types';
 import { Ionicons } from '@expo/vector-icons';
-import { useStore } from '@/stores/store/store';
+// import { useStore } from '@/stores/store/store'; // 保留用于将来可能的更新功能
 
 interface VideoThumbnailProps {
   video: VideoType;
@@ -32,8 +32,7 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
   isSelected = false,
   size = 'medium',
 }) => {
-  const { updateVideo } = useStore();
-
+  // const { updateVideo } = useStore(); // 保留用于将来可能的更新功能
 
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -146,15 +145,10 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
       style={[styles.container, style]}
       onPress={onPress}
       onLongPress={onLongPress}
-      activeOpacity={0.7}
-    >
+      activeOpacity={0.7}>
       <View style={styles.thumbnailContainer}>
         {video.thumbnailUri ? (
-          <Image
-            source={{ uri: video.thumbnailUri }}
-            style={styles.thumbnail}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: video.thumbnailUri }} style={styles.thumbnail} resizeMode="cover" />
         ) : (
           <View style={styles.placeholder}>
             <Ionicons name="videocam" size={32} color="#666" />
@@ -169,12 +163,9 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
 
         {showDuration && (
           <View style={styles.durationBadge}>
-            <Text style={styles.durationText}>
-              {formatDuration(video.duration)}
-            </Text>
+            <Text style={styles.durationText}>{formatDuration(video.duration)}</Text>
           </View>
         )}
-
       </View>
 
       {showTitle && (
@@ -186,12 +177,8 @@ export const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
       )}
 
       <View style={styles.infoContainer}>
-        <Text style={styles.playCount}>
-          {video.playCount} 次播放
-        </Text>
-        <Text style={styles.date}>
-          {new Date(video.createdAt).toLocaleDateString()}
-        </Text>
+        <Text style={styles.playCount}>{video.playCount} 次播放</Text>
+        <Text style={styles.date}>{new Date(video.createdAt).toLocaleDateString()}</Text>
       </View>
     </TouchableOpacity>
   );

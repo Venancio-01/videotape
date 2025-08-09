@@ -42,26 +42,26 @@ export class PerformanceOptimizer {
    */
   async monitorQuery<T>(operation: () => Promise<T>, queryName: string): Promise<T> {
     const startTime = performance.now();
-    
+
     try {
       const result = await operation();
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.queryTimes.push(duration);
       this.metrics.queryTime = duration;
-      
+
       // 记录详细的查询性能
       this.logQueryPerformance(queryName, duration);
-      
+
       return result;
     } catch (error) {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.queryTimes.push(duration);
       this.metrics.queryTime = duration;
-      
+
       this.logQueryPerformance(queryName, duration, error);
       throw error;
     }
@@ -72,25 +72,25 @@ export class PerformanceOptimizer {
    */
   async monitorWrite<T>(operation: () => Promise<T>, operationName: string): Promise<T> {
     const startTime = performance.now();
-    
+
     try {
       const result = await operation();
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.writeTimes.push(duration);
       this.metrics.writeTime = duration;
-      
+
       this.logWritePerformance(operationName, duration);
-      
+
       return result;
     } catch (error) {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.writeTimes.push(duration);
       this.metrics.writeTime = duration;
-      
+
       this.logWritePerformance(operationName, duration, error);
       throw error;
     }
@@ -101,25 +101,25 @@ export class PerformanceOptimizer {
    */
   async monitorRead<T>(operation: () => Promise<T>, operationName: string): Promise<T> {
     const startTime = performance.now();
-    
+
     try {
       const result = await operation();
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.readTimes.push(duration);
       this.metrics.readTime = duration;
-      
+
       this.logReadPerformance(operationName, duration);
-      
+
       return result;
     } catch (error) {
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       this.readTimes.push(duration);
       this.metrics.readTime = duration;
-      
+
       this.logReadPerformance(operationName, duration, error);
       throw error;
     }
@@ -176,7 +176,7 @@ export class PerformanceOptimizer {
 
     const sorted = [...times].sort((a, b) => a - b);
     const sum = times.reduce((acc, val) => acc + val, 0);
-    
+
     return {
       count: times.length,
       average: sum / times.length,
@@ -274,23 +274,21 @@ export class DatabaseOptimizer {
    * 优化数据库配置
    */
   async optimizeDatabase(): Promise<void> {
-    const db = getDatabase();
-    
     try {
       console.log('开始优化数据库配置...');
-      
+
       // 1. 清理过期数据
       await this.cleanupExpiredData();
-      
+
       // 2. 优化索引
       await this.optimizeIndexes();
-      
+
       // 3. 压缩数据库
       await this.compactDatabase();
-      
+
       // 4. 优化缓存
       await this.optimizeCache();
-      
+
       console.log('数据库优化完成');
     } catch (error) {
       console.error('数据库优化失败:', error);
@@ -303,17 +301,17 @@ export class DatabaseOptimizer {
    */
   private async cleanupExpiredData(): Promise<void> {
     const db = getDatabase();
-    
+
     try {
       // 清理过期的播放历史
       const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30天前
-      const oldHistory = db.playHistory.getRecent(1000).filter(
-        h => new Date(h.playedAt) < cutoffDate
-      );
+      const oldHistory = db.playHistory
+        .getRecent(1000)
+        .filter((h) => new Date(h.playedAt) < cutoffDate);
 
       if (oldHistory.length > 0) {
         await db.batch.write(() => {
-          oldHistory.forEach(history => {
+          oldHistory.forEach((history) => {
             db.playHistory.delete(history.id);
           });
         });
@@ -322,7 +320,6 @@ export class DatabaseOptimizer {
 
       // 清理 MMKV 缓存
       await mmkvStorage.cleanup();
-      
     } catch (error) {
       console.error('清理过期数据失败:', error);
     }
@@ -332,17 +329,14 @@ export class DatabaseOptimizer {
    * 优化索引
    */
   private async optimizeIndexes(): Promise<void> {
-    const db = getDatabase();
-    
     try {
       // 分析查询模式
       const queryPatterns = await this.analyzeQueryPatterns();
-      
+
       // 根据查询模式建议索引优化
       const recommendations = this.generateIndexRecommendations(queryPatterns);
-      
+
       console.log('索引优化建议:', recommendations);
-      
     } catch (error) {
       console.error('优化索引失败:', error);
     }
@@ -371,13 +365,13 @@ export class DatabaseOptimizer {
    */
   private generateIndexRecommendations(queryPatterns: any): string[] {
     const recommendations: string[] = [];
-    
+
     queryPatterns.frequentQueries.forEach((query: any) => {
       if (query.frequency === 'high' && query.field !== 'id') {
         recommendations.push(`考虑为 ${query.field} 字段添加索引`);
       }
     });
-    
+
     return recommendations;
   }
 
@@ -386,15 +380,14 @@ export class DatabaseOptimizer {
    */
   private async compactDatabase(): Promise<void> {
     const db = getDatabase();
-    
+
     try {
       const beforeSize = await this.getDatabaseSize();
       await db.utils.compact();
       const afterSize = await this.getDatabaseSize();
-      
-      const reduction = ((beforeSize - afterSize) / beforeSize * 100).toFixed(2);
+
+      const reduction = (((beforeSize - afterSize) / beforeSize) * 100).toFixed(2);
       console.log(`数据库压缩完成: ${beforeSize} -> ${afterSize} (${reduction}% 减少)`);
-      
     } catch (error) {
       console.error('压缩数据库失败:', error);
     }
@@ -407,12 +400,11 @@ export class DatabaseOptimizer {
     try {
       // 优化 MMKV 缓存配置
       await mmkvStorage.cleanup();
-      
+
       // 预热常用数据
       await this.preloadCache();
-      
+
       console.log('缓存优化完成');
-      
     } catch (error) {
       console.error('优化缓存失败:', error);
     }
@@ -422,17 +414,12 @@ export class DatabaseOptimizer {
    * 预加载缓存
    */
   private async preloadCache(): Promise<void> {
-    const db = getDatabase();
-    
     try {
       // 预加载最近访问的视频
+      const db = getDatabase();
       const recentVideos = db.videos.getRecent(50);
-      
-      // 预加载常用设置
-      const settings = db.settings.get();
-      
+
       console.log(`预加载了 ${recentVideos.length} 个视频到缓存`);
-      
     } catch (error) {
       console.error('预加载缓存失败:', error);
     }
@@ -461,7 +448,7 @@ export class DatabaseOptimizer {
   }> {
     const performanceReport = this.performanceOptimizer.getPerformanceReport();
     const dbStats = await this.getDatabaseStats();
-    
+
     return {
       immediate: this.getImmediateActions(performanceReport, dbStats),
       scheduled: this.getScheduledActions(performanceReport, dbStats),
@@ -474,19 +461,20 @@ export class DatabaseOptimizer {
    */
   private getImmediateActions(report: any, stats: any): string[] {
     const actions: string[] = [];
-    
-    if (stats.estimatedSize > 100 * 1024 * 1024) { // 100MB
+
+    if (stats.estimatedSize > 100 * 1024 * 1024) {
+      // 100MB
       actions.push('立即清理过期数据');
     }
-    
+
     if (report.details.queryStats.average > 100) {
       actions.push('优化慢查询');
     }
-    
+
     if (report.details.writeStats.average > 50) {
       actions.push('优化写入操作');
     }
-    
+
     return actions;
   }
 
@@ -495,11 +483,11 @@ export class DatabaseOptimizer {
    */
   private getScheduledActions(report: any, stats: any): string[] {
     const actions: string[] = [];
-    
+
     actions.push('每周执行数据库压缩');
     actions.push('每月分析查询性能');
     actions.push('每季度审查索引策略');
-    
+
     return actions;
   }
 
@@ -508,11 +496,11 @@ export class DatabaseOptimizer {
    */
   private getLongTermActions(report: any, stats: any): string[] {
     const actions: string[] = [];
-    
+
     actions.push('实现读写分离');
     actions.push('考虑数据分片策略');
     actions.push('实现更智能的缓存策略');
-    
+
     return actions;
   }
 
@@ -522,7 +510,7 @@ export class DatabaseOptimizer {
   private async getDatabaseStats(): Promise<any> {
     const db = getDatabase();
     const storageStats = await mmkvStorage.getStats();
-    
+
     return {
       ...db.utils.getStats(),
       storage: storageStats,
@@ -539,19 +527,19 @@ export class QueryOptimizer {
    */
   optimizeQueryConditions(conditions: any): any {
     const optimized = { ...conditions };
-    
+
     // 移除无效条件
-    Object.keys(optimized).forEach(key => {
+    Object.keys(optimized).forEach((key) => {
       if (optimized[key] === undefined || optimized[key] === null || optimized[key] === '') {
         delete optimized[key];
       }
     });
-    
+
     // 优化排序条件
     if (optimized.sortBy && !this.isIndexedField(optimized.sortBy)) {
       console.warn(`排序字段 ${optimized.sortBy} 没有索引，可能影响性能`);
     }
-    
+
     return optimized;
   }
 
@@ -568,22 +556,22 @@ export class QueryOptimizer {
    */
   suggestQueryOptimizations(query: any): string[] {
     const suggestions: string[] = [];
-    
+
     // 检查是否使用了索引字段
-    if (query.filters && !Object.keys(query.filters).some(field => this.isIndexedField(field))) {
+    if (query.filters && !Object.keys(query.filters).some((field) => this.isIndexedField(field))) {
       suggestions.push('建议在过滤条件中使用索引字段');
     }
-    
+
     // 检查分页大小
     if (query.limit && query.limit > 100) {
       suggestions.push('分页大小过大，建议减少到50条以下');
     }
-    
+
     // 检查排序字段
     if (query.sortBy && !this.isIndexedField(query.sortBy)) {
       suggestions.push(`排序字段 ${query.sortBy} 没有索引，建议添加索引`);
     }
-    
+
     return suggestions;
   }
 }
@@ -601,14 +589,14 @@ export const queryOptimizer = new QueryOptimizer();
 export function monitorPerformance(operationName: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       return await performanceOptimizer.monitorQuery(
         () => originalMethod.apply(this, args),
         `${operationName}.${propertyKey}`
       );
     };
-    
+
     return descriptor;
   };
 }
@@ -619,19 +607,18 @@ export function monitorPerformance(operationName: string) {
 export async function autoOptimizeDatabase(): Promise<void> {
   try {
     console.log('开始自动优化数据库...');
-    
+
     // 执行优化
     await databaseOptimizer.optimizeDatabase();
-    
+
     // 获取优化建议
     const recommendations = await databaseOptimizer.getOptimizationRecommendations();
-    
+
     console.log('优化建议:', recommendations);
-    
+
     // 记录优化结果
     const report = performanceOptimizer.getPerformanceReport();
     console.log('性能报告:', report);
-    
   } catch (error) {
     console.error('自动优化数据库失败:', error);
   }

@@ -16,7 +16,7 @@ export const UploadScreen: React.FC = () => {
   const handlePickVideo = async () => {
     try {
       setLoading(true);
-      
+
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permissionResult.granted) {
         Alert.alert('权限错误', '需要相册权限才能选择视频');
@@ -45,7 +45,7 @@ export const UploadScreen: React.FC = () => {
   const handleRecordVideo = async () => {
     try {
       setLoading(true);
-      
+
       const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
       if (!permissionResult.granted) {
         Alert.alert('权限错误', '需要相机权限才能录制视频');
@@ -74,7 +74,7 @@ export const UploadScreen: React.FC = () => {
   const handlePickFile = async () => {
     try {
       setLoading(true);
-      
+
       const result = await DocumentPicker.getDocumentAsync({
         type: ['video/*'],
         copyToCacheDirectory: true,
@@ -107,7 +107,7 @@ export const UploadScreen: React.FC = () => {
       };
 
       const result = await videoService.addVideo(videoData);
-      
+
       if (result.success) {
         Alert.alert('成功', '视频上传成功！');
       } else {
@@ -235,21 +235,19 @@ export const UploadScreen: React.FC = () => {
               <Ionicons name="images" size={24} color="white" />
               <Text style={styles.uploadButtonText}>从相册选择</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.uploadButton, styles.uploadButtonSecondary]} 
-              onPress={handleRecordVideo}
-            >
+
+            <TouchableOpacity
+              style={[styles.uploadButton, styles.uploadButtonSecondary]}
+              onPress={handleRecordVideo}>
               <Ionicons name="videocam" size={24} color="#333" />
               <Text style={[styles.uploadButtonText, styles.uploadButtonTextSecondary]}>
                 录制视频
               </Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.uploadButton, styles.uploadButtonSecondary]} 
-              onPress={handlePickFile}
-            >
+
+            <TouchableOpacity
+              style={[styles.uploadButton, styles.uploadButtonSecondary]}
+              onPress={handlePickFile}>
               <Ionicons name="document" size={24} color="#333" />
               <Text style={[styles.uploadButtonText, styles.uploadButtonTextSecondary]}>
                 选择文件

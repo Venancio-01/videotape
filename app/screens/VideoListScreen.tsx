@@ -118,29 +118,23 @@ export const VideoListScreen: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.title}>视频文库</Text>
         <Text style={styles.subtitle}>管理您的所有视频文件</Text>
-        
+
         <View style={styles.actions}>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => setShowSearch(!showSearch)}
-          >
+          <TouchableOpacity style={styles.actionButton} onPress={() => setShowSearch(!showSearch)}>
             <Ionicons name="search" size={16} color="white" />
             <Text style={styles.actionButtonText}>搜索</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => setShowFilter(!showFilter)}
-          >
+
+          <TouchableOpacity style={styles.actionButton} onPress={() => setShowFilter(!showFilter)}>
             <Ionicons name="filter" size={16} color="white" />
             <Text style={styles.actionButtonText}>筛选</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="add" size={16} color="white" />
             <Text style={styles.actionButtonText}>添加</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="grid" size={16} color="white" />
             <Text style={styles.actionButtonText}>视图</Text>
@@ -163,9 +157,7 @@ export const VideoListScreen: React.FC = () => {
       {/* 筛选覆盖层 */}
       {showFilter && (
         <View style={styles.filterOverlay}>
-          <FilterBar
-            onFilterChange={() => setShowFilter(false)}
-          />
+          <FilterBar onFilterChange={() => setShowFilter(false)} />
         </View>
       )}
 
@@ -175,10 +167,8 @@ export const VideoListScreen: React.FC = () => {
           <Text style={styles.statNumber}>{videos.length}</Text>
           <Text style={styles.statLabel}>总视频</Text>
         </View>
-          <View style={styles.statItem}>
-          <Text style={styles.statNumber}>
-            {videos.reduce((sum, v) => sum + v.playCount, 0)}
-          </Text>
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{videos.reduce((sum, v) => sum + v.playCount, 0)}</Text>
           <Text style={styles.statLabel}>播放次数</Text>
         </View>
         <View style={styles.statItem}>

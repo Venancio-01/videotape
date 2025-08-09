@@ -107,7 +107,7 @@ export interface AppConfig {
   cache: CacheSettings;
   privacy: PrivacySettings;
   experimental: ExperimentalSettings;
-  
+
   // 元数据
   version: string;
   lastUpdated: Date;
@@ -206,17 +206,17 @@ export class ConfigService {
   private async loadConfig(): Promise<void> {
     try {
       const savedConfig = await mmkvStorage.getObject<AppConfig>('app_config');
-      
+
       if (savedConfig) {
         // 合并配置，确保新字段有默认值
         this.config = this.mergeConfig(this.config, savedConfig);
-        
+
         // 检查版本升级
         if (savedConfig.version !== this.configVersion) {
           await this.handleConfigUpgrade(savedConfig.version, this.configVersion);
         }
       }
-      
+
       // 定期清理缓存
       this.scheduleCacheCleanup();
     } catch (error) {
@@ -229,12 +229,12 @@ export class ConfigService {
    */
   private mergeConfig(defaultConfig: AppConfig, savedConfig: Partial<AppConfig>): AppConfig {
     const merged = { ...defaultConfig };
-    
+
     // 递归合并对象
     const deepMerge = (target: any, source: any): any => {
       if (typeof target !== 'object' || target === null) return source;
       if (typeof source !== 'object' || source === null) return target;
-      
+
       const result = { ...target };
       for (const key in source) {
         if (source.hasOwnProperty(key)) {
@@ -247,7 +247,7 @@ export class ConfigService {
       }
       return result;
     };
-    
+
     return deepMerge(merged, savedConfig);
   }
 
@@ -256,10 +256,10 @@ export class ConfigService {
    */
   private async handleConfigUpgrade(oldVersion: string, newVersion: string): Promise<void> {
     console.log(`配置升级: ${oldVersion} -> ${newVersion}`);
-    
+
     // 根据版本差异进行特殊处理
     // 这里可以添加版本特定的升级逻辑
-    
+
     this.config.version = newVersion;
     this.config.lastUpdated = new Date();
     await this.saveConfig();
@@ -295,12 +295,12 @@ export class ConfigService {
    * 更新播放器设置
    */
   async updatePlayerSettings(settings: Partial<PlayerSettings>): Promise<void> {
-    const oldSettings = { ...this.config.player };
+    // const oldSettings = { ...this.config.player }; // 保留用于可能的回滚功能
     this.config.player = { ...this.config.player, ...settings };
-    
+
     await this.saveConfig();
     this.notifyListeners('player', this.config.player);
-    
+
     // 保存到单独的键以便快速访问
     if (settings.volume !== undefined) {
       await mmkvStorage.setNumber(CONFIG_KEYS.VOLUME, settings.volume);
@@ -324,12 +324,12 @@ export class ConfigService {
    * 更新UI设置
    */
   async updateUISettings(settings: Partial<UISettings>): Promise<void> {
-    const oldSettings = { ...this.config.ui };
+    // const oldSettings = { ...this.config.ui }; // 保留用于可能的回滚功能
     this.config.ui = { ...this.config.ui, ...settings };
-    
+
     await this.saveConfig();
     this.notifyListeners('ui', this.config.ui);
-    
+
     // 保存到单独的键以便快速访问
     if (settings.theme !== undefined) {
       await mmkvStorage.setString(CONFIG_KEYS.THEME, settings.theme);
@@ -350,7 +350,7 @@ export class ConfigService {
     this.config.network = { ...this.config.network, ...settings };
     await this.saveConfig();
     this.notifyListeners('network', this.config.network);
-    
+
     // 保存到单独的键以便快速访问
     if (settings.dataSaver !== undefined) {
       await mmkvStorage.setBoolean(CONFIG_KEYS.DATA_SAVER, settings.dataSaver);
@@ -412,9 +412,9 @@ export class ConfigService {
     if (!this.listeners.has(section)) {
       this.listeners.set(section, new Set());
     }
-    
+
     this.listeners.get(section)!.add(callback);
-    
+
     // 返回取消监听的函数
     return () => {
       const sectionListeners = this.listeners.get(section);
@@ -433,7 +433,7 @@ export class ConfigService {
   private notifyListeners(section: keyof AppConfig, value: any): void {
     const sectionListeners = this.listeners.get(section);
     if (sectionListeners) {
-      sectionListeners.forEach(callback => {
+      sectionListeners.forEach((callback) => {
         try {
           callback(value);
         } catch (error) {
@@ -449,7 +449,7 @@ export class ConfigService {
   async resetConfig(): Promise<void> {
     this.config = this.getDefaultConfig();
     await this.saveConfig();
-    
+
     // 通知所有监听器
     for (const section of this.listeners.keys()) {
       this.notifyListeners(section as keyof AppConfig, (this.config as any)[section]);
@@ -471,7 +471,7 @@ export class ConfigService {
       const importedConfig = JSON.parse(configJson);
       this.config = this.mergeConfig(this.getDefaultConfig(), importedConfig);
       await this.saveConfig();
-      
+
       // 通知所有监听器
       for (const section of this.listeners.keys()) {
         this.notifyListeners(section as keyof AppConfig, (this.config as any)[section]);
@@ -492,12 +492,12 @@ export class ConfigService {
   }> {
     const configJson = JSON.stringify(this.config);
     const configSize = new Blob([configJson]).size;
-    
+
     let listenerCount = 0;
     for (const listeners of this.listeners.values()) {
       listenerCount += listeners.size;
     }
-    
+
     return {
       configSize,
       lastUpdated: this.config.lastUpdated,
@@ -511,16 +511,19 @@ export class ConfigService {
    */
   private scheduleCacheCleanup(): void {
     // 每天检查一次是否需要清理
-    setInterval(async () => {
-      const lastCleanup = await mmkvStorage.getNumber(CONFIG_KEYS.LAST_CLEANUP, 0);
-      const now = Date.now();
-      const dayInMs = 24 * 60 * 60 * 1000;
-      
-      if (now - lastCleanup > dayInMs) {
-        await mmkvStorage.cleanup();
-        await mmkvStorage.setNumber(CONFIG_KEYS.LAST_CLEANUP, now);
-      }
-    }, 60 * 60 * 1000); // 每小时检查一次
+    setInterval(
+      async () => {
+        const lastCleanup = await mmkvStorage.getNumber(CONFIG_KEYS.LAST_CLEANUP, 0);
+        const now = Date.now();
+        const dayInMs = 24 * 60 * 60 * 1000;
+
+        if (now - lastCleanup > dayInMs) {
+          await mmkvStorage.cleanup();
+          await mmkvStorage.setNumber(CONFIG_KEYS.LAST_CLEANUP, now);
+        }
+      },
+      60 * 60 * 1000
+    ); // 每小时检查一次
   }
 
   /**
@@ -555,12 +558,13 @@ export const config = {
   },
   experimental: {
     get: () => configService.getExperimentalSettings(),
-    update: (settings: Partial<ExperimentalSettings>) => configService.updateExperimentalSettings(settings),
+    update: (settings: Partial<ExperimentalSettings>) =>
+      configService.updateExperimentalSettings(settings),
   },
   reset: () => configService.resetConfig(),
   export: () => configService.exportConfig(),
   import: (configJson: string) => configService.importConfig(configJson),
-  addListener: (section: keyof AppConfig, callback: (value: any) => void) => 
+  addListener: (section: keyof AppConfig, callback: (value: any) => void) =>
     configService.addListener(section, callback),
 };
 

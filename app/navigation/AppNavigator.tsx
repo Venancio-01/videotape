@@ -65,28 +65,11 @@ const MainTabNavigator: React.FC = () => {
           borderTopWidth: 1,
           borderTopColor: '#e0e0e0',
         },
-      })}
-    >
-      <Tab.Screen 
-        name="Home" 
-        component={TikTokHomeScreen}
-        options={{ title: '首页' }}
-      />
-      <Tab.Screen 
-        name="Discover" 
-        component={DiscoverScreen}
-        options={{ title: '发现' }}
-      />
-      <Tab.Screen 
-        name="Upload" 
-        component={UploadScreen}
-        options={{ title: '发布' }}
-      />
-      <Tab.Screen 
-        name="Library" 
-        component={VideoListScreen}
-        options={{ title: '文库' }}
-      />
+      })}>
+      <Tab.Screen name="Home" component={TikTokHomeScreen} options={{ title: '首页' }} />
+      <Tab.Screen name="Discover" component={DiscoverScreen} options={{ title: '发现' }} />
+      <Tab.Screen name="Upload" component={UploadScreen} options={{ title: '发布' }} />
+      <Tab.Screen name="Library" component={VideoListScreen} options={{ title: '文库' }} />
     </Tab.Navigator>
   );
 };
@@ -107,28 +90,19 @@ export const AppNavigator: React.FC = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-        }}
-      >
-        <Stack.Screen 
-          name="Main" 
-          component={MainTabNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="VideoPlayer" 
+        }}>
+        <Stack.Screen name="Main" component={MainTabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="VideoPlayer"
           component={VideoPlayerScreen}
           options={{ title: '视频播放' }}
         />
-        <Stack.Screen 
-          name="VideoDetail" 
+        <Stack.Screen
+          name="VideoDetail"
           component={VideoDetailScreen}
           options={{ title: '视频详情' }}
         />
-        <Stack.Screen 
-          name="Settings" 
-          component={SettingsScreen}
-          options={{ title: '设置' }}
-        />
+        <Stack.Screen name="Settings" component={SettingsScreen} options={{ title: '设置' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

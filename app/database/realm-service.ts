@@ -54,7 +54,7 @@ export class RealmDatabaseService implements AppDatabase {
         try {
           const id = this.generateId();
           const now = new Date();
-          
+
           this.realm.write(() => {
             const video = this.realm.create('Video', {
               id,
@@ -92,11 +92,11 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(video, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
             if (updates.title) video.titleIndexed = updates.title;
             if (updates.folderId !== undefined) video.folderIdIndexed = updates.folderId || '';
-            
+
             resolve();
           });
         } catch (error) {
@@ -134,13 +134,7 @@ export class RealmDatabaseService implements AppDatabase {
     },
 
     search: (query: string, options: SearchOptions = {}): Video[] => {
-      const {
-        sortBy = 'date',
-        sortOrder = 'desc',
-        limit = 50,
-        offset = 0,
-        filters = {}
-      } = options;
+      const { sortBy = 'date', sortOrder = 'desc', limit = 50, offset = 0, filters = {} } = options;
 
       let results = this.realm.objects('Video');
 
@@ -163,7 +157,7 @@ export class RealmDatabaseService implements AppDatabase {
         results = results.filtered('quality == $0', filters.quality);
       }
       if (filters.tags && filters.tags.length > 0) {
-        const tagFilter = filters.tags.map(tag => `tags CONTAINS[c] "${tag}"`).join(' OR ');
+        const tagFilter = filters.tags.map((tag) => `tags CONTAINS[c] "${tag}"`).join(' OR ');
         results = results.filtered(tagFilter);
       }
 
@@ -192,21 +186,24 @@ export class RealmDatabaseService implements AppDatabase {
     },
 
     getByFolder: (folderId: string): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .filtered('folderIdIndexed == $0', folderId)
         .sorted('createdAtIndexed', true)
         .map((v: any) => v as Video);
     },
 
     getRecent: (limit: number = 20): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .sorted('createdAtIndexed', true)
         .slice(0, limit)
         .map((v: any) => v as Video);
     },
 
     getMostPlayed: (limit: number = 20): Video[] => {
-      return this.realm.objects('Video')
+      return this.realm
+        .objects('Video')
         .sorted('playCount', true)
         .slice(0, limit)
         .map((v: any) => v as Video);
@@ -215,12 +212,14 @@ export class RealmDatabaseService implements AppDatabase {
 
   // 播放列表操作
   playlists = {
-    add: async (playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>): Promise<Playlist> => {
+    add: async (
+      playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>
+    ): Promise<Playlist> => {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
           const now = new Date();
-          
+
           this.realm.write(() => {
             const playlist = this.realm.create('Playlist', {
               id,
@@ -252,10 +251,10 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(playlist, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
             if (updates.name) playlist.nameIndexed = updates.name;
-            
+
             resolve();
           });
         } catch (error) {
@@ -347,7 +346,7 @@ export class RealmDatabaseService implements AppDatabase {
         try {
           const id = this.generateId();
           const now = new Date();
-          
+
           this.realm.write(() => {
             const folder = this.realm.create('Folder', {
               id,
@@ -380,11 +379,11 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(folder, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
             if (updates.name) folder.nameIndexed = updates.name;
             if (updates.parentId !== undefined) folder.parentIdIndexed = updates.parentId || '';
-            
+
             resolve();
           });
         } catch (error) {
@@ -422,14 +421,16 @@ export class RealmDatabaseService implements AppDatabase {
     },
 
     getRootFolders: (): Folder[] => {
-      return this.realm.objects('Folder')
+      return this.realm
+        .objects('Folder')
         .filtered('parentIdIndexed == ""')
         .sorted('nameIndexed', false)
         .map((f: any) => f as Folder);
     },
 
     getSubFolders: (parentId: string): Folder[] => {
-      return this.realm.objects('Folder')
+      return this.realm
+        .objects('Folder')
         .filtered('parentIdIndexed == $0', parentId)
         .sorted('nameIndexed', false)
         .map((f: any) => f as Folder);
@@ -442,7 +443,7 @@ export class RealmDatabaseService implements AppDatabase {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
-          
+
           this.realm.write(() => {
             const history = this.realm.create('PlayHistory', {
               id,
@@ -500,14 +501,16 @@ export class RealmDatabaseService implements AppDatabase {
     },
 
     getByVideo: (videoId: string): PlayHistory[] => {
-      return this.realm.objects('PlayHistory')
+      return this.realm
+        .objects('PlayHistory')
         .filtered('videoIdIndexed == $0', videoId)
         .sorted('playedAtIndexed', true)
         .map((h: any) => h as PlayHistory);
     },
 
     getRecent: (limit: number = 50): PlayHistory[] => {
-      return this.realm.objects('PlayHistory')
+      return this.realm
+        .objects('PlayHistory')
         .sorted('playedAtIndexed', true)
         .slice(0, limit)
         .map((h: any) => h as PlayHistory);
@@ -604,17 +607,19 @@ export class RealmDatabaseService implements AppDatabase {
         try {
           // 关闭当前数据库
           this.realm.close();
-          
+
           // 恢复备份
-          Realm.open({ ...realmConfig, path: backupPath }).then((realm: any) => {
-            // 将恢复的数据复制到主数据库
-            realm.writeCopyTo(this.realm.path);
-            realm.close();
-            
-            // 重新打开主数据库
-            this.realm = new Realm(realmConfig);
-            resolve();
-          }).catch(reject);
+          Realm.open({ ...realmConfig, path: backupPath })
+            .then((realm: any) => {
+              // 将恢复的数据复制到主数据库
+              realm.writeCopyTo(this.realm.path);
+              realm.close();
+
+              // 重新打开主数据库
+              this.realm = new Realm(realmConfig);
+              resolve();
+            })
+            .catch(reject);
         } catch (error) {
           reject(error);
         }

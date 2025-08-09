@@ -24,13 +24,6 @@
   },
   "swarm": {
     "enabled": true,
-    "strategies": [
-      "research",
-      "development",
-      "analysis",
-      "testing",
-      "optimization",
-      "maintenance"
-    ]
+    "strategies": ["research", "development", "analysis", "testing", "optimization", "maintenance"]
   }
 }

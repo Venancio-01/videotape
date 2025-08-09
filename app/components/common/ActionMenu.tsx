@@ -36,14 +36,10 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
 
   // 处理删除
   const handleDelete = () => {
-    Alert.alert(
-      '确认删除',
-      `确定要删除视频"${video.title}"吗？此操作不可撤销。`,
-      [
-        { text: '取消', style: 'cancel' },
-        { text: '删除', style: 'destructive', onPress: confirmDelete },
-      ]
-    );
+    Alert.alert('确认删除', `确定要删除视频"${video.title}"吗？此操作不可撤销。`, [
+      { text: '取消', style: 'cancel' },
+      { text: '删除', style: 'destructive', onPress: confirmDelete },
+    ]);
   };
 
   // 确认删除
@@ -76,7 +72,6 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
   const handleDownload = () => {
     onDownload?.(video);
   };
-
 
   // 处理重命名
   const handleRename = () => {
@@ -199,23 +194,11 @@ export const ActionMenu: React.FC<ActionMenuProps> = ({
       {menuItems.map((item, index) => (
         <TouchableOpacity
           key={item.label}
-          style={[
-            styles.menuItem,
-            index === menuItems.length - 1 && styles.menuItemLast,
-          ]}
+          style={[styles.menuItem, index === menuItems.length - 1 && styles.menuItemLast]}
           onPress={item.onPress}
-          activeOpacity={0.6}
-        >
-          <Ionicons
-            name={item.icon as any}
-            size={20}
-            color={item.color}
-            style={styles.menuIcon}
-          />
-          <Text style={[
-            styles.menuText,
-            item.color === '#ff4444' && styles.dangerText,
-          ]}>
+          activeOpacity={0.6}>
+          <Ionicons name={item.icon as any} size={20} color={item.color} style={styles.menuIcon} />
+          <Text style={[styles.menuText, item.color === '#ff4444' && styles.dangerText]}>
             {item.label}
           </Text>
         </TouchableOpacity>

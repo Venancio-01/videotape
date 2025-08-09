@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { TikTokHomeScreen } from '@/screens/TikTokHomeScreen';
@@ -15,7 +15,7 @@ export default function Screen() {
     try {
       setLoadingLocal(true);
       setLoading(true);
-      
+
       // 加载视频数据
       const result = await videoService.getVideos();
       if (result.success && result.data) {
@@ -48,13 +48,9 @@ export default function Screen() {
   return (
     <View style={styles.container}>
       <StatusBar hidden={false} style="light" />
-      
+
       {/* 根据当前视图模式显示不同的屏幕 */}
-      {currentViewMode === 'tiktok' ? (
-        <TikTokHomeScreen />
-      ) : (
-        <VideoListScreen />
-      )}
+      {currentViewMode === 'tiktok' ? <TikTokHomeScreen /> : <VideoListScreen />}
     </View>
   );
 }

@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Dimensions, Alert, Text, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Alert,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { VideoPlayer } from '@/components/video/VideoPlayer';
 import { PlayerControls } from '@/components/video/PlayerControls';
@@ -16,11 +23,7 @@ interface FullScreenPlayerProps {
 /**
  * 全屏视频播放器
  */
-export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
-  video,
-  onExit,
-  style,
-}) => {
+export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({ video, onExit, style }) => {
   const { playerState, setPlayerState } = useStore();
   const [showControls, setShowControls] = useState(true);
   const [hideControlsTimeout, setHideControlsTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -36,15 +39,15 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   // 显示控制面板并设置自动隐藏
   const showControlsPanel = () => {
     setShowControls(true);
-    
+
     if (hideControlsTimeout) {
       clearTimeout(hideControlsTimeout);
     }
-    
+
     const timeout = setTimeout(() => {
       setShowControls(false);
     }, 5000);
-    
+
     setHideControlsTimeout(timeout as any);
   };
 
@@ -62,7 +65,7 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
     try {
       // 增加播放次数
       await videoService.incrementPlayCount(video.id);
-      
+
       // 如果不是循环播放，自动播放下一个视频
       if (!playerState.isLooping) {
         // 这里可以实现自动播放下一个视频的逻辑
@@ -75,14 +78,10 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   // 处理视频错误
   const handleVideoError = (error: any) => {
     console.error('Video error:', error);
-    Alert.alert(
-      '播放错误',
-      '视频播放出现问题，请重试。',
-      [
-        { text: '重试', onPress: () => setPlayerState({ isPlaying: true }) },
-        { text: '取消', onPress: onExit },
-      ]
-    );
+    Alert.alert('播放错误', '视频播放出现问题，请重试。', [
+      { text: '重试', onPress: () => setPlayerState({ isPlaying: true }) },
+      { text: '取消', onPress: onExit },
+    ]);
   };
 
   // 处理视频加载
@@ -204,7 +203,7 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
   return (
     <View style={[styles.container, style]}>
       <StatusBar hidden={true} />
-      
+
       <View style={styles.contentContainer}>
         <VideoPlayer
           video={video}
@@ -213,19 +212,12 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
           onLoad={handleVideoLoad}
           onProgress={handleProgress}
         />
-        
-        <TouchableOpacity
-          style={styles.overlay}
-          onPress={handleScreenPress}
-          activeOpacity={1}
-        >
+
+        <TouchableOpacity style={styles.overlay} onPress={handleScreenPress} activeOpacity={1}>
           {/* 顶部栏 */}
           {showControls && (
             <View style={styles.topBar}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={onExit}
-              >
+              <TouchableOpacity style={styles.backButton} onPress={onExit}>
                 <Ionicons name="chevron-down" size={24} color="white" />
               </TouchableOpacity>
               <Text style={styles.videoTitle} numberOfLines={1}>
@@ -234,7 +226,7 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
               <View style={styles.backButton} />
             </View>
           )}
-          
+
           {/* 播放器控制 */}
           <PlayerControls
             showControls={showControls}
@@ -247,7 +239,7 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
             onNext={handleNext}
             onPrevious={handlePrevious}
           />
-          
+
           {/* 加载指示器 */}
           {playerState.isBuffering && (
             <View style={styles.loadingOverlay}>

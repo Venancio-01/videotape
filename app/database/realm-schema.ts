@@ -26,7 +26,7 @@ export class Video extends Realm.Object {
       lastPlayedAt: 'date?',
       folderId: 'string?',
       tags: 'string[]',
-      
+
       // 新增字段用于优化查询
       fileSize: 'int',
       resolution: 'string?',
@@ -34,12 +34,12 @@ export class Video extends Realm.Object {
       quality: 'string?',
       playbackProgress: 'double',
       viewCount: 'int',
-      
+
       // 索引字段
       titleIndexed: { type: 'string', indexed: true },
       folderIdIndexed: { type: 'string', indexed: true },
       createdAtIndexed: { type: 'date', indexed: true },
-    }
+    },
   };
 
   id!: string;
@@ -56,7 +56,7 @@ export class Video extends Realm.Object {
   lastPlayedAt?: Date;
   folderId?: string;
   tags!: string[];
-  
+
   // 新增字段
   fileSize!: number;
   resolution?: string;
@@ -64,7 +64,7 @@ export class Video extends Realm.Object {
   quality?: string;
   playbackProgress!: number;
   viewCount!: number;
-  
+
   // 索引字段
   titleIndexed!: string;
   folderIdIndexed!: string;
@@ -87,14 +87,14 @@ export class Playlist extends Realm.Object {
       updatedAt: 'date',
       videoIds: 'string[]',
       isPrivate: 'boolean',
-      
+
       // 关系字段暂时移除，简化实现
       // videos: { type: 'linkingObjects', objectType: 'Video', property: 'playlistIds' },
-      
+
       // 索引字段
       nameIndexed: { type: 'string', indexed: true },
       createdAtIndexed: { type: 'date', indexed: true },
-    }
+    },
   };
 
   id!: string;
@@ -105,10 +105,10 @@ export class Playlist extends Realm.Object {
   updatedAt!: Date;
   videoIds!: string[];
   isPrivate!: boolean;
-  
+
   // 关系字段暂时移除
   // videos!: Realm.Results<Video> & Realm.Object[];
-  
+
   // 索引字段
   nameIndexed!: string;
   createdAtIndexed!: Date;
@@ -130,17 +130,17 @@ export class Folder extends Realm.Object {
       updatedAt: 'date',
       videoCount: 'int',
       isPrivate: 'boolean',
-      
+
       // 关系字段暂时移除，简化实现
       // parentFolder: 'Folder?',
       // subFolders: { type: 'linkingObjects', objectType: 'Folder', property: 'parentFolder' },
       // videos: { type: 'linkingObjects', objectType: 'Video', property: 'folderId' },
-      
+
       // 索引字段
       nameIndexed: { type: 'string', indexed: true },
       parentIdIndexed: { type: 'string', indexed: true },
       createdAtIndexed: { type: 'date', indexed: true },
-    }
+    },
   };
 
   id!: string;
@@ -151,12 +151,12 @@ export class Folder extends Realm.Object {
   updatedAt!: Date;
   videoCount!: number;
   isPrivate!: boolean;
-  
+
   // 关系字段暂时移除
   // parentFolder?: Folder;
   // subFolders!: Realm.Results<Folder> & Realm.Object[];
   // videos!: Realm.Results<Video> & Realm.Object[];
-  
+
   // 索引字段
   nameIndexed!: string;
   parentIdIndexed!: string;
@@ -177,19 +177,19 @@ export class PlayHistory extends Realm.Object {
       position: 'double',
       duration: 'double',
       completed: 'boolean',
-      
+
       // 关系字段暂时移除，简化实现
       // video: { type: 'Video', optional: true },
-      
+
       // 新增字段
       playbackSpeed: 'double',
       volume: 'double',
       deviceInfo: 'string?',
-      
+
       // 索引字段
       videoIdIndexed: { type: 'string', indexed: true },
       playedAtIndexed: { type: 'date', indexed: true },
-    }
+    },
   };
 
   id!: string;
@@ -198,15 +198,15 @@ export class PlayHistory extends Realm.Object {
   position!: number;
   duration!: number;
   completed!: boolean;
-  
+
   // 关系字段暂时移除
   // video?: Video;
-  
+
   // 新增字段
   playbackSpeed!: number;
   volume!: number;
   deviceInfo?: string;
-  
+
   // 索引字段
   videoIdIndexed!: string;
   playedAtIndexed!: Date;
@@ -230,18 +230,18 @@ export class AppSettings extends Realm.Object {
       quality: 'string',
       dataSaver: 'boolean',
       backgroundPlay: 'boolean',
-      
+
       // 新增字段
       lastUpdated: 'date',
       syncEnabled: 'boolean',
       analyticsEnabled: 'boolean',
       crashReportingEnabled: 'boolean',
-      
+
       // 复杂设置对象暂时移除，简化实现
       // playbackPreferences: 'PlaybackPreferences?',
       // uiPreferences: 'UIPreferences?',
       // networkPreferences: 'NetworkPreferences?',
-    }
+    },
   };
 
   id!: string;
@@ -254,13 +254,13 @@ export class AppSettings extends Realm.Object {
   quality!: string;
   dataSaver!: boolean;
   backgroundPlay!: boolean;
-  
+
   // 新增字段
   lastUpdated!: Date;
   syncEnabled!: boolean;
   analyticsEnabled!: boolean;
   crashReportingEnabled!: boolean;
-  
+
   // 复杂设置对象暂时移除
   // playbackPreferences?: PlaybackPreferences;
   // uiPreferences?: UIPreferences;
@@ -286,13 +286,7 @@ export class AppSettings extends Realm.Object {
  * 数据库配置
  */
 export const realmConfig = {
-  schema: [
-    Video,
-    Playlist,
-    Folder,
-    PlayHistory,
-    AppSettings,
-  ],
+  schema: [Video, Playlist, Folder, PlayHistory, AppSettings],
   schemaVersion: 1,
   path: 'videotape.realm',
   // 删除旧版本数据库（开发阶段）
@@ -341,7 +335,7 @@ export type RealmAppSettings = AppSettings;
  */
 export interface AppDatabase {
   realm: Realm;
-  
+
   // 视频操作
   videos: {
     add: (video: Omit<Video, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Video>;
@@ -354,7 +348,7 @@ export interface AppDatabase {
     getRecent: (limit?: number) => Video[];
     getMostPlayed: (limit?: number) => Video[];
   };
-  
+
   // 播放列表操作
   playlists: {
     add: (playlist: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Playlist>;
@@ -365,7 +359,7 @@ export interface AppDatabase {
     addVideoToPlaylist: (playlistId: string, videoId: string) => Promise<void>;
     removeVideoFromPlaylist: (playlistId: string, videoId: string) => Promise<void>;
   };
-  
+
   // 文件夹操作
   folders: {
     add: (folder: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Folder>;
@@ -376,7 +370,7 @@ export interface AppDatabase {
     getRootFolders: () => Folder[];
     getSubFolders: (parentId: string) => Folder[];
   };
-  
+
   // 播放历史操作
   playHistory: {
     add: (history: Omit<PlayHistory, 'id'>) => Promise<PlayHistory>;
@@ -386,21 +380,21 @@ export interface AppDatabase {
     getRecent: (limit?: number) => PlayHistory[];
     clear: () => Promise<void>;
   };
-  
+
   // 设置操作
   settings: {
     get: () => AppSettings;
     update: (updates: Partial<AppSettings>) => Promise<void>;
     reset: () => Promise<void>;
   };
-  
+
   // 批量操作
   batch: {
     write: (operations: () => void) => Promise<void>;
     backup: () => Promise<string>;
     restore: (backupPath: string) => Promise<void>;
   };
-  
+
   // 工具方法
   utils: {
     generateId: () => string;

@@ -9,15 +9,15 @@ interface SettingsState {
   settings: AppSettings;
   isLoading: boolean;
   error: string | null;
-  
+
   // 操作方法
   updateSettings: (updates: Partial<AppSettings>) => Promise<void>;
   resetSettings: () => Promise<void>;
   refreshSettings: () => Promise<void>;
-  
+
   // 主题相关
   setTheme: (theme: 'light' | 'dark' | 'auto') => Promise<void>;
-  
+
   // 播放器设置
   setVolume: (volume: number) => Promise<void>;
   setPlaybackSpeed: (speed: number) => Promise<void>;
@@ -65,9 +65,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       };
       set({ settings: appSettings, isLoading: false });
     } catch (error) {
-      set({ 
+      set({
         error: error instanceof Error ? error.message : '加载设置失败',
-        isLoading: false 
+        isLoading: false,
       });
     }
   },
@@ -97,12 +97,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       // 更新本地状态
       set((state) => ({
         settings: { ...state.settings, ...updates },
-        isLoading: false
+        isLoading: false,
       }));
     } catch (error) {
-      set({ 
+      set({
         error: error instanceof Error ? error.message : '更新设置失败',
-        isLoading: false 
+        isLoading: false,
       });
     }
   },
@@ -114,9 +114,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       await configService.resetConfig();
       set({ settings: defaultSettings, isLoading: false });
     } catch (error) {
-      set({ 
+      set({
         error: error instanceof Error ? error.message : '重置设置失败',
-        isLoading: false 
+        isLoading: false,
       });
     }
   },

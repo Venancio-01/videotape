@@ -12,11 +12,11 @@ export const EventBusDemo: React.FC = () => {
 
   // 监听所有事件
   useEventBus('video-added', (data) => {
-    setEvents(prev => [
+    setEvents((prev) => [
       { type: '*', data, timestamp: new Date() },
-      ...prev.slice(0, 19) // 只保留最近20个事件
+      ...prev.slice(0, 19), // 只保留最近20个事件
     ]);
-    setEventCount(prev => prev + 1);
+    setEventCount((prev) => prev + 1);
   });
 
   // 监听视频相关事件
@@ -220,18 +220,10 @@ export const EventBusDemo: React.FC = () => {
   const renderEventItem = ({ item, index }: { item: any; index: number }) => (
     <View
       key={index}
-      style={[
-        styles.eventItem,
-        index === events.length - 1 && styles.eventItemLast,
-      ]}
-    >
+      style={[styles.eventItem, index === events.length - 1 && styles.eventItemLast]}>
       <Text style={styles.eventType}>{item.type}</Text>
-      <Text style={styles.eventData}>
-        {JSON.stringify(item.data, null, 2)}
-      </Text>
-      <Text style={styles.eventTime}>
-        {item.timestamp.toLocaleTimeString()}
-      </Text>
+      <Text style={styles.eventData}>{JSON.stringify(item.data, null, 2)}</Text>
+      <Text style={styles.eventTime}>{item.timestamp.toLocaleTimeString()}</Text>
     </View>
   );
 
@@ -264,45 +256,36 @@ export const EventBusDemo: React.FC = () => {
         <View style={styles.actions}>
           <Text style={styles.sectionTitle}>触发事件</Text>
           <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleEmitVideoAdded}
-            >
+            <TouchableOpacity style={styles.actionButton} onPress={handleEmitVideoAdded}>
               <Text style={styles.actionButtonText}>视频添加</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={[styles.actionButton, styles.actionButtonSecondary]}
-              onPress={handleEmitVideoPlayed}
-            >
+              onPress={handleEmitVideoPlayed}>
               <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>
                 视频播放
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={[styles.actionButton, styles.actionButtonSecondary]}
-              onPress={handleEmitCustomEvent}
-            >
+              onPress={handleEmitCustomEvent}>
               <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>
                 自定义事件
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={[styles.actionButton, styles.actionButtonSecondary]}
-              onPress={handleEmitError}
-            >
+              onPress={handleEmitError}>
               <Text style={[styles.actionButtonText, styles.actionButtonTextSecondary]}>
                 触发错误
               </Text>
             </TouchableOpacity>
           </View>
-          
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={handleClearEvents}
-          >
+
+          <TouchableOpacity style={styles.clearButton} onPress={handleClearEvents}>
             <Text style={styles.clearButtonText}>清空事件</Text>
           </TouchableOpacity>
         </View>
@@ -317,9 +300,7 @@ export const EventBusDemo: React.FC = () => {
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
               <View style={{ alignItems: 'center', padding: 20 }}>
-                <Text style={{ color: '#999', fontSize: 14 }}>
-                  暂无事件记录
-                </Text>
+                <Text style={{ color: '#999', fontSize: 14 }}>暂无事件记录</Text>
               </View>
             }
           />

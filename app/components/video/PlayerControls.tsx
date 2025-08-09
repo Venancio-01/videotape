@@ -3,7 +3,6 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useStore } from '@/stores/store/store';
-import { useSettingsStore } from '@/stores/settingsStore';
 
 interface PlayerControlsProps {
   style?: any;
@@ -154,12 +153,8 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
     <View style={[styles.container, !showControls && styles.hidden, style]}>
       {/* 时间信息 */}
       <View style={styles.timeInfo}>
-        <Text style={styles.timeText}>
-          {formatTime(playerState.position)}
-        </Text>
-        <Text style={styles.timeText}>
-          {formatTime(playerState.duration)}
-        </Text>
+        <Text style={styles.timeText}>{formatTime(playerState.position)}</Text>
+        <Text style={styles.timeText}>{formatTime(playerState.duration)}</Text>
       </View>
 
       {/* 进度条 */}
@@ -177,10 +172,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
 
       {/* 控制按钮 */}
       <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={handleToggleShuffle}
-        >
+        <TouchableOpacity style={styles.controlButton} onPress={handleToggleShuffle}>
           <Ionicons
             name="shuffle"
             size={24}
@@ -188,40 +180,20 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={handlePrevious}
-        >
+        <TouchableOpacity style={styles.controlButton} onPress={handlePrevious}>
           <Ionicons name="play-skip-back" size={24} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={handleTogglePlayPause}
-        >
-          <Ionicons
-            name={playerState.isPlaying ? 'pause' : 'play'}
-            size={32}
-            color="white"
-          />
+        <TouchableOpacity style={styles.controlButton} onPress={handleTogglePlayPause}>
+          <Ionicons name={playerState.isPlaying ? 'pause' : 'play'} size={32} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={handleNext}
-        >
+        <TouchableOpacity style={styles.controlButton} onPress={handleNext}>
           <Ionicons name="play-skip-forward" size={24} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.controlButton}
-          onPress={handleToggleLoop}
-        >
-          <Ionicons
-            name="repeat"
-            size={24}
-            color={playerState.isLooping ? '#ffffff' : '#666666'}
-          />
+        <TouchableOpacity style={styles.controlButton} onPress={handleToggleLoop}>
+          <Ionicons name="repeat" size={24} color={playerState.isLooping ? '#ffffff' : '#666666'} />
         </TouchableOpacity>
       </View>
 
@@ -251,9 +223,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           minimumTrackTintColor="#ffffff"
           maximumTrackTintColor="#666666"
         />
-        <Text style={styles.speedText}>
-          {playerState.playbackRate.toFixed(2)}x
-        </Text>
+        <Text style={styles.speedText}>{playerState.playbackRate.toFixed(2)}x</Text>
       </View>
     </View>
   );

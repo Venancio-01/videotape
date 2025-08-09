@@ -79,7 +79,7 @@
 
 ## 技术栈
 
-- **框架**：React Native + Expo (~53.0.20)
+- **框架**：React Native + Expo (~52.0.46)
 - **语言**：TypeScript
 - **导航**：Expo Router
 - **样式**：Tailwind CSS (NativeWind)

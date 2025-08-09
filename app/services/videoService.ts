@@ -1,6 +1,14 @@
 import { getUnifiedDatabase } from '@/database';
 import { storageService } from '@/services/storage';
-import { Video, Playlist, Folder, PlayHistory, FilterOptions, DatabaseResult, PaginatedData } from '@/types';
+import {
+  Video,
+  // Playlist, // 保留用于将来可能的播放列表功能
+  // Folder, // 保留用于将来可能的文件夹功能
+  // PlayHistory, // 保留用于将来可能的历史记录功能
+  FilterOptions,
+  DatabaseResult,
+  PaginatedData,
+} from '@/types';
 
 /**
  * 视频管理服务
@@ -20,16 +28,18 @@ export class VideoService {
   /**
    * 添加视频
    */
-  async addVideo(videoData: Omit<Video, 'id' | 'createdAt' | 'updatedAt' | 'playCount' | 'isFavorite'>): Promise<DatabaseResult<Video>> {
+  async addVideo(
+    videoData: Omit<Video, 'id' | 'createdAt' | 'updatedAt' | 'playCount' | 'isFavorite'>
+  ): Promise<DatabaseResult<Video>> {
     try {
       const db = getUnifiedDatabase();
-      
+
       // 保存视频文件
       const videoUri = await storageService.saveVideoFile(videoData.uri, `video_${Date.now()}.mp4`);
-      
+
       // 生成缩略图
       const thumbnailUri = await storageService.generateThumbnail(videoUri);
-      
+
       // 获取文件信息
       const fileInfo = await storageService.getFileInfo(videoUri);
       const fileSize = (fileInfo as any).size || 0;
@@ -94,10 +104,14 @@ export class VideoService {
   /**
    * 获取分页视频
    */
-  async getPaginatedVideos(page: number, pageSize: number, options?: FilterOptions): Promise<DatabaseResult<PaginatedData<Video>>> {
+  async getPaginatedVideos(
+    page: number,
+    pageSize: number,
+    options?: FilterOptions
+  ): Promise<DatabaseResult<PaginatedData<Video>>> {
     try {
       const db = getUnifiedDatabase();
-      
+
       const searchOptions: any = {
         sortBy: options?.sortBy || 'createdAt',
         sortOrder: options?.sortOrder || 'desc',
@@ -126,9 +140,9 @@ export class VideoService {
 
       // 应用文件类型筛选
       if (options?.mimeType) {
-        searchOptions.filters = { 
-          ...searchOptions.filters, 
-          mimeType: options.mimeType 
+        searchOptions.filters = {
+          ...searchOptions.filters,
+          mimeType: options.mimeType,
         };
       }
 
@@ -201,8 +215,8 @@ export class VideoService {
       const playlists = await db.playlists.getAll();
       for (const playlist of playlists) {
         if (playlist.videoIds.includes(id)) {
-          const updatedVideoIds = playlist.videoIds.filter(videoId => videoId !== id);
-          await db.playlists.update(playlist.id, { 
+          const updatedVideoIds = playlist.videoIds.filter((videoId) => videoId !== id);
+          await db.playlists.update(playlist.id, {
             videoIds: updatedVideoIds,
           });
         }
@@ -215,7 +229,6 @@ export class VideoService {
     }
   }
 
-  
   /**
    * 增加播放次数
    */
@@ -239,7 +252,6 @@ export class VideoService {
     }
   }
 
-  
   /**
    * 获取最近播放的视频
    */
@@ -249,7 +261,7 @@ export class VideoService {
       const videos = db.videos.search('', {
         sortBy: 'date',
         sortOrder: 'desc',
-        limit
+        limit,
       });
 
       return { success: true, data: videos as Video[] };
@@ -289,7 +301,6 @@ export class VideoService {
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
-
-  }
+}
 
 export const videoService = VideoService.getInstance();

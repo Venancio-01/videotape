@@ -13,11 +13,7 @@ interface FilterBarProps {
 /**
  * 筛选栏组件
  */
-export const FilterBar: React.FC<FilterBarProps> = ({
-  filterOptions,
-  onFilterChange,
-  style,
-}) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions, onFilterChange, style }) => {
   const { currentFilter, setCurrentFilter } = useStore();
 
   // 排序选项
@@ -131,8 +127,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.optionsContainer}
-        >
+          contentContainerStyle={styles.optionsContainer}>
           {sortOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
@@ -140,8 +135,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 styles.optionButton,
                 currentFilter.sortBy === option.value && styles.optionButtonActive,
               ]}
-              onPress={() => handleSortChange(option.value as FilterOptions['sortBy'])}
-            >
+              onPress={() => handleSortChange(option.value as FilterOptions['sortBy'])}>
               <Ionicons
                 name={option.icon as any}
                 size={14}
@@ -151,10 +145,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ]}
                 color={currentFilter.sortBy === option.value ? '#fff' : '#666'}
               />
-              <Text style={[
-                styles.optionText,
-                currentFilter.sortBy === option.value && styles.optionTextActive,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  currentFilter.sortBy === option.value && styles.optionTextActive,
+                ]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -170,8 +165,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.optionsContainer}
-        >
+          contentContainerStyle={styles.optionsContainer}>
           {filterByOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
@@ -179,8 +173,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 styles.optionButton,
                 currentFilter.filterBy === option.value && styles.optionButtonActive,
               ]}
-              onPress={() => handleFilterByChange(option.value as FilterOptions['filterBy'])}
-            >
+              onPress={() => handleFilterByChange(option.value as FilterOptions['filterBy'])}>
               <Ionicons
                 name={option.icon as any}
                 size={14}
@@ -190,10 +183,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ]}
                 color={currentFilter.filterBy === option.value ? '#fff' : '#666'}
               />
-              <Text style={[
-                styles.optionText,
-                currentFilter.filterBy === option.value && styles.optionTextActive,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  currentFilter.filterBy === option.value && styles.optionTextActive,
+                ]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -209,8 +203,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.optionsContainer}
-        >
+          contentContainerStyle={styles.optionsContainer}>
           {sortOrderOptions.map((option) => (
             <TouchableOpacity
               key={option.value}
@@ -218,8 +211,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 styles.optionButton,
                 currentFilter.sortOrder === option.value && styles.optionButtonActive,
               ]}
-              onPress={() => handleSortOrderChange(option.value as FilterOptions['sortOrder'])}
-            >
+              onPress={() => handleSortOrderChange(option.value as FilterOptions['sortOrder'])}>
               <Ionicons
                 name={option.icon as any}
                 size={14}
@@ -229,10 +221,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ]}
                 color={currentFilter.sortOrder === option.value ? '#fff' : '#666'}
               />
-              <Text style={[
-                styles.optionText,
-                currentFilter.sortOrder === option.value && styles.optionTextActive,
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  currentFilter.sortOrder === option.value && styles.optionTextActive,
+                ]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
