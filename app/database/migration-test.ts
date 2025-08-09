@@ -1,6 +1,7 @@
 /**
- * 数据迁移测试和验证工具
- * 提供完整的测试套件来验证迁移的正确性和完整性
+ * 数据迁移测试和验证工具 - 已废弃
+ * 迁移已完成，应用现在完全使用 Realm 数据库
+ * 此文件保留用于历史参考
  */
 
 import { getUnifiedDatabase } from './unified-realm-service';
@@ -483,20 +484,21 @@ export class MigrationTestSuite {
   }
 
   /**
-   * 测试数据迁移
+   * 测试数据迁移 - 已废弃
    */
   private async testDataMigration(): Promise<void> {
-    console.log('测试数据迁移...');
+    console.log('测试数据迁移 (已废弃)...');
     
     try {
-      // 这里需要模拟旧数据库并测试迁移
-      // 由于实际的旧数据库操作比较复杂，这里只测试迁移服务的基本功能
-      
+      // 迁移已完成，测试 Realm 数据库功能
       const migrationService = new DataMigrationService();
       
-      // 测试迁移服务初始化
-      this.addResult('migration.init', {
-        success: true,
+      // 测试迁移服务状态
+      const result = await migrationService.migrate();
+      this.addResult('migration.status', {
+        success: result.success,
+        message: '迁移已完成',
+        warnings: result.warnings,
       });
 
       // 测试备份功能

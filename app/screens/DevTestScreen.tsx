@@ -141,7 +141,7 @@ export const DevTestScreen: React.FC = () => {
             <View style={styles.featuresList}>
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />
-                <Text style={styles.featureText}>数据库管理 (Dexie.js)</Text>
+                <Text style={styles.featureText}>数据库管理 (Realm)</Text>
               </View>
               <View style={styles.featureItem}>
                 <Ionicons name="checkmark-circle" size={16} color="#4CAF50" style={styles.featureIcon} />

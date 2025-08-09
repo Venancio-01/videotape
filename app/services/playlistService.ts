@@ -1,4 +1,4 @@
-import db from './database';
+import { getUnifiedDatabase } from '@/database';
 import { Playlist, DatabaseResult } from '@/types';
 
 /**
@@ -21,17 +21,21 @@ export class PlaylistService {
    */
   async createPlaylist(playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt' | 'videoIds'>): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist: Playlist = {
-        id: `playlist_${Date.now()}`,
-        ...playlistData,
+      const db = getUnifiedDatabase();
+      
+      const playlistInput = {
+        name: playlistData.name,
+        description: playlistData.description,
+        thumbnailUri: playlistData.thumbnailUri,
+        videoIds: [],
+        isPrivate: playlistData.isPrivate || false,
         createdAt: new Date(),
         updatedAt: new Date(),
-        videoIds: [],
       };
 
-      await db.playlists.add(playlist);
+      const playlist = await db.playlists.add(playlistInput);
 
-      return { success: true, data: playlist };
+      return { success: true, data: playlist as Playlist };
     } catch (error) {
       console.error('Failed to create playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -43,11 +47,12 @@ export class PlaylistService {
    */
   async getPlaylist(id: string): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist = await db.playlists.get(id);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(id);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
-      return { success: true, data: playlist };
+      return { success: true, data: playlist as Playlist };
     } catch (error) {
       console.error('Failed to get playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -59,8 +64,9 @@ export class PlaylistService {
    */
   async getAllPlaylists(): Promise<DatabaseResult<Playlist[]>> {
     try {
-      const playlists = await db.playlists.toArray();
-      return { success: true, data: playlists };
+      const db = getUnifiedDatabase();
+      const playlists = await db.playlists.getAll();
+      return { success: true, data: playlists as Playlist[] };
     } catch (error) {
       console.error('Failed to get all playlists:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -72,20 +78,21 @@ export class PlaylistService {
    */
   async updatePlaylist(id: string, updates: Partial<Playlist>): Promise<DatabaseResult<Playlist>> {
     try {
-      const existingPlaylist = await db.playlists.get(id);
+      const db = getUnifiedDatabase();
+      const existingPlaylist = await db.playlists.getById(id);
       if (!existingPlaylist) {
         return { success: false, error: 'Playlist not found' };
       }
 
       const updatedPlaylist = {
-        ...existingPlaylist,
         ...updates,
         updatedAt: new Date(),
       };
 
-      await db.playlists.put(updatedPlaylist);
+      await db.playlists.update(id, updatedPlaylist);
+      const updatedPlaylistResult = await db.playlists.getById(id);
 
-      return { success: true, data: updatedPlaylist };
+      return { success: true, data: updatedPlaylistResult as Playlist };
     } catch (error) {
       console.error('Failed to update playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -97,7 +104,8 @@ export class PlaylistService {
    */
   async deletePlaylist(id: string): Promise<DatabaseResult<boolean>> {
     try {
-      const playlist = await db.playlists.get(id);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(id);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
@@ -116,7 +124,8 @@ export class PlaylistService {
    */
   async addVideoToPlaylist(playlistId: string, videoId: string): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(playlistId);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
@@ -126,15 +135,12 @@ export class PlaylistService {
       }
 
       const updatedVideoIds = [...playlist.videoIds, videoId];
-      const updatedPlaylist = {
-        ...playlist,
+      await db.playlists.update(playlistId, { 
         videoIds: updatedVideoIds,
-        updatedAt: new Date(),
-      };
+      });
+      const updatedPlaylistResult = await db.playlists.getById(playlistId);
 
-      await db.playlists.put(updatedPlaylist);
-
-      return { success: true, data: updatedPlaylist };
+      return { success: true, data: updatedPlaylistResult as Playlist };
     } catch (error) {
       console.error('Failed to add video to playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -146,21 +152,19 @@ export class PlaylistService {
    */
   async removeVideoFromPlaylist(playlistId: string, videoId: string): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(playlistId);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
 
       const updatedVideoIds = playlist.videoIds.filter(id => id !== videoId);
-      const updatedPlaylist = {
-        ...playlist,
+      await db.playlists.update(playlistId, { 
         videoIds: updatedVideoIds,
-        updatedAt: new Date(),
-      };
+      });
+      const updatedPlaylistResult = await db.playlists.getById(playlistId);
 
-      await db.playlists.put(updatedPlaylist);
-
-      return { success: true, data: updatedPlaylist };
+      return { success: true, data: updatedPlaylistResult as Playlist };
     } catch (error) {
       console.error('Failed to remove video from playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -172,21 +176,19 @@ export class PlaylistService {
    */
   async addVideosToPlaylist(playlistId: string, videoIds: string[]): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(playlistId);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
 
-      const uniqueVideoIds = [...new Set([...playlist.videoIds, ...videoIds])];
-      const updatedPlaylist = {
-        ...playlist,
+      const uniqueVideoIds = Array.from(new Set([...playlist.videoIds, ...videoIds]));
+      await db.playlists.update(playlistId, { 
         videoIds: uniqueVideoIds,
-        updatedAt: new Date(),
-      };
+      });
+      const updatedPlaylistResult = await db.playlists.getById(playlistId);
 
-      await db.playlists.put(updatedPlaylist);
-
-      return { success: true, data: updatedPlaylist };
+      return { success: true, data: updatedPlaylistResult as Playlist };
     } catch (error) {
       console.error('Failed to add videos to playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -198,15 +200,17 @@ export class PlaylistService {
    */
   async getPlaylistVideos(playlistId: string): Promise<DatabaseResult<any[]>> {
     try {
-      const playlist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(playlistId);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
 
-      const videos = await db.videos
-        .where('id')
-        .anyOf(playlist.videoIds)
-        .toArray();
+      const videos = [];
+      for (const videoId of playlist.videoIds) {
+        const video = await db.videos.getById(videoId);
+        if (video) videos.push(video);
+      }
 
       return { success: true, data: videos };
     } catch (error) {
@@ -220,20 +224,18 @@ export class PlaylistService {
    */
   async reorderPlaylist(playlistId: string, videoIds: string[]): Promise<DatabaseResult<Playlist>> {
     try {
-      const playlist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const playlist = await db.playlists.getById(playlistId);
       if (!playlist) {
         return { success: false, error: 'Playlist not found' };
       }
 
-      const updatedPlaylist = {
-        ...playlist,
+      await db.playlists.update(playlistId, { 
         videoIds,
-        updatedAt: new Date(),
-      };
+      });
+      const updatedPlaylistResult = await db.playlists.getById(playlistId);
 
-      await db.playlists.put(updatedPlaylist);
-
-      return { success: true, data: updatedPlaylist };
+      return { success: true, data: updatedPlaylistResult as Playlist };
     } catch (error) {
       console.error('Failed to reorder playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -245,15 +247,15 @@ export class PlaylistService {
    */
   async searchPlaylists(query: string): Promise<DatabaseResult<Playlist[]>> {
     try {
+      const db = getUnifiedDatabase();
+      const allPlaylists = await db.playlists.getAll();
       const searchTerm = query.toLowerCase();
-      const playlists = await db.playlists
-        .filter(playlist => 
-          playlist.name.toLowerCase().includes(searchTerm) ||
-          (playlist.description || '').toLowerCase().includes(searchTerm)
-        )
-        .toArray();
+      const playlists = allPlaylists.filter(playlist => 
+        playlist.name.toLowerCase().includes(searchTerm) ||
+        (playlist.description || '').toLowerCase().includes(searchTerm)
+      );
 
-      return { success: true, data: playlists };
+      return { success: true, data: playlists as Playlist[] };
     } catch (error) {
       console.error('Failed to search playlists:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -265,11 +267,11 @@ export class PlaylistService {
    */
   async getPlaylistsContainingVideo(videoId: string): Promise<DatabaseResult<Playlist[]>> {
     try {
-      const playlists = await db.playlists
-        .filter(playlist => playlist.videoIds.includes(videoId))
-        .toArray();
+      const db = getUnifiedDatabase();
+      const allPlaylists = await db.playlists.getAll();
+      const playlists = allPlaylists.filter(playlist => playlist.videoIds.includes(videoId));
 
-      return { success: true, data: playlists };
+      return { success: true, data: playlists as Playlist[] };
     } catch (error) {
       console.error('Failed to get playlists containing video:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -281,25 +283,25 @@ export class PlaylistService {
    */
   async duplicatePlaylist(playlistId: string, newName: string): Promise<DatabaseResult<Playlist>> {
     try {
-      const originalPlaylist = await db.playlists.get(playlistId);
+      const db = getUnifiedDatabase();
+      const originalPlaylist = await db.playlists.getById(playlistId);
       if (!originalPlaylist) {
         return { success: false, error: 'Playlist not found' };
       }
 
-      const newPlaylist: Playlist = {
-        id: `playlist_${Date.now()}`,
+      const newPlaylistInput = {
         name: newName,
         description: originalPlaylist.description,
         thumbnailUri: originalPlaylist.thumbnailUri,
-        createdAt: new Date(),
-        updatedAt: new Date(),
         videoIds: [...originalPlaylist.videoIds],
         isPrivate: originalPlaylist.isPrivate,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
-      await db.playlists.add(newPlaylist);
+      const newPlaylist = await db.playlists.add(newPlaylistInput);
 
-      return { success: true, data: newPlaylist };
+      return { success: true, data: newPlaylist as Playlist };
     } catch (error) {
       console.error('Failed to duplicate playlist:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };

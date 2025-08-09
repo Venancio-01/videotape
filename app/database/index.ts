@@ -34,7 +34,7 @@ export {
   RealmAppSettings
 } from './realm-schema';
 
-// 数据迁移服务
+// 数据迁移服务 - 已废弃，保留用于兼容性
 export { default as DataMigrationService, migrateData, needsMigration } from './migration-service';
 
 // MMKV 存储服务
@@ -83,14 +83,13 @@ export class DatabaseManager {
     try {
       console.log('正在初始化数据库服务...');
       
-      // 检查是否需要数据迁移
-      const { needsMigration } = await import('./migration-service');
-      const shouldMigrate = await needsMigration();
+      // 迁移已完成，直接初始化 Realm 数据库
+      const { getUnifiedDatabase } = await import('./unified-realm-service');
+      const db = getUnifiedDatabase();
       
-      if (shouldMigrate) {
-        console.log('检测到需要数据迁移');
-        // 这里可以显示迁移提示给用户
-      }
+      // 确保数据库连接正常
+      const stats = db.utils.getStats();
+      console.log(`数据库初始化完成，视频数量: ${stats.videoCount}`);
       
       this.isInitialized = true;
       console.log('数据库服务初始化完成');

@@ -8,7 +8,7 @@
 ### 1.2 技术栈
 - **文件选择**: Expo Document Picker
 - **文件存储**: Expo File System
-- **数据库**: Dexie.js (IndexedDB)
+- **数据库**: Realm + MMKV
 - **状态管理**: Zustand
 - **UI组件**: React Native + Nativewind
 

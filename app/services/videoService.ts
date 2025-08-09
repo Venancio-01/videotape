@@ -1,4 +1,4 @@
-import db from '@/services/database';
+import { getUnifiedDatabase } from '@/database';
 import { storageService } from '@/services/storage';
 import { Video, Playlist, Folder, PlayHistory, FilterOptions, DatabaseResult, PaginatedData } from '@/types';
 
@@ -22,6 +22,8 @@ export class VideoService {
    */
   async addVideo(videoData: Omit<Video, 'id' | 'createdAt' | 'updatedAt' | 'playCount' | 'isFavorite'>): Promise<DatabaseResult<Video>> {
     try {
+      const db = getUnifiedDatabase();
+      
       // 保存视频文件
       const videoUri = await storageService.saveVideoFile(videoData.uri, `video_${Date.now()}.mp4`);
       
@@ -32,20 +34,26 @@ export class VideoService {
       const fileInfo = await storageService.getFileInfo(videoUri);
       const fileSize = (fileInfo as any).size || 0;
 
-      const video: Video = {
-        id: `video_${Date.now()}`,
-        ...videoData,
+      const videoInput = {
+        title: videoData.title,
         uri: videoUri,
         thumbnailUri,
+        duration: videoData.duration,
         size: fileSize,
+        mimeType: videoData.mimeType,
+        description: videoData.description,
+        folderId: videoData.folderId,
+        tags: videoData.tags || [],
+        playCount: 0,
+        isFavorite: false,
+        lastPlayedAt: undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
-        playCount: 0,
       };
 
-      await db.videos.add(video);
+      const video = await db.videos.add(videoInput);
 
-      return { success: true, data: video };
+      return { success: true, data: video as Video };
     } catch (error) {
       console.error('Failed to add video:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -57,11 +65,12 @@ export class VideoService {
    */
   async getVideo(id: string): Promise<DatabaseResult<Video>> {
     try {
-      const video = await db.videos.get(id);
+      const db = getUnifiedDatabase();
+      const video = await db.videos.getById(id);
       if (!video) {
         return { success: false, error: 'Video not found' };
       }
-      return { success: true, data: video };
+      return { success: true, data: video as Video };
     } catch (error) {
       console.error('Failed to get video:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -73,8 +82,9 @@ export class VideoService {
    */
   async getVideos(): Promise<DatabaseResult<Video[]>> {
     try {
-      const videos = await db.videos.toArray();
-      return { success: true, data: videos };
+      const db = getUnifiedDatabase();
+      const videos = await db.videos.getAll();
+      return { success: true, data: videos as Video[] };
     } catch (error) {
       console.error('Failed to get all videos:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -86,50 +96,49 @@ export class VideoService {
    */
   async getPaginatedVideos(page: number, pageSize: number, options?: FilterOptions): Promise<DatabaseResult<PaginatedData<Video>>> {
     try {
-      let query = db.videos.orderBy(options?.sortBy || 'createdAt');
-
-      // 应用排序
-      if (options?.sortOrder === 'desc') {
-        query = query.reverse();
-      }
+      const db = getUnifiedDatabase();
+      
+      const searchOptions: any = {
+        sortBy: options?.sortBy || 'createdAt',
+        sortOrder: options?.sortOrder || 'desc',
+        limit: pageSize,
+        offset: (page - 1) * pageSize,
+      };
 
       // 应用筛选
       if (options?.filterBy === 'recent') {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-        query = query.filter(video => video.createdAt >= oneWeekAgo);
+        searchOptions.filters = { createdAt: { $gte: oneWeekAgo } };
       } else if (options?.folderId) {
-        query = query.filter(video => video.folderId === options.folderId);
+        searchOptions.filters = { folderId: options.folderId };
       }
 
       // 应用搜索
       if (options?.searchQuery) {
-        const searchQuery = options.searchQuery.toLowerCase();
-        query = query.filter(video => 
-          video.title.toLowerCase().includes(searchQuery) ||
-          (video.description || '').toLowerCase().includes(searchQuery)
-        );
+        searchOptions.searchQuery = options.searchQuery;
       }
 
       // 应用标签筛选
       if (options?.tags && options.tags.length > 0) {
-        query = query.filter(video => 
-          options.tags!.some(tag => video.tags.includes(tag))
-        );
+        searchOptions.tags = options.tags;
       }
 
       // 应用文件类型筛选
       if (options?.mimeType) {
-        query = query.filter(video => video.mimeType === options.mimeType);
+        searchOptions.filters = { 
+          ...searchOptions.filters, 
+          mimeType: options.mimeType 
+        };
       }
 
-      const total = await query.count();
-      const items = await query.offset((page - 1) * pageSize).limit(pageSize).toArray();
+      const result = db.videos.search(searchOptions.searchQuery || '', searchOptions);
+      const total = result.length;
 
       return {
         success: true,
         data: {
-          items,
+          items: result as Video[],
           total,
           page,
           pageSize,
@@ -147,20 +156,21 @@ export class VideoService {
    */
   async updateVideo(id: string, updates: Partial<Video>): Promise<DatabaseResult<Video>> {
     try {
-      const existingVideo = await db.videos.get(id);
+      const db = getUnifiedDatabase();
+      const existingVideo = await db.videos.getById(id);
       if (!existingVideo) {
         return { success: false, error: 'Video not found' };
       }
 
       const updatedVideo = {
-        ...existingVideo,
         ...updates,
         updatedAt: new Date(),
       };
 
-      await db.videos.put(updatedVideo);
+      await db.videos.update(id, updatedVideo);
+      const updatedVideoResult = await db.videos.getById(id);
 
-      return { success: true, data: updatedVideo };
+      return { success: true, data: updatedVideoResult as Video };
     } catch (error) {
       console.error('Failed to update video:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -172,7 +182,8 @@ export class VideoService {
    */
   async deleteVideo(id: string): Promise<DatabaseResult<boolean>> {
     try {
-      const video = await db.videos.get(id);
+      const db = getUnifiedDatabase();
+      const video = await db.videos.getById(id);
       if (!video) {
         return { success: false, error: 'Video not found' };
       }
@@ -187,13 +198,12 @@ export class VideoService {
       await db.videos.delete(id);
 
       // 从播放列表中移除
-      const playlists = await db.playlists.toArray();
+      const playlists = await db.playlists.getAll();
       for (const playlist of playlists) {
         if (playlist.videoIds.includes(id)) {
           const updatedVideoIds = playlist.videoIds.filter(videoId => videoId !== id);
           await db.playlists.update(playlist.id, { 
             videoIds: updatedVideoIds,
-            updatedAt: new Date(),
           });
         }
       }
@@ -211,7 +221,8 @@ export class VideoService {
    */
   async incrementPlayCount(id: string): Promise<DatabaseResult<void>> {
     try {
-      const video = await db.videos.get(id);
+      const db = getUnifiedDatabase();
+      const video = await db.videos.getById(id);
       if (!video) {
         return { success: false, error: 'Video not found' };
       }
@@ -234,14 +245,14 @@ export class VideoService {
    */
   async getRecentVideos(limit: number = 10): Promise<DatabaseResult<Video[]>> {
     try {
-      const videos = await db.videos
-        .orderBy('lastPlayedAt')
-        .reverse()
-        .filter(video => video.lastPlayedAt !== undefined)
-        .limit(limit)
-        .toArray();
+      const db = getUnifiedDatabase();
+      const videos = db.videos.search('', {
+        sortBy: 'date',
+        sortOrder: 'desc',
+        limit
+      });
 
-      return { success: true, data: videos };
+      return { success: true, data: videos as Video[] };
     } catch (error) {
       console.error('Failed to get recent videos:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -253,16 +264,10 @@ export class VideoService {
    */
   async searchVideos(query: string): Promise<DatabaseResult<Video[]>> {
     try {
-      const searchTerm = query.toLowerCase();
-      const videos = await db.videos
-        .filter(video => 
-          video.title.toLowerCase().includes(searchTerm) ||
-          video.description?.toLowerCase().includes(searchTerm) ||
-          video.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-        )
-        .toArray();
+      const db = getUnifiedDatabase();
+      const videos = db.videos.search(query);
 
-      return { success: true, data: videos };
+      return { success: true, data: videos as Video[] };
     } catch (error) {
       console.error('Failed to search videos:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };

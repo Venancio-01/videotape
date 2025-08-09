@@ -1,6 +1,5 @@
 /**
  * Realm 数据模型定义
- * 基于现有 Dexie.js 数据模型的 Realm 映射
  */
 
 import Realm from 'realm';
