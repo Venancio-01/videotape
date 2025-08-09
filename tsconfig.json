@@ -32,29 +32,21 @@
     "useUnknownInCatchVariables": true,
     "paths": {
       "~/*": ["./*"],
-      "@/*": ["app/*"],
-      "@/components/*": ["app/components/*"],
-      "@/screens/*": ["app/screens/*"],
-      "@/services/*": ["app/services/*"],
-      "@/types/*": ["app/types/*"],
-      "@/utils/*": ["app/utils/*"],
-      "@/stores/*": ["app/stores/*"],
-      "@/storage/*": ["app/storage/*"],
-      "@/database/*": ["app/database/*"],
-      "@/navigation/*": ["app/navigation/*"]
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@/screens/*": ["src/screens/*"],
+      "@/services/*": ["src/services/*"],
+      "@/types/*": ["src/types/*"],
+      "@/utils/*": ["src/utils/*"],
+      "@/stores/*": ["src/stores/*"],
+      "@/storage/*": ["src/storage/*"],
+      "@/database/*": ["src/database/*"],
+      "@/navigation/*": ["src/navigation/*"],
+      "@/features/*": ["src/features/*"]
     },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./@types"
-    ]
+    "typeRoots": ["./node_modules/@types", "./@types"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "nativewind-env.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",

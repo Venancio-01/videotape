@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Alert,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import { View, StyleSheet, StatusBar, Alert, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { VideoPlayer } from '@/components/video/VideoPlayer';
 import { PlayerControls } from '@/components/video/PlayerControls';

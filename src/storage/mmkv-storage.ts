@@ -1,9 +1,10 @@
 /**
  * MMKV 配置存储服务
  * 用于高性能的键值对存储，主要存储用户设置、缓存等配置数据
+ * 现在使用安全的 MMKV 包装器来处理开发环境和远程调试场景
  */
 
-import { MMKV } from 'react-native-mmkv';
+import { StorageFactory, StorageInterface } from './safe-mmkv';
 
 /**
  * 存储键前缀
@@ -11,12 +12,10 @@ import { MMKV } from 'react-native-mmkv';
 const STORAGE_PREFIX = 'videotape_';
 
 /**
- * MMKV 实例
+ * 安全的存储实例
+ * 自动检测环境并选择合适的存储方式
  */
-const storage = new MMKV({
-  id: 'videotape-storage',
-  path: `${STORAGE_PREFIX}mmkv`,
-});
+const storage = StorageFactory.getInstance('videotape-storage', STORAGE_PREFIX);
 
 /**
  * 缓存接口
@@ -94,7 +93,7 @@ export class MMKVStorage {
   async setString(key: string, value: string): Promise<void> {
     try {
       const storageKey = this.generateKey(key);
-      storage.set(storageKey, value);
+      storage.set(storageKey.substring(STORAGE_PREFIX.length), value);
 
       // 更新内存缓存
       this.cache.set(key, {
@@ -123,7 +122,7 @@ export class MMKVStorage {
 
       // 从持久化存储读取
       const storageKey = this.generateKey(key);
-      const value = storage.getString(storageKey) || null;
+      const value = storage.get<string>(storageKey.substring(STORAGE_PREFIX.length));
 
       if (value !== null) {
         // 更新内存缓存
@@ -135,7 +134,7 @@ export class MMKVStorage {
         this.ensureSizeLimit();
       }
 
-      return value;
+      return value ?? null;
     } catch (error) {
       console.error(`MMKV getString failed for key ${key}:`, error);
       return null;
@@ -148,7 +147,7 @@ export class MMKVStorage {
   async setNumber(key: string, value: number): Promise<void> {
     try {
       const storageKey = this.generateKey(key);
-      storage.set(storageKey, value);
+      storage.set(storageKey.substring(STORAGE_PREFIX.length), value);
 
       // 更新内存缓存
       this.cache.set(key, {
@@ -177,7 +176,7 @@ export class MMKVStorage {
 
       // 从持久化存储读取
       const storageKey = this.generateKey(key);
-      const value = storage.getNumber(storageKey);
+      const value = storage.get<number>(storageKey.substring(STORAGE_PREFIX.length), defaultValue);
 
       if (value !== undefined) {
         // 更新内存缓存
@@ -187,7 +186,7 @@ export class MMKVStorage {
           ttl: this.defaultTTL,
         });
         this.ensureSizeLimit();
-        return value;
+        return value ?? defaultValue;
       }
 
       return defaultValue;
@@ -203,7 +202,7 @@ export class MMKVStorage {
   async setBoolean(key: string, value: boolean): Promise<void> {
     try {
       const storageKey = this.generateKey(key);
-      storage.set(storageKey, value);
+      storage.set(storageKey.substring(STORAGE_PREFIX.length), value);
 
       // 更新内存缓存
       this.cache.set(key, {
@@ -232,7 +231,7 @@ export class MMKVStorage {
 
       // 从持久化存储读取
       const storageKey = this.generateKey(key);
-      const value = storage.getBoolean(storageKey);
+      const value = storage.get<boolean>(storageKey.substring(STORAGE_PREFIX.length), defaultValue);
 
       if (value !== undefined) {
         // 更新内存缓存
@@ -242,7 +241,7 @@ export class MMKVStorage {
           ttl: this.defaultTTL,
         });
         this.ensureSizeLimit();
-        return value;
+        return value ?? defaultValue;
       }
 
       return defaultValue;
@@ -313,10 +312,10 @@ export class MMKVStorage {
 
       // 从持久化存储读取
       const storageKey = this.generateKey(key);
-      const value = storage.getBuffer(storageKey);
+      const value = storage.get<string>(storageKey);
 
       if (value !== undefined) {
-        const uint8Array = new Uint8Array(value);
+        const uint8Array = new Uint8Array(value.split('').map((char) => char.charCodeAt(0)));
         // 更新内存缓存
         this.cache.set(key, {
           value: uint8Array,
@@ -370,7 +369,7 @@ export class MMKVStorage {
 
       // 从持久化存储读取
       const storageKey = this.generateKey(key);
-      const value = storage.getString(storageKey) || null;
+      const value = storage.get<string>(storageKey) || null;
 
       if (value !== null) {
         const entry: CacheEntry<T> = JSON.parse(value);
@@ -399,7 +398,7 @@ export class MMKVStorage {
   async remove(key: string): Promise<void> {
     try {
       const storageKey = this.generateKey(key);
-      storage.delete(storageKey);
+      storage.delete(storageKey.substring(STORAGE_PREFIX.length));
       this.cache.delete(key);
     } catch (error) {
       console.error(`MMKV remove failed for key ${key}:`, error);
@@ -425,13 +424,7 @@ export class MMKVStorage {
    */
   async clear(): Promise<void> {
     try {
-      const allKeys = storage.getAllKeys();
-      const appKeys = allKeys.filter((key) => key.startsWith(STORAGE_PREFIX));
-
-      if (appKeys.length > 0) {
-        appKeys.forEach((key) => storage.delete(key));
-      }
-
+      storage.clear();
       this.cache.clear();
     } catch (error) {
       console.error('MMKV clear failed:', error);
@@ -444,10 +437,7 @@ export class MMKVStorage {
    */
   async getAllKeys(): Promise<string[]> {
     try {
-      const allKeys = storage.getAllKeys();
-      return allKeys
-        .filter((key) => key.startsWith(STORAGE_PREFIX))
-        .map((key) => key.substring(STORAGE_PREFIX.length));
+      return storage.getAllKeys();
     } catch (error) {
       console.error('MMKV getAllKeys failed:', error);
       return [];
@@ -486,7 +476,7 @@ export class MMKVStorage {
     try {
       return keys.map((key) => {
         const storageKey = this.generateKey(key);
-        const value = storage.getString(storageKey) || '';
+        const value = storage.get<string>(storageKey) || '';
 
         if (value !== null) {
           try {
@@ -577,7 +567,7 @@ export class MMKVStorage {
 
       for (const key of allKeys) {
         const storageKey = this.generateKey(key);
-        const value = storage.getString(storageKey) || '';
+        const value = storage.get<string>(storageKey) || '';
 
         if (value) {
           try {
@@ -642,7 +632,7 @@ export class MMKVStorage {
   /**
    * 获取 MMKV 实例（用于高级操作）
    */
-  getStorageInstance(): MMKV {
+  getStorageInstance(): StorageInterface {
     return storage;
   }
 
@@ -664,7 +654,7 @@ export class MMKVStorage {
   contains(key: string): boolean {
     try {
       const storageKey = this.generateKey(key);
-      return storage.contains(storageKey);
+      return storage.contains(storageKey.substring(STORAGE_PREFIX.length));
     } catch (error) {
       console.error(`MMKV contains failed for key ${key}:`, error);
       return false;
@@ -677,7 +667,7 @@ export class MMKVStorage {
   deleteSync(key: string): void {
     try {
       const storageKey = this.generateKey(key);
-      storage.delete(storageKey);
+      storage.delete(storageKey.substring(STORAGE_PREFIX.length));
       this.cache.delete(key);
     } catch (error) {
       console.error(`MMKV deleteSync failed for key ${key}:`, error);
@@ -689,13 +679,7 @@ export class MMKVStorage {
    */
   clearSync(): void {
     try {
-      const allKeys = storage.getAllKeys();
-      const appKeys = allKeys.filter((key) => key.startsWith(STORAGE_PREFIX));
-
-      if (appKeys.length > 0) {
-        appKeys.forEach((key) => storage.delete(key));
-      }
-
+      storage.clear();
       this.cache.clear();
     } catch (error) {
       console.error('MMKV clearSync failed:', error);
