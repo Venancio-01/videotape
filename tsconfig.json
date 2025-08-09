@@ -31,20 +31,7 @@
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": true,
     "paths": {
-      "~/*": ["./*"],
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/screens/*": ["src/screens/*"],
-      "@/services/*": ["src/services/*"],
-      "@/types/*": ["src/types/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/stores/*": ["src/stores/*"],
-      "@/storage/*": ["src/storage/*"],
-      "@/database/*": ["src/database/*"],
-      "@/navigation/*": ["src/navigation/*"],
-      "@/features/*": ["src/features/*"],
-      "@/lib/*": ["lib/*"],
-      "@/theme/*": ["theme/*"]
+      "@/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types", "./@types"]
   },
