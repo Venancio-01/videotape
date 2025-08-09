@@ -122,7 +122,6 @@ export class TestDataGenerator {
   static generateTestSettings() {
     return {
       theme: ['light', 'dark', 'auto'][Math.floor(Math.random() * 3)],
-      language: ['zh-CN', 'en-US', 'ja-JP'][Math.floor(Math.random() * 3)],
       autoPlay: Math.random() > 0.5,
       loop: Math.random() > 0.5,
       shuffle: Math.random() > 0.5,

@@ -46,7 +46,6 @@ export { default as ConfigService, configService, config } from '../storage/conf
 // 类型定义
 export type {
   Theme,
-  Language,
   VideoQuality,
   PlayerSettings,
   UISettings,

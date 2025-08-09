@@ -11,11 +11,6 @@ import { mmkvStorage, CONFIG_KEYS } from './mmkv-storage';
 export type Theme = 'light' | 'dark' | 'auto';
 
 /**
- * 语言类型
- */
-export type Language = 'zh-CN' | 'en-US' | 'ja-JP' | 'ko-KR';
-
-/**
  * 视频质量类型
  */
 export type VideoQuality = 'auto' | 'low' | 'medium' | 'high';
@@ -43,7 +38,6 @@ export interface PlayerSettings {
  */
 export interface UISettings {
   theme: Theme;
-  language: Language;
   fontSize: 'small' | 'medium' | 'large';
   fontFamily?: string;
   animationsEnabled: boolean;
@@ -152,7 +146,6 @@ export class ConfigService {
       },
       ui: {
         theme: 'auto',
-        language: 'zh-CN',
         fontSize: 'medium',
         animationsEnabled: true,
         hapticFeedbackEnabled: true,
@@ -340,9 +333,6 @@ export class ConfigService {
     // 保存到单独的键以便快速访问
     if (settings.theme !== undefined) {
       await mmkvStorage.setString(CONFIG_KEYS.THEME, settings.theme);
-    }
-    if (settings.language !== undefined) {
-      await mmkvStorage.setString(CONFIG_KEYS.LANGUAGE, settings.language);
     }
   }
 

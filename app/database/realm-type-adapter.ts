@@ -190,7 +190,6 @@ export class RealmTypeAdapter {
     return {
       id: realmSettings.id,
       theme: realmSettings.theme,
-      language: realmSettings.language,
       autoPlay: realmSettings.autoPlay,
       loop: realmSettings.loop,
       shuffle: realmSettings.shuffle,

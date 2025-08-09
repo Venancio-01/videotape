@@ -63,7 +63,6 @@ export interface PlayHistory {
  */
 export interface AppSettings {
   theme: 'light' | 'dark' | 'auto';
-  language: string;
   autoPlay: boolean;
   loop: boolean;
   shuffle: boolean;

@@ -130,7 +130,6 @@ export interface PlayHistoryInput {
 
 export interface SettingsInput {
   theme?: string;
-  language?: string;
   autoPlay?: boolean;
   loop?: boolean;
   shuffle?: boolean;

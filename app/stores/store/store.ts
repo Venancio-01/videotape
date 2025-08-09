@@ -71,7 +71,6 @@ export interface AppState {
 // 默认设置
 const defaultSettings: AppSettings = {
   theme: 'auto',
-  language: 'zh-CN',
   autoPlay: false,
   loop: false,
   shuffle: false,

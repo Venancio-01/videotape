@@ -222,7 +222,6 @@ export class AppSettings extends Realm.Object {
     properties: {
       id: 'string',
       theme: 'string',
-      language: 'string',
       autoPlay: 'boolean',
       loop: 'boolean',
       shuffle: 'boolean',
@@ -247,7 +246,6 @@ export class AppSettings extends Realm.Object {
 
   id!: string;
   theme!: string;
-  language!: string;
   autoPlay!: boolean;
   loop!: boolean;
   shuffle!: boolean;
@@ -307,7 +305,6 @@ export const realmConfig = {
 export const defaultAppSettings: Partial<AppSettings> = {
   id: 'default',
   theme: 'auto',
-  language: 'zh-CN',
   autoPlay: true,
   loop: false,
   shuffle: false,

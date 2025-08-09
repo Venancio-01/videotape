@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AppSettings } from '@/types';
-import { configService, Language } from '@/storage/config-service';
+import { configService } from '@/storage/config-service';
 
 /**
  * 设置状态管理 - 使用新的配置服务
@@ -17,7 +17,6 @@ interface SettingsState {
   
   // 主题相关
   setTheme: (theme: 'light' | 'dark' | 'auto') => Promise<void>;
-  setLanguage: (language: string) => Promise<void>;
   
   // 播放器设置
   setVolume: (volume: number) => Promise<void>;
@@ -33,7 +32,6 @@ interface SettingsState {
 // 默认设置
 const defaultSettings: AppSettings = {
   theme: 'auto',
-  language: 'zh-CN',
   autoPlay: false,
   loop: false,
   shuffle: false,
@@ -56,7 +54,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       const config = configService.getConfig();
       const appSettings: AppSettings = {
         theme: config.ui.theme,
-        language: config.ui.language,
         autoPlay: config.player.autoPlay,
         loop: config.player.loop,
         shuffle: config.player.shuffle,
@@ -91,7 +88,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       await configService.updateUISettings({
         theme: updates.theme,
-        language: updates.language as Language,
       });
 
       await configService.updateNetworkSettings({
@@ -128,10 +124,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   // 主题设置
   setTheme: async (theme) => {
     await get().updateSettings({ theme });
-  },
-
-  setLanguage: async (language) => {
-    await get().updateSettings({ language });
   },
 
   // 播放器设置
