@@ -3,10 +3,8 @@
  * 提供完整的测试套件来验证迁移的正确性和完整性
  */
 
-import { getDatabase } from './realm-service';
-import { DataMigrationService, MigrationResult, MigrationProgress } from './migration-service';
-import { configService } from '../storage/config-service';
-import { RealmTypeAdapter } from './realm-type-adapter';
+import { getUnifiedDatabase } from './unified-realm-service';
+import { DataMigrationService, MigrationResult } from './migration-service';
 
 /**
  * 测试数据生成器
@@ -162,7 +160,7 @@ export class MigrationValidator {
     };
 
     try {
-      const db = getDatabase();
+      const db = getUnifiedDatabase();
       
       // 验证数据完整性
       details.dataIntegrity = await this.validateDataIntegrity(db, result);
@@ -428,7 +426,7 @@ export class MigrationTestSuite {
     console.log('测试基础功能...');
     
     try {
-      const db = getDatabase();
+      const db = getUnifiedDatabase();
       
       // 测试数据库连接
       const stats = db.utils.getStats();
@@ -523,7 +521,7 @@ export class MigrationTestSuite {
     console.log('测试性能...');
     
     try {
-      const db = getDatabase();
+      const db = getUnifiedDatabase();
       
       // 测试批量插入性能
       const batchSize = 100;
@@ -599,7 +597,7 @@ export class MigrationTestSuite {
     console.log('测试错误处理...');
     
     try {
-      const db = getDatabase();
+      const db = getUnifiedDatabase();
       
       // 测试重复插入
       const testVideo = {
@@ -671,7 +669,7 @@ export class MigrationTestSuite {
     console.log('测试并发...');
     
     try {
-      const db = getDatabase();
+      const db = getUnifiedDatabase();
       const concurrentOperations = 10;
       
       // 创建多个并发操作

@@ -1,4 +1,16 @@
-const { hairlineWidth, platformSelect } = require('nativewind/theme');
+const { platformSelect } = require('nativewind/theme');
+
+/**
+ * 创建带透明度的颜色
+ */
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue === undefined) {
+      return `rgb(var(--${variableName}))`;
+    }
+    return `rgba(var(--${variableName}), ${opacityValue})`;
+  };
+}
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -44,24 +56,9 @@ module.exports = {
         },
       },
       borderWidth: {
-        hairline: hairlineWidth(),
+        hairline: 0.5,
       },
     },
   },
   plugins: [],
 };
-
-function jithOpacity(variableName) {
-  return ({ opacityValue }) => {
-    if (opacityValue !== undefined) {
-      return platformSelect({
-        ios: `rgb(var(--${variableName}) / ${opacityValue})`,
-        android: `rgb(var(--android-${variableName}) / ${opacityValue})`,
-      });
-    }
-    return platformSelect({
-      ios: `rgb(var(--${variableName}))`,
-      android: `rgb(var(--android-${variableName}))`,
-    });
-  };
-}

@@ -302,9 +302,10 @@ export class RealmDatabaseService implements AppDatabase {
           }
 
           this.realm.write(() => {
-            if (!playlist.videoIds.includes(videoId)) {
-              playlist.videoIds.push(videoId);
-              playlist.updatedAt = new Date();
+            const videoIds = (playlist as any).videoIds as string[];
+            if (!videoIds.includes(videoId)) {
+              videoIds.push(videoId);
+              (playlist as any).updatedAt = new Date();
             }
             resolve();
           });
@@ -324,10 +325,11 @@ export class RealmDatabaseService implements AppDatabase {
           }
 
           this.realm.write(() => {
-            const index = playlist.videoIds.indexOf(videoId);
+            const videoIds = (playlist as any).videoIds as string[];
+            const index = videoIds.indexOf(videoId);
             if (index > -1) {
-              playlist.videoIds.splice(index, 1);
-              playlist.updatedAt = new Date();
+              videoIds.splice(index, 1);
+              (playlist as any).updatedAt = new Date();
             }
             resolve();
           });
@@ -589,7 +591,7 @@ export class RealmDatabaseService implements AppDatabase {
       return new Promise((resolve, reject) => {
         try {
           const backupPath = `${this.realm.path}.backup`;
-          this.realm.writeCopyTo(backupPath);
+          this.realm.writeCopyTo(backupPath as any);
           resolve(backupPath);
         } catch (error) {
           reject(error);

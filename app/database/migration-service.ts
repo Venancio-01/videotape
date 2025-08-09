@@ -4,8 +4,7 @@
  */
 
 import Dexie, { Table } from 'dexie';
-import { getDatabase } from './realm-service';
-import { Video, Playlist, Folder, PlayHistory, AppSettings } from './realm-schema';
+import { getUnifiedDatabase } from './unified-realm-service';
 import { RealmTypeAdapter } from './realm-type-adapter';
 
 /**
@@ -334,7 +333,7 @@ export class DataMigrationService {
 
     try {
       const oldVideos = await db.table('videos').toArray();
-      const newDb = getDatabase();
+      const newDb = getUnifiedDatabase();
 
       for (let i = 0; i < oldVideos.length; i++) {
         const oldVideo = oldVideos[i];
@@ -399,7 +398,7 @@ export class DataMigrationService {
 
     try {
       const oldPlaylists = await db.table('playlists').toArray();
-      const newDb = getDatabase();
+      const newDb = getUnifiedDatabase();
 
       for (let i = 0; i < oldPlaylists.length; i++) {
         const oldPlaylist = oldPlaylists[i];
@@ -440,7 +439,7 @@ export class DataMigrationService {
 
     try {
       const oldFolders = await db.table('folders').toArray();
-      const newDb = getDatabase();
+      const newDb = getUnifiedDatabase();
 
       for (let i = 0; i < oldFolders.length; i++) {
         const oldFolder = oldFolders[i];
@@ -481,7 +480,7 @@ export class DataMigrationService {
 
     try {
       const oldHistory = await db.table('playHistory').toArray();
-      const newDb = getDatabase();
+      const newDb = getUnifiedDatabase();
 
       for (let i = 0; i < oldHistory.length; i++) {
         const oldRecord = oldHistory[i];
@@ -525,7 +524,7 @@ export class DataMigrationService {
 
     try {
       const oldSettings = await db.table('settings').toArray();
-      const newDb = getDatabase();
+      const newDb = getUnifiedDatabase();
 
       if (oldSettings.length > 0) {
         const settings = oldSettings[0];
@@ -566,7 +565,7 @@ export class DataMigrationService {
   private async validateMigration(oldDb: Dexie): Promise<{ errors: string[]; warnings: string[] }> {
     const errors: string[] = [];
     const warnings: string[] = [];
-    const newDb = getDatabase();
+    const newDb = getUnifiedDatabase();
 
     try {
       // 验证视频数量
@@ -624,7 +623,7 @@ export class DataMigrationService {
    * 创建备份
    */
   async createBackup(): Promise<string> {
-    const newDb = getDatabase();
+    const newDb = getUnifiedDatabase();
     return await newDb.batch.backup();
   }
 
@@ -663,7 +662,7 @@ export async function needsMigration(): Promise<boolean> {
     await oldDb.close();
     
     // 检查新数据库是否已有数据
-    const newDb = getDatabase();
+    const newDb = getUnifiedDatabase();
     const stats = newDb.utils.getStats();
     
     // 如果旧数据库存在且新数据库为空，则需要迁移
