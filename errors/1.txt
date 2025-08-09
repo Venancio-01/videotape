@@ -1,65 +1,50 @@
-Android Bundled 2165ms node_modules\expo-router\entry.js (1769 modules)
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./_layout.tsx" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./components/AppInitializer.tsx" is missing the required default export. Ensure a React component is exported as default.    
- WARN  Route "./components/EventBusDemo.tsx" is missing the required default export. Ensure a React component is exported as default.      
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./components/common/ActionMenu.tsx" is missing the required default export. Ensure a React component is exported as default. 
- WARN  Route "./components/common/FilterBar.tsx" is missing the required default export. Ensure a React component is exported as default.  
- WARN  Route "./components/common/SearchBar.tsx" is missing the required default export. Ensure a React component is exported as default.  
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./components/common/VideoList.tsx" is missing the required default export. Ensure a React component is exported as default.  
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./components/AppInitializer.tsx" is missing the required default export. Ensure a React component is exported as default.
+ WARN  Route "./components/EventBusDemo.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./components/common/ActionMenu.tsx" is missing the required default export. Ensure a React component is exported as default.
+ WARN  Route "./components/common/FilterBar.tsx" is missing the required default export. Ensure a React component is exported as default.
+ WARN  Route "./components/common/SearchBar.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./components/common/VideoList.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./components/tiktok/TikTokStyleFeed.tsx" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./components/video/FullScreenPlayer.tsx" is missing the required default export. Ensure a React component is exported as default.
  WARN  Route "./components/video/PlayerControls.tsx" is missing the required default export. Ensure a React component is exported as default.
- WARN  Route "./components/video/VideoPlayer.tsx" is missing the required default export. Ensure a React component is exported as default. 
+ WARN  Route "./components/video/VideoPlayer.tsx" is missing the required default export. Ensure a React component is exported as default.
  WARN  Route "./components/video/VideoThumbnail.tsx" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./database/index.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./database/migration-test.ts" is missing the required default export. Ensure a React component is exported as default.       
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./database/performance-optimizer.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
  WARN  Route "./database/realm-schema.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./database/realm-service.ts" is missing the required default export. Ensure a React component is exported as default.        
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./database/realm-type-adapter.ts" is missing the required default export. Ensure a React component is exported as default.   
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./database/unified-realm-service.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ WARN  Route "./database/realm-type-adapter.ts" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./index.tsx" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./navigation/AppNavigator.tsx" is missing the required default export. Ensure a React component is exported as default.      
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./screens/DevTestScreen.tsx" is missing the required default export. Ensure a React component is exported as default.        
- WARN  Route "./screens/DiscoverScreen.tsx" is missing the required default export. Ensure a React component is exported as default.       
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./screens/TikTokHomeScreen.tsx" is missing the required default export. Ensure a React component is exported as default.     
- ERROR  Error: Cannot find native module 'ExponentImagePicker', js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./navigation/AppNavigator.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./screens/DevTestScreen.tsx" is missing the required default export. Ensure a React component is exported as default.
+ WARN  Route "./screens/DiscoverScreen.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./screens/TikTokHomeScreen.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./screens/UploadScreen.tsx" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./screens/VideoListScreen.tsx" is missing the required default export. Ensure a React component is exported as default.      
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
- WARN  Route "./services/playlistService.ts" is missing the required default export. Ensure a React component is exported as default.      
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./screens/VideoListScreen.tsx" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./services/playlistService.ts" is missing the required default export. Ensure a React component is exported as default.
  WARN  Route "./services/storage.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Could not find the Realm binary. Please consult our troubleshooting guide: https://www.mongodb.com/docs/realm-sdks/js/latest/#md:troubleshooting-missing-binary, js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./services/videoService.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Failed to create a new MMKV instance: react-native-mmkv 3.x.x requires TurboModules, but the new architecture is not enabled!
-* Downgrade to react-native-mmkv 2.x.x if you want to stay on the old architecture.
-* Enable the new architecture in your app to use react-native-mmkv 3.x.x. (See https://github.com/reactwg/react-native-new-architecture/blob/main/docs/enable-apps.md), js engine: hermes
- WARN  Route "./storage/config-service.ts" is missing the required default export. Ensure a React component is exported as default.        
- ERROR  Error: Failed to create a new MMKV instance: react-native-mmkv 3.x.x requires TurboModules, but the new architecture is not enabled!
-* Downgrade to react-native-mmkv 2.x.x if you want to stay on the old architecture.
-* Enable the new architecture in your app to use react-native-mmkv 3.x.x. (See https://github.com/reactwg/react-native-new-architecture/blob/main/docs/enable-apps.md), js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
+ WARN  Route "./storage/config-service.ts" is missing the required default export. Ensure a React component is exported as default.
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./storage/mmkv-storage.ts" is missing the required default export. Ensure a React component is exported as default.
- ERROR  Error: Failed to create a new MMKV instance: react-native-mmkv 3.x.x requires TurboModules, but the new architecture is not enabled!
-* Downgrade to react-native-mmkv 2.x.x if you want to stay on the old architecture.
-* Enable the new architecture in your app to use react-native-mmkv 3.x.x. (See https://github.com/reactwg/react-native-new-architecture/blob/main/docs/enable-apps.md), js engine: hermes
+ ERROR  Error: Failed to create a new MMKV instance: React Native is not running on-device. MMKV can only be used when synchronous method invocations (JSI) are possible. If you are using a remote debugger (e.g. Chrome), switch to an on-device debugger (e.g. Flipper) instead., js engine: hermes
  WARN  Route "./stores/settingsStore.ts" is missing the required default export. Ensure a React component is exported as default.
  WARN  Route "./stores/store/store.ts" is missing the required default export. Ensure a React component is exported as default.
  WARN  Route "./types/index.ts" is missing the required default export. Ensure a React component is exported as default.
