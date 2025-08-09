@@ -6,10 +6,10 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeToggle } from '~/components/ThemeToggle';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { AppInitializer } from '@/components/AppInitializer';
-import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
-import { NAV_THEME } from '~/theme';
+import { useColorScheme, useInitialAndroidBarSync } from '@/lib/useColorScheme';
+import { NAV_THEME } from '@/theme/index';
 
 export {
   // Catch any errors thrown by the Layout component.

@@ -42,7 +42,9 @@
       "@/storage/*": ["src/storage/*"],
       "@/database/*": ["src/database/*"],
       "@/navigation/*": ["src/navigation/*"],
-      "@/features/*": ["src/features/*"]
+      "@/features/*": ["src/features/*"],
+      "@/lib/*": ["lib/*"],
+      "@/theme/*": ["theme/*"]
     },
     "typeRoots": ["./node_modules/@types", "./@types"]
   },

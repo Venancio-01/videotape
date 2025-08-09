@@ -5,7 +5,7 @@ type ButtonProps = {
   title?: string;
 } & TouchableOpacityProps;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
+export const UIButton = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
   return (
     <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
       <Text style={styles.buttonText}>{title}</Text>
@@ -13,7 +13,7 @@ export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps 
   );
 });
 
-Button.displayName = 'Button';
+UIButton.displayName = 'UIButton';
 
 const styles = StyleSheet.create({
   button: {

@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Text } from '~/components/nativewindui/Text';
+import { Text } from '@/components/nativewindui/Text';
 
 export default function EditScreenInfo({ path }: { path: string }) {
   const title = 'Open up the code for this screen:';

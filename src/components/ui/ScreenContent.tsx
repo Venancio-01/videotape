@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Text } from '~/components/nativewindui/Text';
+import { Text } from '@/components/nativewindui/Text';
 
 import EditScreenInfo from './EditScreenInfo';
 

@@ -2,8 +2,8 @@ import { Icon } from '@roninoss/icons';
 import { StatusBar } from 'expo-status-bar';
 import { Linking, Platform, View } from 'react-native';
 
-import { Text } from '~/components/nativewindui/Text';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { Text } from '@/components/nativewindui/Text';
+import { useColorScheme } from '@/lib/useColorScheme';
 
 export default function ModalScreen() {
   const { colors, colorScheme } = useColorScheme();
