@@ -123,24 +123,24 @@ export class DatabaseManager {
   /**
    * 获取数据库实例（推荐使用统一服务）
    */
-  getDatabase() {
-    const { getUnifiedDatabase } = require('./unified-realm-service');
+  async getDatabase() {
+    const { getUnifiedDatabase } = await import('./unified-realm-service');
     return getUnifiedDatabase();
   }
 
   /**
    * 获取配置服务
    */
-  getConfigService() {
-    const { configService } = require('../storage/config-service');
+  async getConfigService() {
+    const { configService } = await import('../storage/config-service');
     return configService;
   }
 
   /**
    * 获取存储服务
    */
-  getStorageService() {
-    const { mmkvStorage } = require('../storage/mmkv-storage');
+  async getStorageService() {
+    const { mmkvStorage } = await import('../storage/mmkv-storage');
     return mmkvStorage;
   }
 
@@ -152,9 +152,9 @@ export class DatabaseManager {
     storage: any;
     config: any;
   }> {
-    const db = this.getDatabase();
-    const storage = this.getStorageService();
-    const configService = this.getConfigService();
+    const db = await this.getDatabase();
+    const storage = await this.getStorageService();
+    const configService = await this.getConfigService();
 
     return {
       database: db.utils.getStats(),
@@ -169,15 +169,15 @@ export class DatabaseManager {
   async cleanup(): Promise<void> {
     try {
       // 关闭数据库连接
-      const { closeUnifiedDatabase } = require('./unified-realm-service');
+      const { closeUnifiedDatabase } = await import('./unified-realm-service');
       closeUnifiedDatabase();
 
       // 清理存储服务
-      const storage = this.getStorageService();
+      const storage = await this.getStorageService();
       await storage.cleanup();
 
       // 销毁配置服务
-      const configService = this.getConfigService();
+      const configService = await this.getConfigService();
       configService.destroy();
 
       this.isInitialized = false;
@@ -196,9 +196,9 @@ export class DatabaseManager {
     storage: any;
   }> {
     try {
-      const db = this.getDatabase();
-      const configService = this.getConfigService();
-      const storage = this.getStorageService();
+      const db = await this.getDatabase();
+      const configService = await this.getConfigService();
+      const storage = await this.getStorageService();
 
       return {
         database: await db.batch.backup(),
@@ -216,11 +216,11 @@ export class DatabaseManager {
    */
   async restore(backup: { database: string; config: string; storage: any }): Promise<void> {
     try {
-      const configService = this.getConfigService();
-      const storage = this.getStorageService();
+      const configService = await this.getConfigService();
+      const storage = await this.getStorageService();
 
       // 恢复数据库
-      const db = this.getDatabase();
+      const db = await this.getDatabase();
       await db.batch.restore(backup.database);
 
       // 恢复配置
@@ -241,8 +241,8 @@ export class DatabaseManager {
    */
   async reset(): Promise<void> {
     try {
-      const configService = this.getConfigService();
-      const storage = this.getStorageService();
+      const configService = await this.getConfigService();
+      const storage = await this.getStorageService();
 
       // 清空数据库
       await this.cleanup();
