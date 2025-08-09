@@ -5,7 +5,8 @@
 
 import Dexie, { Table } from 'dexie';
 import { getDatabase } from './realm-service';
-import { Video, Playlist, Folder, PlayHistory, AppSettings } from '@/types';
+import { Video, Playlist, Folder, PlayHistory, AppSettings } from './realm-schema';
+import { RealmTypeAdapter } from './realm-type-adapter';
 
 /**
  * 迁移进度接口
@@ -352,6 +353,11 @@ export class DataMigrationService {
             lastPlayedAt: oldVideo.lastPlayedAt ? new Date(oldVideo.lastPlayedAt) : undefined,
             folderId: oldVideo.folderId,
             tags: Array.isArray(oldVideo.tags) ? oldVideo.tags : [],
+            fileSize: oldVideo.size || 0,
+            format: (oldVideo.mimeType || 'video/mp4').split('/')[1] || 'unknown',
+            quality: 'medium',
+            playbackProgress: 0,
+            viewCount: oldVideo.playCount || 0,
           };
 
           await newDb.videos.add(videoData);
@@ -487,6 +493,9 @@ export class DataMigrationService {
             position: oldRecord.position || 0,
             duration: oldRecord.duration || 0,
             completed: oldRecord.completed || false,
+            playbackSpeed: 1.0,
+            volume: 1.0,
+            deviceInfo: '',
           };
 
           await newDb.playHistory.add(historyData);

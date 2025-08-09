@@ -1,31 +1,187 @@
 /**
- * Realm 数据库服务实现
- * 提供完整的数据库操作接口
+ * 统一的 Realm 数据库服务
+ * 解决类型错误和依赖冗余问题
  */
 
 import Realm from 'realm';
-import {
-  realmConfig,
-  defaultAppSettings,
-  AppDatabase,
-  Video,
-  Playlist,
-  Folder,
-  PlayHistory,
-  AppSettings,
-  SearchOptions,
-  DatabaseStats,
-} from './realm-schema';
+import { Video, Playlist, Folder, PlayHistory, AppSettings, defaultAppSettings } from './realm-schema';
+import { RealmTypeAdapter } from './realm-type-adapter';
 
 /**
- * Realm 数据库服务类
+ * 数据库操作接口
  */
-export class RealmDatabaseService implements AppDatabase {
-  public realm: Realm;
+export interface DatabaseOperations {
+  // 视频操作
+  videos: {
+    add: (video: VideoInput) => Promise<Video>;
+    update: (id: string, updates: Partial<VideoInput>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+    getById: (id: string) => Video | null;
+    getAll: () => Video[];
+    search: (query: string, options?: SearchOptions) => Video[];
+    getByFolder: (folderId: string) => Video[];
+    getRecent: (limit?: number) => Video[];
+    getMostPlayed: (limit?: number) => Video[];
+  };
+
+  // 播放列表操作
+  playlists: {
+    add: (playlist: PlaylistInput) => Promise<Playlist>;
+    update: (id: string, updates: Partial<PlaylistInput>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+    getById: (id: string) => Playlist | null;
+    getAll: () => Playlist[];
+    addVideoToPlaylist: (playlistId: string, videoId: string) => Promise<void>;
+    removeVideoFromPlaylist: (playlistId: string, videoId: string) => Promise<void>;
+  };
+
+  // 文件夹操作
+  folders: {
+    add: (folder: FolderInput) => Promise<Folder>;
+    update: (id: string, updates: Partial<FolderInput>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+    getById: (id: string) => Folder | null;
+    getAll: () => Folder[];
+    getRootFolders: () => Folder[];
+    getSubFolders: (parentId: string) => Folder[];
+  };
+
+  // 播放历史操作
+  playHistory: {
+    add: (history: PlayHistoryInput) => Promise<PlayHistory>;
+    update: (id: string, updates: Partial<PlayHistoryInput>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+    getByVideo: (videoId: string) => PlayHistory[];
+    getRecent: (limit?: number) => PlayHistory[];
+    clear: () => Promise<void>;
+  };
+
+  // 设置操作
+  settings: {
+    get: () => AppSettings;
+    update: (updates: Partial<SettingsInput>) => Promise<void>;
+    reset: () => Promise<void>;
+  };
+
+  // 批量操作
+  batch: {
+    write: (operations: () => void) => Promise<void>;
+    backup: () => Promise<string>;
+    restore: (backupPath: string) => Promise<void>;
+  };
+
+  // 工具方法
+  utils: {
+    generateId: () => string;
+    close: () => void;
+    compact: () => Promise<void>;
+    getStats: () => DatabaseStats;
+  };
+}
+
+/**
+ * 输入类型定义（简化版，不包含 Realm 特有字段）
+ */
+export interface VideoInput {
+  title: string;
+  description?: string;
+  uri: string;
+  thumbnailUri?: string;
+  duration: number;
+  size: number;
+  mimeType: string;
+  playCount?: number;
+  lastPlayedAt?: Date;
+  folderId?: string;
+  tags?: string[];
+  fileSize?: number;
+  format?: string;
+  quality?: string;
+  playbackProgress?: number;
+  viewCount?: number;
+}
+
+export interface PlaylistInput {
+  name: string;
+  description?: string;
+  thumbnailUri?: string;
+  videoIds?: string[];
+  isPrivate?: boolean;
+}
+
+export interface FolderInput {
+  name: string;
+  description?: string;
+  parentId?: string;
+  videoCount?: number;
+  isPrivate?: boolean;
+}
+
+export interface PlayHistoryInput {
+  videoId: string;
+  playedAt: Date;
+  position: number;
+  duration: number;
+  completed: boolean;
+  playbackSpeed?: number;
+  volume?: number;
+  deviceInfo?: string;
+}
+
+export interface SettingsInput {
+  theme?: string;
+  language?: string;
+  autoPlay?: boolean;
+  loop?: boolean;
+  shuffle?: boolean;
+  volume?: number;
+  playbackSpeed?: number;
+  quality?: string;
+  dataSaver?: boolean;
+  backgroundPlay?: boolean;
+  syncEnabled?: boolean;
+  analyticsEnabled?: boolean;
+  crashReportingEnabled?: boolean;
+}
+
+/**
+ * 搜索选项
+ */
+export interface SearchOptions {
+  sortBy?: 'title' | 'date' | 'duration' | 'size' | 'playCount';
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+  filters?: {
+    folderId?: string;
+    tags?: string[];
+    mimeType?: string;
+    quality?: string;
+  };
+}
+
+/**
+ * 数据库统计信息
+ */
+export interface DatabaseStats {
+  videoCount: number;
+  playlistCount: number;
+  folderCount: number;
+  historyCount: number;
+  totalSize: number;
+  lastBackup?: Date;
+  version: number;
+}
+
+/**
+ * 统一的 Realm 数据库服务
+ */
+export class UnifiedRealmService implements DatabaseOperations {
+  private realm: Realm;
   private isInitialized = false;
 
   constructor() {
-    this.realm = new Realm(realmConfig);
+    this.realm = new Realm(RealmTypeAdapter.createRealmConfig());
     this.isInitialized = true;
     this.initializeDefaultData();
   }
@@ -35,7 +191,6 @@ export class RealmDatabaseService implements AppDatabase {
    */
   private initializeDefaultData(): void {
     try {
-      // 检查是否已存在默认设置
       const existingSettings = this.realm.objectForPrimaryKey('AppSettings', 'default');
       if (!existingSettings) {
         this.realm.write(() => {
@@ -47,33 +202,39 @@ export class RealmDatabaseService implements AppDatabase {
     }
   }
 
+  /**
+   * 生成唯一ID
+   */
+  private generateId(): string {
+    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * 确定视频质量
+   */
+  private determineQuality(fileSize: number): string {
+    const sizeInMB = fileSize / (1024 * 1024);
+    if (sizeInMB > 100) return 'high';
+    if (sizeInMB > 20) return 'medium';
+    return 'low';
+  }
+
   // 视频操作
   videos = {
-    add: async (videoData: Omit<Video, 'id' | 'createdAt' | 'updatedAt'>): Promise<Video> => {
+    add: async (videoData: VideoInput): Promise<Video> => {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
-          const now = new Date();
-          
+          const realmVideoData = RealmTypeAdapter.toRealmVideo({
+            ...videoData,
+            id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+
           this.realm.write(() => {
-            const video = this.realm.create('Video', {
-              id,
-              ...videoData,
-              createdAt: now,
-              updatedAt: now,
-              playCount: 0,
-              tags: videoData.tags || [],
-              fileSize: videoData.size,
-              format: videoData.mimeType.split('/')[1] || 'unknown',
-              quality: this.determineQuality(videoData.size),
-              playbackProgress: 0,
-              viewCount: 0,
-              // 索引字段
-              titleIndexed: videoData.title,
-              folderIdIndexed: videoData.folderId || '',
-              createdAtIndexed: now,
-            });
-            resolve(video);
+            const video = this.realm.create('Video', realmVideoData);
+            resolve(RealmTypeAdapter.fromRealmVideo(video as any));
           });
         } catch (error) {
           reject(error);
@@ -81,7 +242,7 @@ export class RealmDatabaseService implements AppDatabase {
       });
     },
 
-    update: async (id: string, updates: Partial<Video>): Promise<void> => {
+    update: async (id: string, updates: Partial<VideoInput>): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const video = this.realm.objectForPrimaryKey('Video', id);
@@ -92,11 +253,10 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(video, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
-            if (updates.title) video.titleIndexed = updates.title;
-            if (updates.folderId !== undefined) video.folderIdIndexed = updates.folderId || '';
-            
+            RealmTypeAdapter.updateVideoIndexes(video, updates);
+
             resolve();
           });
         } catch (error) {
@@ -126,11 +286,11 @@ export class RealmDatabaseService implements AppDatabase {
 
     getById: (id: string): Video | null => {
       const result = this.realm.objectForPrimaryKey('Video', id);
-      return result ? (result as unknown as Video) : null;
+      return result ? RealmTypeAdapter.fromRealmVideo(result as any) : null;
     },
 
     getAll: (): Video[] => {
-      return this.realm.objects('Video').map((v: any) => v as Video);
+      return this.realm.objects('Video').map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     search: (query: string, options: SearchOptions = {}): Video[] => {
@@ -188,52 +348,47 @@ export class RealmDatabaseService implements AppDatabase {
       }
 
       // 分页
-      return results.slice(offset, offset + limit).map((v: any) => v as Video);
+      return results.slice(offset, offset + limit).map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getByFolder: (folderId: string): Video[] => {
       return this.realm.objects('Video')
         .filtered('folderIdIndexed == $0', folderId)
         .sorted('createdAtIndexed', true)
-        .map((v: any) => v as Video);
+        .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getRecent: (limit: number = 20): Video[] => {
       return this.realm.objects('Video')
         .sorted('createdAtIndexed', true)
         .slice(0, limit)
-        .map((v: any) => v as Video);
+        .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
 
     getMostPlayed: (limit: number = 20): Video[] => {
       return this.realm.objects('Video')
         .sorted('playCount', true)
         .slice(0, limit)
-        .map((v: any) => v as Video);
+        .map((v: any) => RealmTypeAdapter.fromRealmVideo(v));
     },
   };
 
   // 播放列表操作
   playlists = {
-    add: async (playlistData: Omit<Playlist, 'id' | 'createdAt' | 'updatedAt'>): Promise<Playlist> => {
+    add: async (playlistData: PlaylistInput): Promise<Playlist> => {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
-          const now = new Date();
-          
+          const realmPlaylistData = RealmTypeAdapter.toRealmPlaylist({
+            ...playlistData,
+            id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+
           this.realm.write(() => {
-            const playlist = this.realm.create('Playlist', {
-              id,
-              ...playlistData,
-              createdAt: now,
-              updatedAt: now,
-              videoIds: playlistData.videoIds || [],
-              isPrivate: playlistData.isPrivate || false,
-              // 索引字段
-              nameIndexed: playlistData.name,
-              createdAtIndexed: now,
-            });
-            resolve(playlist);
+            const playlist = this.realm.create('Playlist', realmPlaylistData);
+            resolve(RealmTypeAdapter.fromRealmPlaylist(playlist as any));
           });
         } catch (error) {
           reject(error);
@@ -241,7 +396,7 @@ export class RealmDatabaseService implements AppDatabase {
       });
     },
 
-    update: async (id: string, updates: Partial<Playlist>): Promise<void> => {
+    update: async (id: string, updates: Partial<PlaylistInput>): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const playlist = this.realm.objectForPrimaryKey('Playlist', id);
@@ -252,10 +407,10 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(playlist, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
-            if (updates.name) playlist.nameIndexed = updates.name;
-            
+            RealmTypeAdapter.updatePlaylistIndexes(playlist, updates);
+
             resolve();
           });
         } catch (error) {
@@ -285,11 +440,11 @@ export class RealmDatabaseService implements AppDatabase {
 
     getById: (id: string): Playlist | null => {
       const result = this.realm.objectForPrimaryKey('Playlist', id);
-      return result ? (result as unknown as Playlist) : null;
+      return result ? RealmTypeAdapter.fromRealmPlaylist(result as any) : null;
     },
 
     getAll: (): Playlist[] => {
-      return this.realm.objects('Playlist').map((p: any) => p as Playlist);
+      return this.realm.objects('Playlist').map((p: any) => RealmTypeAdapter.fromRealmPlaylist(p));
     },
 
     addVideoToPlaylist: async (playlistId: string, videoId: string): Promise<void> => {
@@ -302,9 +457,10 @@ export class RealmDatabaseService implements AppDatabase {
           }
 
           this.realm.write(() => {
-            if (!playlist.videoIds.includes(videoId)) {
-              playlist.videoIds.push(videoId);
-              playlist.updatedAt = new Date();
+            const videoIds = (playlist as any).videoIds as string[];
+            if (!videoIds.includes(videoId)) {
+              videoIds.push(videoId);
+              (playlist as any).updatedAt = new Date();
             }
             resolve();
           });
@@ -324,10 +480,11 @@ export class RealmDatabaseService implements AppDatabase {
           }
 
           this.realm.write(() => {
-            const index = playlist.videoIds.indexOf(videoId);
+            const videoIds = (playlist as any).videoIds as string[];
+            const index = videoIds.indexOf(videoId);
             if (index > -1) {
-              playlist.videoIds.splice(index, 1);
-              playlist.updatedAt = new Date();
+              videoIds.splice(index, 1);
+              (playlist as any).updatedAt = new Date();
             }
             resolve();
           });
@@ -340,26 +497,20 @@ export class RealmDatabaseService implements AppDatabase {
 
   // 文件夹操作
   folders = {
-    add: async (folderData: Omit<Folder, 'id' | 'createdAt' | 'updatedAt'>): Promise<Folder> => {
+    add: async (folderData: FolderInput): Promise<Folder> => {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
-          const now = new Date();
-          
+          const realmFolderData = RealmTypeAdapter.toRealmFolder({
+            ...folderData,
+            id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+
           this.realm.write(() => {
-            const folder = this.realm.create('Folder', {
-              id,
-              ...folderData,
-              createdAt: now,
-              updatedAt: now,
-              videoCount: 0,
-              isPrivate: folderData.isPrivate || false,
-              // 索引字段
-              nameIndexed: folderData.name,
-              parentIdIndexed: folderData.parentId || '',
-              createdAtIndexed: now,
-            });
-            resolve(folder);
+            const folder = this.realm.create('Folder', realmFolderData);
+            resolve(RealmTypeAdapter.fromRealmFolder(folder as any));
           });
         } catch (error) {
           reject(error);
@@ -367,7 +518,7 @@ export class RealmDatabaseService implements AppDatabase {
       });
     },
 
-    update: async (id: string, updates: Partial<Folder>): Promise<void> => {
+    update: async (id: string, updates: Partial<FolderInput>): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const folder = this.realm.objectForPrimaryKey('Folder', id);
@@ -378,11 +529,10 @@ export class RealmDatabaseService implements AppDatabase {
 
           this.realm.write(() => {
             Object.assign(folder, updates, { updatedAt: new Date() });
-            
+
             // 更新索引字段
-            if (updates.name) folder.nameIndexed = updates.name;
-            if (updates.parentId !== undefined) folder.parentIdIndexed = updates.parentId || '';
-            
+            RealmTypeAdapter.updateFolderIndexes(folder, updates);
+
             resolve();
           });
         } catch (error) {
@@ -412,46 +562,42 @@ export class RealmDatabaseService implements AppDatabase {
 
     getById: (id: string): Folder | null => {
       const result = this.realm.objectForPrimaryKey('Folder', id);
-      return result ? (result as unknown as Folder) : null;
+      return result ? RealmTypeAdapter.fromRealmFolder(result as any) : null;
     },
 
     getAll: (): Folder[] => {
-      return this.realm.objects('Folder').map((f: any) => f as Folder);
+      return this.realm.objects('Folder').map((f: any) => RealmTypeAdapter.fromRealmFolder(f));
     },
 
     getRootFolders: (): Folder[] => {
       return this.realm.objects('Folder')
         .filtered('parentIdIndexed == ""')
         .sorted('nameIndexed', false)
-        .map((f: any) => f as Folder);
+        .map((f: any) => RealmTypeAdapter.fromRealmFolder(f));
     },
 
     getSubFolders: (parentId: string): Folder[] => {
       return this.realm.objects('Folder')
         .filtered('parentIdIndexed == $0', parentId)
         .sorted('nameIndexed', false)
-        .map((f: any) => f as Folder);
+        .map((f: any) => RealmTypeAdapter.fromRealmFolder(f));
     },
   };
 
   // 播放历史操作
   playHistory = {
-    add: async (historyData: Omit<PlayHistory, 'id'>): Promise<PlayHistory> => {
+    add: async (historyData: PlayHistoryInput): Promise<PlayHistory> => {
       return new Promise((resolve, reject) => {
         try {
           const id = this.generateId();
-          
+          const realmHistoryData = RealmTypeAdapter.toRealmPlayHistory({
+            ...historyData,
+            id,
+          });
+
           this.realm.write(() => {
-            const history = this.realm.create('PlayHistory', {
-              id,
-              ...historyData,
-              playbackSpeed: historyData.playbackSpeed || 1.0,
-              volume: historyData.volume || 1.0,
-              // 索引字段
-              videoIdIndexed: historyData.videoId,
-              playedAtIndexed: historyData.playedAt,
-            });
-            resolve(history);
+            const history = this.realm.create('PlayHistory', realmHistoryData);
+            resolve(RealmTypeAdapter.fromRealmPlayHistory(history as any));
           });
         } catch (error) {
           reject(error);
@@ -459,7 +605,7 @@ export class RealmDatabaseService implements AppDatabase {
       });
     },
 
-    update: async (id: string, updates: Partial<PlayHistory>): Promise<void> => {
+    update: async (id: string, updates: Partial<PlayHistoryInput>): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const history = this.realm.objectForPrimaryKey('PlayHistory', id);
@@ -501,14 +647,14 @@ export class RealmDatabaseService implements AppDatabase {
       return this.realm.objects('PlayHistory')
         .filtered('videoIdIndexed == $0', videoId)
         .sorted('playedAtIndexed', true)
-        .map((h: any) => h as PlayHistory);
+        .map((h: any) => RealmTypeAdapter.fromRealmPlayHistory(h));
     },
 
     getRecent: (limit: number = 50): PlayHistory[] => {
       return this.realm.objects('PlayHistory')
         .sorted('playedAtIndexed', true)
         .slice(0, limit)
-        .map((h: any) => h as PlayHistory);
+        .map((h: any) => RealmTypeAdapter.fromRealmPlayHistory(h));
     },
 
     clear: async (): Promise<void> => {
@@ -530,10 +676,10 @@ export class RealmDatabaseService implements AppDatabase {
   settings = {
     get: (): AppSettings => {
       const settings = this.realm.objectForPrimaryKey('AppSettings', 'default');
-      return settings ? (settings as unknown as AppSettings) : (defaultAppSettings as AppSettings);
+      return settings ? RealmTypeAdapter.fromRealmAppSettings(settings as any) : (defaultAppSettings as AppSettings);
     },
 
-    update: async (updates: Partial<AppSettings>): Promise<void> => {
+    update: async (updates: Partial<SettingsInput>): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
           const settings = this.realm.objectForPrimaryKey('AppSettings', 'default');
@@ -589,7 +735,7 @@ export class RealmDatabaseService implements AppDatabase {
       return new Promise((resolve, reject) => {
         try {
           const backupPath = `${this.realm.path}.backup`;
-          this.realm.writeCopyTo(backupPath);
+          this.realm.writeCopyTo(backupPath as any);
           resolve(backupPath);
         } catch (error) {
           reject(error);
@@ -602,15 +748,19 @@ export class RealmDatabaseService implements AppDatabase {
         try {
           // 关闭当前数据库
           this.realm.close();
-          
+
           // 恢复备份
-          Realm.open({ ...realmConfig, path: backupPath }).then((realm: any) => {
+          Realm.open({
+            schema: [Video, Playlist, Folder, PlayHistory, AppSettings],
+            schemaVersion: 1,
+            path: backupPath,
+          } as Realm.Configuration).then((realm: any) => {
             // 将恢复的数据复制到主数据库
-            realm.writeCopyTo(this.realm.path);
+            realm.writeCopyTo(this.realm.path as any);
             realm.close();
-            
+
             // 重新打开主数据库
-            this.realm = new Realm(realmConfig);
+            this.realm = new Realm(RealmTypeAdapter.createRealmConfig());
             resolve();
           }).catch(reject);
         } catch (error) {
@@ -623,7 +773,7 @@ export class RealmDatabaseService implements AppDatabase {
   // 工具方法
   utils = {
     generateId: (): string => {
-      return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return this.generateId();
     },
 
     close: (): void => {
@@ -648,46 +798,29 @@ export class RealmDatabaseService implements AppDatabase {
         folderCount: this.realm.objects('Folder').length,
         historyCount: this.realm.objects('PlayHistory').length,
         totalSize: this.realm.objects('Video').sum('fileSize'),
-        lastBackup: undefined, // 可以从设置中获取
-        version: realmConfig.schemaVersion,
+        lastBackup: undefined,
+        version: 1,
       };
     },
   };
 
   /**
-   * 确定视频质量
-   */
-  private determineQuality(fileSize: number): string {
-    const sizeInMB = fileSize / (1024 * 1024);
-    if (sizeInMB > 100) return 'high';
-    if (sizeInMB > 20) return 'medium';
-    return 'low';
-  }
-
-  /**
-   * 生成唯一ID
-   */
-  private generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  /**
-   * 清理资源
+   * 销毁实例
    */
   destroy(): void {
     this.utils.close();
   }
 }
 
-// 数据库实例
-let databaseInstance: RealmDatabaseService | null = null;
+// 全局实例
+let databaseInstance: UnifiedRealmService | null = null;
 
 /**
  * 获取数据库实例
  */
-export function getDatabase(): RealmDatabaseService {
+export function getUnifiedDatabase(): UnifiedRealmService {
   if (!databaseInstance) {
-    databaseInstance = new RealmDatabaseService();
+    databaseInstance = new UnifiedRealmService();
   }
   return databaseInstance;
 }
@@ -695,11 +828,11 @@ export function getDatabase(): RealmDatabaseService {
 /**
  * 关闭数据库连接
  */
-export function closeDatabase(): void {
+export function closeUnifiedDatabase(): void {
   if (databaseInstance) {
     databaseInstance.destroy();
     databaseInstance = null;
   }
 }
 
-export default RealmDatabaseService;
+export default UnifiedRealmService;

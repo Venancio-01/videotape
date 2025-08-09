@@ -89,8 +89,8 @@ export class Playlist extends Realm.Object {
       videoIds: 'string[]',
       isPrivate: 'boolean',
       
-      // 关系字段
-      videos: { type: 'linkingObjects', objectType: 'Video', property: 'playlists' },
+      // 关系字段暂时移除，简化实现
+      // videos: { type: 'linkingObjects', objectType: 'Video', property: 'playlistIds' },
       
       // 索引字段
       nameIndexed: { type: 'string', indexed: true },
@@ -107,8 +107,8 @@ export class Playlist extends Realm.Object {
   videoIds!: string[];
   isPrivate!: boolean;
   
-  // 关系字段
-  videos!: Realm.Results<Video> & Realm.Object[];
+  // 关系字段暂时移除
+  // videos!: Realm.Results<Video> & Realm.Object[];
   
   // 索引字段
   nameIndexed!: string;
@@ -132,10 +132,10 @@ export class Folder extends Realm.Object {
       videoCount: 'int',
       isPrivate: 'boolean',
       
-      // 关系字段
-      parentFolder: { type: 'Folder', optional: true },
-      subFolders: { type: 'linkingObjects', objectType: 'Folder', property: 'parentFolder' },
-      videos: { type: 'linkingObjects', objectType: 'Video', property: 'folder' },
+      // 关系字段暂时移除，简化实现
+      // parentFolder: 'Folder?',
+      // subFolders: { type: 'linkingObjects', objectType: 'Folder', property: 'parentFolder' },
+      // videos: { type: 'linkingObjects', objectType: 'Video', property: 'folderId' },
       
       // 索引字段
       nameIndexed: { type: 'string', indexed: true },
@@ -153,10 +153,10 @@ export class Folder extends Realm.Object {
   videoCount!: number;
   isPrivate!: boolean;
   
-  // 关系字段
-  parentFolder?: Folder;
-  subFolders!: Realm.Results<Folder> & Realm.Object[];
-  videos!: Realm.Results<Video> & Realm.Object[];
+  // 关系字段暂时移除
+  // parentFolder?: Folder;
+  // subFolders!: Realm.Results<Folder> & Realm.Object[];
+  // videos!: Realm.Results<Video> & Realm.Object[];
   
   // 索引字段
   nameIndexed!: string;
@@ -179,8 +179,8 @@ export class PlayHistory extends Realm.Object {
       duration: 'double',
       completed: 'boolean',
       
-      // 关系字段
-      video: { type: 'Video', optional: true },
+      // 关系字段暂时移除，简化实现
+      // video: { type: 'Video', optional: true },
       
       // 新增字段
       playbackSpeed: 'double',
@@ -200,8 +200,8 @@ export class PlayHistory extends Realm.Object {
   duration!: number;
   completed!: boolean;
   
-  // 关系字段
-  video?: Video;
+  // 关系字段暂时移除
+  // video?: Video;
   
   // 新增字段
   playbackSpeed!: number;
@@ -239,10 +239,10 @@ export class AppSettings extends Realm.Object {
       analyticsEnabled: 'boolean',
       crashReportingEnabled: 'boolean',
       
-      // 复杂设置对象
-      playbackPreferences: 'PlaybackPreferences?',
-      uiPreferences: 'UIPreferences?',
-      networkPreferences: 'NetworkPreferences?',
+      // 复杂设置对象暂时移除，简化实现
+      // playbackPreferences: 'PlaybackPreferences?',
+      // uiPreferences: 'UIPreferences?',
+      // networkPreferences: 'NetworkPreferences?',
     }
   };
 
@@ -264,112 +264,26 @@ export class AppSettings extends Realm.Object {
   analyticsEnabled!: boolean;
   crashReportingEnabled!: boolean;
   
-  // 复杂设置对象
-  playbackPreferences?: PlaybackPreferences;
-  uiPreferences?: UIPreferences;
-  networkPreferences?: NetworkPreferences;
+  // 复杂设置对象暂时移除
+  // playbackPreferences?: PlaybackPreferences;
+  // uiPreferences?: UIPreferences;
+  // networkPreferences?: NetworkPreferences;
 }
 
 /**
- * 播放偏好设置嵌套对象
+ * 播放偏好设置嵌套对象（暂时禁用）
  */
-export class PlaybackPreferences extends Realm.Object {
-  static schema: Realm.ObjectSchema = {
-    name: 'PlaybackPreferences',
-    embedded: true,
-    properties: {
-      defaultPlaybackSpeed: 'double',
-      defaultVolume: 'double',
-      autoSkipIntro: 'boolean',
-      autoSkipCredits: 'boolean',
-      rememberPosition: 'boolean',
-      autoPlayNext: 'boolean',
-      loopSingle: 'boolean',
-      shufflePlaylist: 'boolean',
-      defaultQuality: 'string',
-      subtitlesEnabled: 'boolean',
-      subtitleLanguage: 'string?',
-      audioLanguage: 'string?',
-    }
-  };
-
-  defaultPlaybackSpeed!: number;
-  defaultVolume!: number;
-  autoSkipIntro!: boolean;
-  autoSkipCredits!: boolean;
-  rememberPosition!: boolean;
-  autoPlayNext!: boolean;
-  loopSingle!: boolean;
-  shufflePlaylist!: boolean;
-  defaultQuality!: string;
-  subtitlesEnabled!: boolean;
-  subtitleLanguage?: string;
-  audioLanguage?: string;
-}
+// export class PlaybackPreferences extends Realm.Object { ... }
 
 /**
- * UI 偏好设置嵌套对象
+ * UI 偏好设置嵌套对象（暂时禁用）
  */
-export class UIPreferences extends Realm.Object {
-  static schema: Realm.ObjectSchema = {
-    name: 'UIPreferences',
-    embedded: true,
-    properties: {
-      theme: 'string',
-      fontSize: 'string',
-      fontFamily: 'string?',
-      animationsEnabled: 'boolean',
-      hapticFeedbackEnabled: 'boolean',
-      statusBarHidden: 'boolean',
-      navigationBarHidden: 'boolean',
-      autoRotate: 'boolean',
-      brightness: 'double',
-      gridMode: 'boolean',
-      thumbnailSize: 'string',
-    }
-  };
-
-  theme!: string;
-  fontSize!: string;
-  fontFamily?: string;
-  animationsEnabled!: boolean;
-  hapticFeedbackEnabled!: boolean;
-  statusBarHidden!: boolean;
-  navigationBarHidden!: boolean;
-  autoRotate!: boolean;
-  brightness!: number;
-  gridMode!: boolean;
-  thumbnailSize!: string;
-}
+// export class UIPreferences extends Realm.Object { ... }
 
 /**
- * 网络偏好设置嵌套对象
+ * 网络偏好设置嵌套对象（暂时禁用）
  */
-export class NetworkPreferences extends Realm.Object {
-  static schema: Realm.ObjectSchema = {
-    name: 'NetworkPreferences',
-    embedded: true,
-    properties: {
-      dataSaverMode: 'boolean',
-      wifiOnlyDownloads: 'boolean',
-      autoDownload: 'boolean',
-      maxDownloadQuality: 'string',
-      maxStreamingQuality: 'string',
-      bandwidthLimit: 'int',
-      concurrentDownloads: 'int',
-      cacheSize: 'int',
-    }
-  };
-
-  dataSaverMode!: boolean;
-  wifiOnlyDownloads!: boolean;
-  autoDownload!: boolean;
-  maxDownloadQuality!: string;
-  maxStreamingQuality!: string;
-  bandwidthLimit!: number;
-  concurrentDownloads!: number;
-  cacheSize!: number;
-}
+// export class NetworkPreferences extends Realm.Object { ... }
 
 /**
  * 数据库配置
@@ -381,9 +295,6 @@ export const realmConfig = {
     Folder,
     PlayHistory,
     AppSettings,
-    PlaybackPreferences,
-    UIPreferences,
-    NetworkPreferences,
   ],
   schemaVersion: 1,
   path: 'videotape.realm',
@@ -410,40 +321,10 @@ export const defaultAppSettings: Partial<AppSettings> = {
   syncEnabled: false,
   analyticsEnabled: false,
   crashReportingEnabled: true,
-  playbackPreferences: {
-    defaultPlaybackSpeed: 1.0,
-    defaultVolume: 1.0,
-    autoSkipIntro: false,
-    autoSkipCredits: false,
-    rememberPosition: true,
-    autoPlayNext: true,
-    loopSingle: false,
-    shufflePlaylist: false,
-    defaultQuality: 'auto',
-    subtitlesEnabled: false,
-  },
-  uiPreferences: {
-    theme: 'auto',
-    fontSize: 'medium',
-    animationsEnabled: true,
-    hapticFeedbackEnabled: true,
-    statusBarHidden: false,
-    navigationBarHidden: false,
-    autoRotate: true,
-    brightness: 1.0,
-    gridMode: false,
-    thumbnailSize: 'medium',
-  },
-  networkPreferences: {
-    dataSaverMode: false,
-    wifiOnlyDownloads: false,
-    autoDownload: false,
-    maxDownloadQuality: 'high',
-    maxStreamingQuality: 'auto',
-    bandwidthLimit: 0,
-    concurrentDownloads: 3,
-    cacheSize: 100,
-  },
+  // 简化配置，暂时移除嵌套对象
+  // playbackPreferences: { ... },
+  // uiPreferences: { ... },
+  // networkPreferences: { ... },
 };
 
 /**
@@ -454,9 +335,10 @@ export type RealmPlaylist = Playlist;
 export type RealmFolder = Folder;
 export type RealmPlayHistory = PlayHistory;
 export type RealmAppSettings = AppSettings;
-export type RealmPlaybackPreferences = PlaybackPreferences;
-export type RealmUIPreferences = UIPreferences;
-export type RealmNetworkPreferences = NetworkPreferences;
+// 嵌套对象类型暂时禁用
+// export type RealmPlaybackPreferences = PlaybackPreferences;
+// export type RealmUIPreferences = UIPreferences;
+// export type RealmNetworkPreferences = NetworkPreferences;
 
 /**
  * 数据库接口

@@ -3,18 +3,45 @@
  * 整合 Realm 数据库、MMKV 存储、配置管理和数据迁移服务
  */
 
-// Realm 数据库相关
+// 主要数据库服务（推荐使用）
+export { default as UnifiedRealmService, getUnifiedDatabase, closeUnifiedDatabase } from './unified-realm-service';
+export {
+  DatabaseOperations,
+  VideoInput,
+  PlaylistInput,
+  FolderInput,
+  PlayHistoryInput,
+  SettingsInput,
+  DatabaseStats,
+  SearchOptions
+} from './unified-realm-service';
+
+// 兼容性导出
 export { default as RealmDatabaseService, getDatabase, closeDatabase } from './realm-service';
-export * from './realm-schema';
+export {
+  Video,
+  Playlist,
+  Folder,
+  PlayHistory,
+  AppSettings,
+  realmConfig,
+  defaultAppSettings,
+  AppDatabase,
+  RealmVideo,
+  RealmPlaylist,
+  RealmFolder,
+  RealmPlayHistory,
+  RealmAppSettings
+} from './realm-schema';
 
 // 数据迁移服务
 export { default as DataMigrationService, migrateData, needsMigration } from './migration-service';
 
 // MMKV 存储服务
-export { default as MMKVStorage, mmkvStorage, CONFIG_KEYS } from './mmkv-storage';
+export { default as MMKVStorage, mmkvStorage, CONFIG_KEYS } from '../storage/mmkv-storage';
 
 // 配置管理服务
-export { default as ConfigService, configService, config } from './config-service';
+export { default as ConfigService, configService, config } from '../storage/config-service';
 
 // 类型定义
 export type {
@@ -28,7 +55,7 @@ export type {
   PrivacySettings,
   ExperimentalSettings,
   AppConfig,
-} from './config-service';
+} from '../storage/config-service';
 
 /**
  * 数据库管理器
@@ -82,18 +109,18 @@ export class DatabaseManager {
   }
 
   /**
-   * 获取数据库实例
+   * 获取数据库实例（推荐使用统一服务）
    */
   getDatabase() {
-    const { getDatabase } = require('./realm-service');
-    return getDatabase();
+    const { getUnifiedDatabase } = require('./unified-realm-service');
+    return getUnifiedDatabase();
   }
 
   /**
    * 获取配置服务
    */
   getConfigService() {
-    const { configService } = require('./config-service');
+    const { configService } = require('../storage/config-service');
     return configService;
   }
 
@@ -101,7 +128,7 @@ export class DatabaseManager {
    * 获取存储服务
    */
   getStorageService() {
-    const { mmkvStorage } = require('./mmkv-storage');
+    const { mmkvStorage } = require('../storage/mmkv-storage');
     return mmkvStorage;
   }
 
@@ -130,8 +157,8 @@ export class DatabaseManager {
   async cleanup(): Promise<void> {
     try {
       // 关闭数据库连接
-      const { closeDatabase } = require('./realm-service');
-      closeDatabase();
+      const { closeUnifiedDatabase } = require('./unified-realm-service');
+      closeUnifiedDatabase();
       
       // 清理存储服务
       const storage = this.getStorageService();

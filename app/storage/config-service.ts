@@ -462,7 +462,7 @@ export class ConfigService {
     
     // 通知所有监听器
     for (const section of this.listeners.keys()) {
-      this.notifyListeners(section, (this.config as any)[section]);
+      this.notifyListeners(section as keyof AppConfig, (this.config as any)[section]);
     }
   }
 
@@ -484,7 +484,7 @@ export class ConfigService {
       
       // 通知所有监听器
       for (const section of this.listeners.keys()) {
-        this.notifyListeners(section, (this.config as any)[section]);
+        this.notifyListeners(section as keyof AppConfig, (this.config as any)[section]);
       }
     } catch (error) {
       throw new Error('配置格式无效');

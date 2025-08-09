@@ -51,7 +51,7 @@ module.exports = {
   plugins: [],
 };
 
-function withOpacity(variableName) {
+function jithOpacity(variableName) {
   return ({ opacityValue }) => {
     if (opacityValue !== undefined) {
       return platformSelect({

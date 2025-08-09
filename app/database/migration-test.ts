@@ -3,9 +3,10 @@
  * 提供完整的测试套件来验证迁移的正确性和完整性
  */
 
-import { getDatabase } from '../realm-service';
-import { DataMigrationService, MigrationResult, MigrationProgress } from '../migration-service';
-import { configService } from '../../storage/config-service';
+import { getDatabase } from './realm-service';
+import { DataMigrationService, MigrationResult, MigrationProgress } from './migration-service';
+import { configService } from '../storage/config-service';
+import { RealmTypeAdapter } from './realm-type-adapter';
 
 /**
  * 测试数据生成器
@@ -245,7 +246,7 @@ export class MigrationValidator {
       // 验证视频-文件夹关系
       const videos = db.videos.getAll();
       const folders = db.folders.getAll();
-      const folderIds = new Set(folders.map(f => f.id));
+      const folderIds = new Set(folders.map((f: any) => f.id));
 
       for (const video of videos) {
         if (video.folderId && !folderIds.has(video.folderId)) {
@@ -255,7 +256,7 @@ export class MigrationValidator {
 
       // 验证播放列表-视频关系
       const playlists = db.playlists.getAll();
-      const videoIds = new Set(videos.map(v => v.id));
+      const videoIds = new Set(videos.map((v: any) => v.id));
 
       for (const playlist of playlists) {
         for (const videoId of playlist.videoIds) {
@@ -443,6 +444,13 @@ export class MigrationTestSuite {
         duration: 100,
         size: 1024 * 1024,
         mimeType: 'video/mp4',
+        playCount: 0,
+        tags: [],
+        fileSize: 1024 * 1024,
+        format: 'mp4',
+        quality: 'medium',
+        playbackProgress: 0,
+        viewCount: 0,
       };
 
       const video = await db.videos.add(testVideo);
@@ -525,6 +533,13 @@ export class MigrationTestSuite {
         duration: 100,
         size: 1024 * 1024,
         mimeType: 'video/mp4',
+        playCount: 0,
+        tags: [],
+        fileSize: 1024 * 1024,
+        format: 'mp4',
+        quality: 'medium',
+        playbackProgress: 0,
+        viewCount: 0,
       }));
 
       const insertStart = Date.now();
@@ -593,13 +608,20 @@ export class MigrationTestSuite {
         duration: 100,
         size: 1024 * 1024,
         mimeType: 'video/mp4',
+        playCount: 0,
+        tags: [],
+        fileSize: 1024 * 1024,
+        format: 'mp4',
+        quality: 'medium',
+        playbackProgress: 0,
+        viewCount: 0,
       };
 
       const video = await db.videos.add(testVideo);
       
       // 尝试插入相同ID的视频（应该失败）
       try {
-        await db.videos.add({ ...testVideo, id: video.id });
+        await db.videos.add({ ...testVideo });
         this.addResult('error.duplicateInsert', {
           success: false,
           expected: 'should_fail',
@@ -660,6 +682,13 @@ export class MigrationTestSuite {
           duration: 100,
           size: 1024 * 1024,
           mimeType: 'video/mp4',
+          playCount: 0,
+          tags: [],
+          fileSize: 1024 * 1024,
+          format: 'mp4',
+          quality: 'medium',
+          playbackProgress: 0,
+          viewCount: 0,
         };
 
         const video = await db.videos.add(testVideo);

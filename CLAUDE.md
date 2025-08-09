@@ -1,185 +1,312 @@
-# Claude Code Configuration - SPARC Development Environment
+# CLAUDE.md
 
-## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
+该文件为 Claude Code (claude.ai/code) 在此存储库中操作代码时提供指导。
 
-**ABSOLUTE RULES**:
-1. ALL operations MUST be concurrent/parallel in a single message
-2. **NEVER save working files, text/mds and tests to the root folder**
-3. ALWAYS organize files in appropriate subdirectories
+## 项目概述
 
-### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
+这是一个名为 "Videotape" 的 React Native 视频学习应用，使用 Expo 构建。它提供了类似抖音的界面用于本地视频学习，专为开发人员离线观看教育视频而设计。该应用具有垂直滚动视频播放、文件管理和学习进度跟踪功能。
 
-**MANDATORY PATTERNS:**
-- **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
-- **Task tool**: ALWAYS spawn ALL agents in ONE message with full instructions
-- **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
-- **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
-- **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
+## 🚨 关键：并发执行和文件管理
 
-### 📁 File Organization Rules
+**绝对规则**：
+1. 所有操作必须在单个消息中并发/并行执行
+2. **切勿将工作文件、文本/mds 和测试保存到根文件夹**
+3. 始终将文件组织到适当的子目录中
 
-**NEVER save to root folder. Use these directories:**
-- `/src` - Source code files
-- `/tests` - Test files
-- `/docs` - Documentation and markdown files
-- `/config` - Configuration files
-- `/scripts` - Utility scripts
-- `/examples` - Example code
+### ⚡ 黄金法则："1 条消息 = 所有相关操作"
 
-## Project Overview
+**强制模式**：
+- **TodoWrite**：始终在单次调用中批量处理所有待办事项（最少 5-10 个）
+- **Task 工具**：始终在单条消息中生成所有代理并附上完整指令
+- **文件操作**：始终在单条消息中批量处理所有读取/写入/编辑操作
+- **Bash 命令**：始终在单条消息中批量处理所有终端操作
+- **内存操作**：始终在单条消息中批量处理所有内存存储/检索操作
 
-This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
+### 📁 文件组织规则
 
-## SPARC Commands
+**切勿保存到根文件夹。使用这些目录**：
+- `/src` - 源代码文件
+- `/tests` - 测试文件
+- `/docs` - 文档和 markdown 文件
+- `/config` - 配置文件
+- `/scripts` - 实用脚本
+- `/examples` - 示例代码
 
-### Core Commands
-- `npx claude-flow sparc modes` - List available modes
-- `npx claude-flow sparc run <mode> "<task>"` - Execute specific mode
-- `npx claude-flow sparc tdd "<feature>"` - Run complete TDD workflow
-- `npx claude-flow sparc info <mode>` - Get mode details
+## 开发命令
 
-### Batchtools Commands
-- `npx claude-flow sparc batch <modes> "<task>"` - Parallel execution
-- `npx claude-flow sparc pipeline "<task>"` - Full pipeline processing
-- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
+### 核心开发
+- `npm start` - 启动 Expo 开发服务器
+- `npm run android` - 在 Android 设备/模拟器上运行
+- `npm run ios` - 在 iOS 设备/模拟器上运行
+- `npm run web` - 运行网页版本
 
-### Build Commands
-- `npm run build` - Build project
-- `npm run test` - Run tests
-- `npm run lint` - Linting
-- `npm run typecheck` - Type checking
+### 构建命令
+- `npm run build:dev` - 构建开发版本
+- `npm run build:preview` - 构建预览版本
+- `npm run build:prod` - 构建生产版本
+- `expo prebuild` - 生成原生构建文件
 
-## SPARC Workflow Phases
+### SPARC 命令
+- `npx claude-flow sparc modes` - 列出可用模式
+- `npx claude-flow sparc run <mode> "<task>"` - 执行特定模式
+- `npx claude-flow sparc tdd "<feature>"` - 运行完整 TDD 工作流
+- `npx claude-flow sparc info <mode>` - 获取模式详情
 
-1. **Specification** - Requirements analysis (`sparc run spec-pseudocode`)
-2. **Pseudocode** - Algorithm design (`sparc run spec-pseudocode`)
-3. **Architecture** - System design (`sparc run architect`)
-4. **Refinement** - TDD implementation (`sparc tdd`)
-5. **Completion** - Integration (`sparc run integration`)
+### 批处理工具命令
+- `npx claude-flow sparc batch <modes> "<task>"` - 并行执行
+- `npx claude-flow sparc pipeline "<task>"` - 完整管道处理
+- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - 多任务处理
 
-## Code Style & Best Practices
+### 构建命令
+- `npm run build` - 构建项目
+- `npm run test` - 运行测试
+- `npm run lint` - 代码检查
+- `npm run typecheck` - 类型检查
 
-- **Modular Design**: Files under 500 lines
-- **Environment Safety**: Never hardcode secrets
-- **Test-First**: Write tests before implementation
-- **Clean Architecture**: Separate concerns
-- **Documentation**: Keep updated
+### 代码质量
+- `npm run lint` - 运行 ESLint 和 Prettier 检查
+- `npm run typecheck` - 运行 TypeScript 类型检查
+- `npm run format` - 使用 ESLint 和 Prettier 格式化代码
 
-## 🚀 Available Agents (54 Total)
+## SPARC 工作流阶段
 
-### Core Development
+1. **规范** - 需求分析 (`sparc run spec-pseudocode`)
+2. **伪代码** - 算法设计 (`sparc run spec-pseudocode`)
+3. **架构** - 系统设计 (`sparc run architect`)
+4. **优化** - TDD 实现 (`sparc tdd`)
+5. **完成** - 集成 (`sparc run integration`)
+
+## 技术栈
+
+- **框架**：React Native + Expo (~53.0.20)
+- **语言**：TypeScript
+- **导航**：Expo Router
+- **样式**：Tailwind CSS (NativeWind)
+- **状态管理**：Zustand
+- **数据库**：Realm（从 Dexie.js 迁移）
+- **视频播放**：react-native-video
+- **文件存储**：Expo File System
+- **包管理器**：pnpm
+
+## 架构
+
+### 数据库层
+该应用使用 Realm 作为主数据库，具有全面的架构：
+
+- **Video**：包含元数据、播放统计和索引的主要视频实体
+- **Playlist**：包含视频 ID 数组的视频集合
+- **Folder**：分层组织结构
+- **PlayHistory**：包含设备信息的详细播放跟踪
+- **AppSettings**：用户偏好和应用配置
+
+关键数据库文件：
+- `app/database/realm-schema.ts` - 数据库架构定义
+- `app/database/realm-service.ts` - 数据库服务实现
+- `app/database/index.ts` - 数据库管理器和迁移服务
+- `app/database/migration-service.ts` - 数据迁移工具
+
+### 服务层
+- `app/services/videoService.ts` - 视频 CRUD 操作和搜索
+- `app/services/storage.ts` - 文件系统操作
+- `app/services/playlistService.ts` - 播放列表管理
+- `app/services/database.ts` - 数据库抽象层
+
+### 状态管理
+- `app/stores/settingsStore.ts` - 用户设置状态
+- `app/stores/store/store.ts` - 全局状态管理
+
+### 组件架构
+- `app/components/video/` - 视频播放组件
+- `app/components/tiktok/` - 抖音风格源组件
+- `app/components/common/` - 可重用 UI 组件
+
+## 数据模型
+
+### 核心类型
+```typescript
+interface Video {
+  id: string;
+  title: string;
+  uri: string;
+  thumbnailUri?: string;
+  duration: number;
+  size: number;
+  mimeType: string;
+  playCount: number;
+  tags: string[];
+  // ... 其他字段
+}
+
+interface PlayerState {
+  currentVideo: Video | null;
+  isPlaying: boolean;
+  position: number;
+  duration: number;
+  // ... 其他播放器状态
+}
+```
+
+## 主要功能
+
+### 视频管理
+- 批量视频上传和组织
+- 基于文件夹的结构支持
+- 缩略图生成和缓存
+- 元数据提取（持续时间、分辨率等）
+- 搜索和过滤功能
+
+### 播放功能
+- 抖音风格垂直滚动
+- 可变播放速度（0.25x - 4x）
+- 进度保存和恢复
+- 后台播放支持
+- 音量和亮度控制
+
+### 学习功能
+- 播放历史跟踪
+- 进度统计
+- 书签功能
+- 学习分析
+
+## 数据库迁移
+
+该项目已从 Dexie.js (IndexedDB) 迁移到 Realm 以在 React Native 中获得更好的性能。关键迁移文件：
+- `app/database/migration-service.ts` - 迁移工具
+- `app/database/simple-realm-schema.ts` - 用于迁移的简化架构
+- `docs/realm-migration-guide.md` - 迁移文档
+
+## 文件组织
+
+```
+app/
+├── components/          # React 组件
+│   ├── video/          # 视频播放组件
+│   ├── tiktok/         # 抖音风格组件
+│   └── common/         # 共享 UI 组件
+├── database/           # Realm 数据库层
+├── services/           # 业务逻辑服务
+├── screens/            # 屏幕组件
+├── stores/             # Zustand 状态管理
+├── types/              # TypeScript 类型定义
+├── utils/              # 实用函数
+└── storage/            # 存储和配置
+```
+
+## 🚀 可用代理（共 54 个）
+
+### 核心开发
 `coder`, `reviewer`, `tester`, `planner`, `researcher`
 
-### Swarm Coordination
+### 群体协调
 `hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
 
-### Consensus & Distributed
+### 共识与分布式
 `byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
 
-### Performance & Optimization
+### 性能与优化
 `perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
 
-### GitHub & Repository
+### GitHub 与仓库
 `github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
 
-### SPARC Methodology
+### SPARC 方法论
 `sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
 
-### Specialized Development
+### 专业开发
 `backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
 
-### Testing & Validation
+### 测试与验证
 `tdd-london-swarm`, `production-validator`
 
-### Migration & Planning
+### 迁移与规划
 `migration-planner`, `swarm-init`
 
-## 🎯 Claude Code vs MCP Tools
+## 🎯 Claude Code 与 MCP 工具
 
-### Claude Code Handles ALL:
-- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
-- Code generation and programming
-- Bash commands and system operations
-- Implementation work
-- Project navigation and analysis
-- TodoWrite and task management
-- Git operations
-- Package management
-- Testing and debugging
+### Claude Code 处理所有：
+- 文件操作（Read, Write, Edit, MultiEdit, Glob, Grep）
+- 代码生成和编程
+- Bash 命令和系统操作
+- 实现工作
+- 项目导航和分析
+- TodoWrite 和任务管理
+- Git 操作
+- 包管理
+- 测试和调试
 
-### MCP Tools ONLY:
-- Coordination and planning
-- Memory management
-- Neural features
-- Performance tracking
-- Swarm orchestration
-- GitHub integration
+### MCP 工具仅用于：
+- 协调和规划
+- 内存管理
+- 神经功能
+- 性能跟踪
+- 群体编排
+- GitHub 集成
 
-**KEY**: MCP coordinates, Claude Code executes.
+**关键**：MCP 协调，Claude Code 创建。
 
-## 🚀 Quick Setup
+## 🚀 快速设置
 
 ```bash
-# Add Claude Flow MCP server
+# 添加 Claude Flow MCP 服务器
 claude mcp add claude-flow npx claude-flow@alpha mcp start
 ```
 
-## MCP Tool Categories
+## MCP 工具类别
 
-### Coordination
+### 协调
 `swarm_init`, `agent_spawn`, `task_orchestrate`
 
-### Monitoring
+### 监控
 `swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
 
-### Memory & Neural
+### 内存与神经
 `memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
 
-### GitHub Integration
+### GitHub 集成
 `github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
 
-### System
+### 系统
 `benchmark_run`, `features_detect`, `swarm_monitor`
 
-## 📋 Agent Coordination Protocol
+## 📋 代理协调协议
 
-### Every Agent MUST:
+### 每个代理必须：
 
-**1️⃣ BEFORE Work:**
+**1️⃣ 工作前：**
 ```bash
 npx claude-flow@alpha hooks pre-task --description "[task]"
 npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
 ```
 
-**2️⃣ DURING Work:**
+**2️⃣ 工作中：**
 ```bash
 npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
 npx claude-flow@alpha hooks notify --message "[what was done]"
 ```
 
-**3️⃣ AFTER Work:**
+**3️⃣ 工作后：**
 ```bash
 npx claude-flow@alpha hooks post-task --task-id "[task]"
 npx claude-flow@alpha hooks session-end --export-metrics true
 ```
 
-## 🎯 Concurrent Execution Examples
+## 🎯 并发执行示例
 
-### ✅ CORRECT (Single Message):
+### ✅ 正确（单条消息）：
 ```javascript
 [BatchTool]:
-  // Initialize swarm
+  // 初始化群体
   mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
   mcp__claude-flow__agent_spawn { type: "researcher" }
   mcp__claude-flow__agent_spawn { type: "coder" }
   mcp__claude-flow__agent_spawn { type: "tester" }
   
-  // Spawn agents with Task tool
+  // 使用 Task 工具生成代理
   Task("Research agent: Analyze requirements...")
   Task("Coder agent: Implement features...")
   Task("Tester agent: Create test suite...")
   
-  // Batch todos
+  // 批量待办事项
   TodoWrite { todos: [
     {id: "1", content: "Research", status: "in_progress", priority: "high"},
     {id: "2", content: "Design", status: "pending", priority: "high"},
@@ -188,78 +315,134 @@ npx claude-flow@alpha hooks session-end --export-metrics true
     {id: "5", content: "Document", status: "pending", priority: "low"}
   ]}
   
-  // File operations
+  // 文件操作
   Bash "mkdir -p app/{src,tests,docs}"
   Write "app/src/index.js"
   Write "app/tests/index.test.js"
   Write "app/docs/README.md"
 ```
 
-### ❌ WRONG (Multiple Messages):
+### ❌ 错误（多条消息）：
 ```javascript
 Message 1: mcp__claude-flow__swarm_init
 Message 2: Task("agent 1")
 Message 3: TodoWrite { todos: [single todo] }
 Message 4: Write "file.js"
-// This breaks parallel coordination!
+// 这会破坏并行协调！
 ```
 
-## Performance Benefits
+## 性能优势
 
-- **84.8% SWE-Bench solve rate**
-- **32.3% token reduction**
-- **2.8-4.4x speed improvement**
-- **27+ neural models**
+- **84.8% SWE-Bench 解决率**
+- **32.3% token 减少**
+- **2.8-4.4x 速度提升**
+- **27+ 神经模型**
 
-## Hooks Integration
+## Hooks 集成
 
-### Pre-Operation
-- Auto-assign agents by file type
-- Validate commands for safety
-- Prepare resources automatically
-- Optimize topology by complexity
-- Cache searches
+### 操作前
+- 按文件类型自动分配代理
+- 验证命令安全性
+- 自动准备资源
+- 按复杂度优化拓扑
+- 缓存搜索
 
-### Post-Operation
-- Auto-format code
-- Train neural patterns
-- Update memory
-- Analyze performance
-- Track token usage
+### 操作后
+- 自动格式化代码
+- 训练神经模式
+- 更新内存
+- 分析性能
+- 跟踪 token 使用
 
-### Session Management
-- Generate summaries
-- Persist state
-- Track metrics
-- Restore context
-- Export workflows
+### 会话管理
+- 生成摘要
+- 持久化状态
+- 跟踪指标
+- 恢复上下文
+- 导出工作流
 
-## Advanced Features (v2.0.0)
+## 高级功能 (v2.0.0)
 
-- 🚀 Automatic Topology Selection
-- ⚡ Parallel Execution (2.8-4.4x speed)
-- 🧠 Neural Training
-- 📊 Bottleneck Analysis
-- 🤖 Smart Auto-Spawning
-- 🛡️ Self-Healing Workflows
-- 💾 Cross-Session Memory
-- 🔗 GitHub Integration
+- 🚀 自动拓扑选择
+- ⚡ 并行执行（2.8-4.4x 速度）
+- 🧠 神经训练
+- 📊 瓶颈分析
+- 🤖 智能自动生成
+- 🛡️ 自愈工作流
+- 💾 跨会话内存
+- 🔗 GitHub 集成
 
-## Integration Tips
+## 集成提示
 
-1. Start with basic swarm init
-2. Scale agents gradually
-3. Use memory for context
-4. Monitor progress regularly
-5. Train patterns from success
-6. Enable hooks automation
-7. Use GitHub tools first
+1. 从基本群体初始化开始
+2. 逐步扩展代理
+3. 使用内存获取上下文
+4. 定期监控进度
+5. 从成功案例训练模式
+6. 启用 hooks 自动化
+7. 优先使用 GitHub 工具
 
-## Support
+## 支持
 
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues
+- 文档：https://github.com/ruvnet/claude-flow
+- 问题：https://github.com/ruvnet/claude-flow/issues
 
 ---
 
-Remember: **Claude Flow coordinates, Claude Code creates!**
+记住：**Claude Flow 协调，Claude Code 创建！**
+
+## 开发说明
+
+### 数据库操作
+- 使用 `databaseManager` 单例进行数据库访问
+- 所有数据库操作都返回 promise
+- 为数据库操作实现适当的错误处理
+- 使用批量操作以获得更好的性能
+
+### 视频文件处理
+- 视频使用 Expo File System 存储
+- 缩略图自动生成
+- 使用 `storageService` 进行文件操作
+- 删除视频时实施适当的清理
+
+### 状态管理
+- 使用 Zustand 进行状态管理
+- 保持状态最小化和专注
+- 对重要状态使用持久化中间件
+- 在效果中实施适当的清理
+
+### 样式
+- 通过 NativeWind 使用 Tailwind CSS 类
+- 遵循现有设计系统
+- 使用响应式设计模式
+- 实现深色/浅色主题支持
+
+## 性能考虑
+
+- 对频繁查询的字段使用 Realm 索引
+- 为大型视频列表实现分页
+- 对视频缩略图使用延迟加载
+- 通过适当的缓存优化视频加载
+- 监控大型视频文件的内存使用
+
+## 测试
+
+目前使用手动测试。应添加测试框架：
+- 考虑为单元测试添加 Jest
+- 用于组件测试的 React Native Testing Library
+- 用于 E2E 测试的 Detox
+
+## 构建和部署
+
+- 使用 Expo Application Services (EAS) 进行构建
+- 在 `eas.json` 中配置构建配置文件
+- 实施适当的版本控制
+- 在 iOS 和 Android 平台上测试
+
+## 代码风格与最佳实践
+
+- **模块化设计**：文件少于 500 行
+- **环境安全**：绝不硬编码秘密
+- **测试优先**：在实现之前编写测试
+- **清洁架构**：分离关注点
+- **文档**：保持更新

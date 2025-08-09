@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AppSettings } from '@/types';
-import { configService } from '@/storage/config-service';
+import { configService, Language } from '@/storage/config-service';
 
 /**
  * 设置状态管理 - 使用新的配置服务
@@ -91,7 +91,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
       await configService.updateUISettings({
         theme: updates.theme,
-        language: updates.language,
+        language: updates.language as Language,
       });
 
       await configService.updateNetworkSettings({
