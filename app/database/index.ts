@@ -34,8 +34,8 @@ export {
   RealmAppSettings
 } from './realm-schema';
 
-// 数据迁移服务 - 已废弃，保留用于兼容性
-export { default as DataMigrationService, migrateData, needsMigration } from './migration-service';
+// 数据迁移服务 - 已废弃，已删除
+// 迁移已完成，应用现在完全使用 Realm 数据库
 
 // MMKV 存储服务
 export { default as MMKVStorage, mmkvStorage, CONFIG_KEYS } from '../storage/mmkv-storage';
@@ -99,11 +99,23 @@ export class DatabaseManager {
   }
 
   /**
-   * 执行数据迁移
+   * 执行数据迁移 - 已废弃
+   * 迁移已完成，此方法保留用于兼容性
    */
   async migrateData(onProgress?: (progress: any) => void): Promise<any> {
-    const { migrateData } = await import('./migration-service');
-    return await migrateData(onProgress);
+    console.log('数据迁移已完成，应用现在使用 Realm 数据库');
+    return {
+      success: true,
+      message: '迁移已完成',
+      stats: {
+        videos: { migrated: 0, failed: 0 },
+        playlists: { migrated: 0, failed: 0 },
+        folders: { migrated: 0, failed: 0 },
+        history: { migrated: 0, failed: 0 },
+        settings: { migrated: 0, failed: 0 },
+      },
+      warnings: ['迁移已完成，应用现在使用 Realm 数据库']
+    };
   }
 
   /**
