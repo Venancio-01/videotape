@@ -45,7 +45,7 @@ export const FullScreenPlayer: React.FC<FullScreenPlayerProps> = ({
       setShowControls(false);
     }, 5000);
     
-    setHideControlsTimeout(timeout);
+    setHideControlsTimeout(timeout as any);
   };
 
   // 处理屏幕点击

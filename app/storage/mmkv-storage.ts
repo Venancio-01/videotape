@@ -281,7 +281,7 @@ export class MMKVStorage {
   async setBuffer(key: string, value: Uint8Array): Promise<void> {
     try {
       const storageKey = this.generateKey(key);
-      storage.set(storageKey, value.buffer as ArrayBuffer);
+      storage.set(storageKey, value);
       
       // 更新内存缓存
       this.cache.set(key, {
@@ -652,7 +652,7 @@ export class MMKVStorage {
    */
   async getStorageSize(): Promise<number> {
     try {
-      return storage.size;
+      return (storage as any).size || 0;
     } catch (error) {
       console.error('MMKV getStorageSize failed:', error);
       return 0;
