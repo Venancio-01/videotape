@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { TikTokHomeScreen } from '@/screens/TikTokHomeScreen';
-import { VideoListScreen } from '@/screens/VideoListScreen';
+import { TikTokHomeScreen } from '../src/screens/TikTokHomeScreen';
+import { VideoListScreen } from '../src/screens/VideoListScreen';
 import { useStore } from '@/stores/store/store';
 import { videoService } from '@/services/videoService';
 
