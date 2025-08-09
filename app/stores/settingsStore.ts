@@ -1,30 +1,33 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { AppSettings } from '@/types';
+import { configService } from '@/storage/config-service';
 
 /**
- * 设置状态管理
+ * 设置状态管理 - 使用新的配置服务
  */
 interface SettingsState {
   settings: AppSettings;
+  isLoading: boolean;
+  error: string | null;
   
   // 操作方法
-  updateSettings: (updates: Partial<AppSettings>) => void;
-  resetSettings: () => void;
+  updateSettings: (updates: Partial<AppSettings>) => Promise<void>;
+  resetSettings: () => Promise<void>;
+  refreshSettings: () => Promise<void>;
   
   // 主题相关
-  setTheme: (theme: 'light' | 'dark' | 'auto') => void;
-  setLanguage: (language: string) => void;
+  setTheme: (theme: 'light' | 'dark' | 'auto') => Promise<void>;
+  setLanguage: (language: string) => Promise<void>;
   
   // 播放器设置
-  setVolume: (volume: number) => void;
-  setPlaybackSpeed: (speed: number) => void;
-  setQuality: (quality: 'auto' | 'low' | 'medium' | 'high') => void;
-  setAutoPlay: (autoPlay: boolean) => void;
-  setLoop: (loop: boolean) => void;
-  setShuffle: (shuffle: boolean) => void;
-  setDataSaver: (dataSaver: boolean) => void;
-  setBackgroundPlay: (backgroundPlay: boolean) => void;
+  setVolume: (volume: number) => Promise<void>;
+  setPlaybackSpeed: (speed: number) => Promise<void>;
+  setQuality: (quality: 'auto' | 'low' | 'medium' | 'high') => Promise<void>;
+  setAutoPlay: (autoPlay: boolean) => Promise<void>;
+  setLoop: (loop: boolean) => Promise<void>;
+  setShuffle: (shuffle: boolean) => Promise<void>;
+  setDataSaver: (dataSaver: boolean) => Promise<void>;
+  setBackgroundPlay: (backgroundPlay: boolean) => Promise<void>;
 }
 
 // 默认设置
@@ -41,77 +44,128 @@ const defaultSettings: AppSettings = {
   backgroundPlay: false,
 };
 
-export const useSettingsStore = create<SettingsState>()(
-  persist(
-    (set, get) => ({
-      settings: defaultSettings,
+export const useSettingsStore = create<SettingsState>((set, get) => ({
+  settings: defaultSettings,
+  isLoading: false,
+  error: null,
 
-      // 更新设置
-      updateSettings: (updates) => set((state) => ({
-        settings: { ...state.settings, ...updates }
-      })),
-
-      // 重置设置
-      resetSettings: () => set({ settings: defaultSettings }),
-
-      // 主题设置
-      setTheme: (theme) => set((state) => ({
-        settings: { ...state.settings, theme }
-      })),
-
-      setLanguage: (language) => set((state) => ({
-        settings: { ...state.settings, language }
-      })),
-
-      // 播放器设置
-      setVolume: (volume) => set((state) => ({
-        settings: { ...state.settings, volume: Math.max(0, Math.min(1, volume)) }
-      })),
-
-      setPlaybackSpeed: (speed) => set((state) => ({
-        settings: { ...state.settings, playbackSpeed: Math.max(0.25, Math.min(3, speed)) }
-      })),
-
-      setQuality: (quality) => set((state) => ({
-        settings: { ...state.settings, quality }
-      })),
-
-      setAutoPlay: (autoPlay) => set((state) => ({
-        settings: { ...state.settings, autoPlay }
-      })),
-
-      setLoop: (loop) => set((state) => ({
-        settings: { ...state.settings, loop }
-      })),
-
-      setShuffle: (shuffle) => set((state) => ({
-        settings: { ...state.settings, shuffle }
-      })),
-
-      setDataSaver: (dataSaver) => set((state) => ({
-        settings: { ...state.settings, dataSaver }
-      })),
-
-      setBackgroundPlay: (backgroundPlay) => set((state) => ({
-        settings: { ...state.settings, backgroundPlay }
-      })),
-    }),
-    {
-      name: 'videotape-settings',
-      storage: createJSONStorage(() => localStorage),
-      version: 1,
-      migrate: (persistedState: any, version: number) => {
-        if (version === 0) {
-          // 迁移旧版本的数据
-          return {
-            settings: {
-              ...defaultSettings,
-              ...persistedState.settings,
-            },
-          };
-        }
-        return persistedState;
-      },
+  // 从配置服务加载设置
+  refreshSettings: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const config = configService.getConfig();
+      const appSettings: AppSettings = {
+        theme: config.ui.theme,
+        language: config.ui.language,
+        autoPlay: config.player.autoPlay,
+        loop: config.player.loop,
+        shuffle: config.player.shuffle,
+        volume: config.player.volume,
+        playbackSpeed: config.player.playbackSpeed,
+        quality: config.player.defaultQuality,
+        dataSaver: config.network.dataSaver,
+        backgroundPlay: false, // 这个字段在新架构中可能需要调整
+      };
+      set({ settings: appSettings, isLoading: false });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : '加载设置失败',
+        isLoading: false 
+      });
     }
-  )
-);
+  },
+
+  // 更新设置
+  updateSettings: async (updates) => {
+    set({ isLoading: true, error: null });
+    try {
+      // 更新配置服务
+      await configService.updatePlayerSettings({
+        volume: updates.volume,
+        playbackSpeed: updates.playbackSpeed,
+        defaultQuality: updates.quality,
+        autoPlay: updates.autoPlay,
+        loop: updates.loop,
+        shuffle: updates.shuffle,
+      });
+
+      await configService.updateUISettings({
+        theme: updates.theme,
+        language: updates.language,
+      });
+
+      await configService.updateNetworkSettings({
+        dataSaver: updates.dataSaver,
+      });
+
+      // 更新本地状态
+      set((state) => ({
+        settings: { ...state.settings, ...updates },
+        isLoading: false
+      }));
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : '更新设置失败',
+        isLoading: false 
+      });
+    }
+  },
+
+  // 重置设置
+  resetSettings: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await configService.resetConfig();
+      set({ settings: defaultSettings, isLoading: false });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : '重置设置失败',
+        isLoading: false 
+      });
+    }
+  },
+
+  // 主题设置
+  setTheme: async (theme) => {
+    await get().updateSettings({ theme });
+  },
+
+  setLanguage: async (language) => {
+    await get().updateSettings({ language });
+  },
+
+  // 播放器设置
+  setVolume: async (volume) => {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    await get().updateSettings({ volume: clampedVolume });
+  },
+
+  setPlaybackSpeed: async (speed) => {
+    const clampedSpeed = Math.max(0.25, Math.min(3, speed));
+    await get().updateSettings({ playbackSpeed: clampedSpeed });
+  },
+
+  setQuality: async (quality) => {
+    await get().updateSettings({ quality });
+  },
+
+  setAutoPlay: async (autoPlay) => {
+    await get().updateSettings({ autoPlay });
+  },
+
+  setLoop: async (loop) => {
+    await get().updateSettings({ loop });
+  },
+
+  setShuffle: async (shuffle) => {
+    await get().updateSettings({ shuffle });
+  },
+
+  setDataSaver: async (dataSaver) => {
+    await get().updateSettings({ dataSaver });
+  },
+
+  setBackgroundPlay: async (backgroundPlay) => {
+    await get().updateSettings({ backgroundPlay });
+  },
+}));

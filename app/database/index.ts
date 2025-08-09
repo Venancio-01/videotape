@@ -1,0 +1,247 @@
+/**
+ * 数据库模块统一导出文件
+ * 整合 Realm 数据库、MMKV 存储、配置管理和数据迁移服务
+ */
+
+// Realm 数据库相关
+export { default as RealmDatabaseService, getDatabase, closeDatabase } from './realm-service';
+export * from './realm-schema';
+
+// 数据迁移服务
+export { default as DataMigrationService, migrateData, needsMigration } from './migration-service';
+
+// MMKV 存储服务
+export { default as MMKVStorage, mmkvStorage, CONFIG_KEYS } from './mmkv-storage';
+
+// 配置管理服务
+export { default as ConfigService, configService, config } from './config-service';
+
+// 类型定义
+export type {
+  Theme,
+  Language,
+  VideoQuality,
+  PlayerSettings,
+  UISettings,
+  NetworkSettings,
+  CacheSettings,
+  PrivacySettings,
+  ExperimentalSettings,
+  AppConfig,
+} from './config-service';
+
+/**
+ * 数据库管理器
+ * 统一管理所有数据库相关的服务
+ */
+export class DatabaseManager {
+  private static instance: DatabaseManager;
+  private isInitialized = false;
+
+  private constructor() {}
+
+  static getInstance(): DatabaseManager {
+    if (!DatabaseManager.instance) {
+      DatabaseManager.instance = new DatabaseManager();
+    }
+    return DatabaseManager.instance;
+  }
+
+  /**
+   * 初始化数据库服务
+   */
+  async initialize(): Promise<void> {
+    if (this.isInitialized) return;
+
+    try {
+      console.log('正在初始化数据库服务...');
+      
+      // 检查是否需要数据迁移
+      const { needsMigration } = await import('./migration-service');
+      const shouldMigrate = await needsMigration();
+      
+      if (shouldMigrate) {
+        console.log('检测到需要数据迁移');
+        // 这里可以显示迁移提示给用户
+      }
+      
+      this.isInitialized = true;
+      console.log('数据库服务初始化完成');
+    } catch (error) {
+      console.error('数据库服务初始化失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 执行数据迁移
+   */
+  async migrateData(onProgress?: (progress: any) => void): Promise<any> {
+    const { migrateData } = await import('./migration-service');
+    return await migrateData(onProgress);
+  }
+
+  /**
+   * 获取数据库实例
+   */
+  getDatabase() {
+    const { getDatabase } = require('./realm-service');
+    return getDatabase();
+  }
+
+  /**
+   * 获取配置服务
+   */
+  getConfigService() {
+    const { configService } = require('./config-service');
+    return configService;
+  }
+
+  /**
+   * 获取存储服务
+   */
+  getStorageService() {
+    const { mmkvStorage } = require('./mmkv-storage');
+    return mmkvStorage;
+  }
+
+  /**
+   * 获取数据库统计信息
+   */
+  async getStats(): Promise<{
+    database: any;
+    storage: any;
+    config: any;
+  }> {
+    const db = this.getDatabase();
+    const storage = this.getStorageService();
+    const configService = this.getConfigService();
+
+    return {
+      database: db.utils.getStats(),
+      storage: await storage.getStats(),
+      config: await configService.getConfigStats(),
+    };
+  }
+
+  /**
+   * 清理资源
+   */
+  async cleanup(): Promise<void> {
+    try {
+      // 关闭数据库连接
+      const { closeDatabase } = require('./realm-service');
+      closeDatabase();
+      
+      // 清理存储服务
+      const storage = this.getStorageService();
+      await storage.cleanup();
+      
+      // 销毁配置服务
+      const configService = this.getConfigService();
+      configService.destroy();
+      
+      this.isInitialized = false;
+      console.log('数据库资源已清理');
+    } catch (error) {
+      console.error('清理数据库资源失败:', error);
+    }
+  }
+
+  /**
+   * 备份数据
+   */
+  async backup(): Promise<{
+    database: string;
+    config: string;
+    storage: any;
+  }> {
+    try {
+      const db = this.getDatabase();
+      const configService = this.getConfigService();
+      const storage = this.getStorageService();
+
+      return {
+        database: await db.batch.backup(),
+        config: await configService.exportConfig(),
+        storage: await storage.export(),
+      };
+    } catch (error) {
+      console.error('备份数据失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 恢复数据
+   */
+  async restore(backup: {
+    database: string;
+    config: string;
+    storage: any;
+  }): Promise<void> {
+    try {
+      const db = this.getDatabase();
+      const configService = this.getConfigService();
+      const storage = this.getStorageService();
+
+      // 恢复数据库
+      await db.batch.restore(backup.database);
+      
+      // 恢复配置
+      await configService.importConfig(backup.config);
+      
+      // 恢复存储
+      await storage.import(backup.storage);
+      
+      console.log('数据恢复完成');
+    } catch (error) {
+      console.error('恢复数据失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 重置所有数据
+   */
+  async reset(): Promise<void> {
+    try {
+      const db = this.getDatabase();
+      const configService = this.getConfigService();
+      const storage = this.getStorageService();
+
+      // 清空数据库
+      await this.cleanup();
+      
+      // 重置配置
+      await configService.resetConfig();
+      
+      // 清空存储
+      await storage.clear();
+      
+      // 重新初始化
+      await this.initialize();
+      
+      console.log('所有数据已重置');
+    } catch (error) {
+      console.error('重置数据失败:', error);
+      throw error;
+    }
+  }
+}
+
+// 导出单例实例
+export const databaseManager = DatabaseManager.getInstance();
+
+// 便捷的初始化函数
+export async function initializeDatabase(): Promise<void> {
+  return await databaseManager.initialize();
+}
+
+// 便捷的清理函数
+export async function cleanupDatabase(): Promise<void> {
+  return await databaseManager.cleanup();
+}
+
+// 默认导出
+export default DatabaseManager;
