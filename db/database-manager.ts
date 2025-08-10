@@ -84,7 +84,7 @@ class DatabaseManager {
       return this.db;
     } catch (error) {
       console.error("Failed to initialize database:", error);
-      
+
       // 尝试清理并重新初始化
       try {
         await this.cleanupAndReinitialize();
@@ -101,11 +101,11 @@ class DatabaseManager {
    */
   private async cleanupAndReinitialize(): Promise<void> {
     console.log("Attempting to cleanup and reinitialize database...");
-    
+
     // 关闭现有连接
     this.isConnected = false;
     this.db = null;
-    
+
     // 删除现有数据库文件
     const dbPath = `${FileSystem.documentDirectory}${DATABASE_NAME}`;
     try {
@@ -114,22 +114,22 @@ class DatabaseManager {
     } catch (deleteError) {
       console.log("Database file not found or couldn't be deleted:", deleteError);
     }
-    
+
     // 等待一小段时间确保文件系统操作完成
     await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     // 重新打开数据库连接
     const expoDb = openDatabaseSync(DATABASE_NAME, {
       enableChangeListener: true,
     });
-    
+
     // 基本配置
     await expoDb.execAsync("PRAGMA foreign_keys = ON;");
     await expoDb.execAsync("SELECT 1;");
-    
+
     this.db = drizzle(expoDb);
     this.isConnected = true;
-    
+
     console.log("Database reinitialized successfully");
   }
 

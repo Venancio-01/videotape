@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { useDatabaseInitialization } from './useDatabaseInitialization';
+import { useDatabaseInitialization } from '../hooks/useDatabaseInitialization';
 
 interface DatabaseErrorHandlerProps {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export function DatabaseErrorHandler({ children }: DatabaseErrorHandlerProps) {
           <Text style={styles.errorDetails}>
             这可能是由于权限问题或存储空间不足导致的。请确保应用有足够的权限访问存储空间。
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={reinitialize}
             style={styles.retryButton}
           >
