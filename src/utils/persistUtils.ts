@@ -2,13 +2,13 @@
  * 持久化工具函数
  */
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { zustandStorage } from "@/lib/storage";
 import { deserializeState, getStateSize, serializeState } from "./stateUtils";
 
 // 持久化配置接口
 export interface PersistConfig {
   key: string;
-  storage?: AsyncStorage;
+  storage?: typeof zustandStorage;
   serialize?: (state: any) => string;
   deserialize?: (serialized: string) => any;
   whitelist?: (string | RegExp)[];
@@ -22,7 +22,7 @@ export interface PersistConfig {
 
 // 默认持久化配置
 const DEFAULT_PERSIST_CONFIG: Partial<PersistConfig> = {
-  storage: AsyncStorage,
+  storage: zustandStorage,
   serialize: serializeState,
   deserialize: deserializeState,
   timeout: 5000,

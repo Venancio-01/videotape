@@ -2,8 +2,8 @@ import { MoonStar, Sun } from "@/components/Icons";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
+import { setString } from "@/lib/storage";
 import { useSettingsStore } from "@/src/stores/settingsStore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "next-themes";
 import { Platform, Pressable, View } from "react-native";
 
@@ -20,7 +20,7 @@ export function ThemeToggle() {
     } else {
       setColorScheme(newTheme);
       setAndroidNavigationBar(newTheme);
-      AsyncStorage.setItem("theme", newTheme);
+      setString("theme", newTheme);
     }
 
     // 更新设置 store

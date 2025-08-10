@@ -5,71 +5,17 @@
 import { StateUtils } from "@/src/utils/stateUtils";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { StateStorage } from "zustand/middleware";
+import { zustandStorage } from "@/lib/storage";
 
-// AsyncStorage 适配器
-export const createAsyncStorageAdapter = (): StateStorage => {
-  // 在 React Native 环境中使用 AsyncStorage
-  try {
-    const {
-      AsyncStorage,
-    } = require("@react-native-async-storage/async-storage");
-    return {
-      getItem: async (name: string): Promise<string | null> => {
-        try {
-          const value = await AsyncStorage.getItem(name);
-          return value;
-        } catch (error) {
-          console.error("AsyncStorage getItem error:", error);
-          return null;
-        }
-      },
-      setItem: async (name: string, value: string): Promise<void> => {
-        try {
-          await AsyncStorage.setItem(name, value);
-        } catch (error) {
-          console.error("AsyncStorage setItem error:", error);
-        }
-      },
-      removeItem: async (name: string): Promise<void> => {
-        try {
-          await AsyncStorage.removeItem(name);
-        } catch (error) {
-          console.error("AsyncStorage removeItem error:", error);
-        }
-      },
-    };
-  } catch {
-    // 在 Web 环境中使用 localStorage
-    return {
-      getItem: (name: string): string | null => {
-        try {
-          return localStorage.getItem(name);
-        } catch (error) {
-          console.error("localStorage getItem error:", error);
-          return null;
-        }
-      },
-      setItem: (name: string, value: string): void => {
-        try {
-          localStorage.setItem(name, value);
-        } catch (error) {
-          console.error("localStorage setItem error:", error);
-        }
-      },
-      removeItem: (name: string): void => {
-        try {
-          localStorage.removeItem(name);
-        } catch (error) {
-          console.error("localStorage removeItem error:", error);
-        }
-      },
-    };
-  }
+// MMKV 适配器
+export const createMMKVStorageAdapter = (): StateStorage => {
+  return zustandStorage;
 };
+
 
 // 自定义 JSON 存储处理器
 export const createCustomJSONStorage = (storage?: StateStorage) => {
-  return createJSONStorage(() => storage || createAsyncStorageAdapter(), {
+  return createJSONStorage(() => storage || createMMKVStorageAdapter(), {
     // 自定义序列化器，处理特殊类型
     replacer: (key, value) => {
       if (value instanceof Set) {
@@ -125,7 +71,7 @@ export interface PersistConfig<T> {
 export const createPersistMiddleware = <T>(config: PersistConfig<T>) => {
   const {
     name,
-    storage = createAsyncStorageAdapter(),
+    storage = createMMKVStorageAdapter(),
     partialize,
     onRehydrateStorage,
     version,
@@ -284,7 +230,7 @@ export const PersistConfigs = {
 export const PersistUtils = {
   // 清理所有持久化数据
   clearAllPersistedData: async () => {
-    const storage = createAsyncStorageAdapter();
+    const storage = createMMKVStorageAdapter();
     const keys = Object.values(PersistConfigs).map((config) => config.name);
 
     for (const key of keys) {
@@ -298,7 +244,7 @@ export const PersistUtils = {
 
   // 获取存储使用情况
   getStorageUsage: async () => {
-    const storage = createAsyncStorageAdapter();
+    const storage = createMMKVStorageAdapter();
     const usage: Record<string, number> = {};
 
     for (const config of Object.values(PersistConfigs)) {
@@ -317,7 +263,7 @@ export const PersistUtils = {
 
   // 备份持久化数据
   backupPersistedData: async () => {
-    const storage = createAsyncStorageAdapter();
+    const storage = createMMKVStorageAdapter();
     const backup: Record<string, string> = {};
 
     for (const config of Object.values(PersistConfigs)) {
@@ -336,7 +282,7 @@ export const PersistUtils = {
 
   // 恢复持久化数据
   restorePersistedData: async (backup: Record<string, string>) => {
-    const storage = createAsyncStorageAdapter();
+    const storage = createMMKVStorageAdapter();
 
     for (const [key, value] of Object.entries(backup)) {
       try {
@@ -395,7 +341,7 @@ export const withPerformanceMonitoring = <T>(
 // 导出所有持久化相关功能
 export const PersistMiddleware = {
   createPersistMiddleware,
-  createAsyncStorageAdapter,
+  createMMKVStorageAdapter,
   createCustomJSONStorage,
   PersistConfigs,
   PersistUtils,

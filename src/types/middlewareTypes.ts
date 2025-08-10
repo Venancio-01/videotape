@@ -2,8 +2,8 @@
  * 中间件类型定义
  */
 
-import type { AsyncStorage } from "@react-native-async-storage/async-storage";
 import type { Store } from "zustand";
+import type { zustandStorage } from "@/lib/storage";
 
 // 基础中间件接口
 export type StoreMiddleware<T> = (store: Store<T>) => Store<T>;
@@ -11,7 +11,7 @@ export type StoreMiddleware<T> = (store: Store<T>) => Store<T>;
 // 持久化中间件配置
 export interface PersistMiddlewareConfig<T> {
   name: string;
-  storage: AsyncStorage;
+  storage: typeof zustandStorage;
   partialize?: (state: T) => Partial<T>;
   onRehydrateStorage?: (state: T) => void;
   version?: number;
