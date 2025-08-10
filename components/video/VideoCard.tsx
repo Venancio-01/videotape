@@ -5,12 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
+import { useVideoStore } from "@/src/stores/videoStore";
 
 interface VideoCardProps {
   video: Video;
 }
 
 export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
+  const { toggleFavorite, addToFavorites, removeFromFavorites } = useVideoStore();
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);

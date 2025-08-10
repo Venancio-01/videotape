@@ -15,6 +15,7 @@ import { H4 } from "@/components/ui/typography";
 import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
 import { Check } from "@/lib/icons/Check";
 import { getItem, setItem } from "@/lib/storage";
+import { useSettingsStore } from "@/src/stores/settingsStore";
 
 type ItemData = {
   title: string;
@@ -49,6 +50,7 @@ export const ThemeSettingItem = () => {
     getItem<"light" | "dark" | "system">("theme"),
   );
   const { colorScheme, setColorScheme } = useColorScheme();
+  const { setTheme: setSettingsTheme } = useSettingsStore();
 
   const { dismiss } = useBottomSheetModal();
 
@@ -80,10 +82,11 @@ export const ThemeSettingItem = () => {
     (value: "light" | "dark" | "system") => {
       setColorScheme(value);
       setItem("theme", value);
+      setSettingsTheme(value);
       setSelectedTheme(value);
       dismiss();
     },
-    [selectedTheme, colorScheme, setColorScheme],
+    [selectedTheme, colorScheme, setColorScheme, setSettingsTheme],
   );
   return (
     <BottomSheet>

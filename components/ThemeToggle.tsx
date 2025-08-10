@@ -4,11 +4,13 @@ import { Platform, Pressable, View } from "react-native";
 import { MoonStar, Sun } from "@/components/Icons";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { useColorScheme } from "@/lib/useColorScheme";
+import { useSettingsStore } from "@/src/stores/settingsStore";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
   const { isDarkColorScheme, setColorScheme } = useColorScheme();
   const { theme, setTheme } = useTheme();
+  const { setTheme: setSettingsTheme } = useSettingsStore();
 
   const handleToggleTheme = () => {
     const newTheme = isDarkColorScheme ? "light" : "dark";
@@ -20,6 +22,9 @@ export function ThemeToggle() {
       setAndroidNavigationBar(newTheme);
       AsyncStorage.setItem("theme", newTheme);
     }
+    
+    // 更新设置 store
+    setSettingsTheme(newTheme as 'light' | 'dark' | 'system');
   };
   return (
     <Pressable
