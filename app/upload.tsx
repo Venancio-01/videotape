@@ -26,7 +26,7 @@ export default function UploadScreen() {
 
       const file = result.assets[0];
       console.log('Selected video:', file);
-      
+
       // TODO: 实现视频文件处理和保存到数据库
       Alert.alert(
         "视频已选择",
@@ -36,7 +36,7 @@ export default function UploadScreen() {
           { text: "确定", onPress: () => router.back() }
         ]
       );
-      
+
     } catch (error) {
       console.error('Error picking video:', error);
       Alert.alert("错误", "选择视频文件时发生错误");
@@ -58,10 +58,10 @@ export default function UploadScreen() {
 
       const image = result.assets[0];
       console.log('Selected thumbnail:', image);
-      
+
       // TODO: 处理缩略图
       Alert.alert("缩略图已选择", "缩略图选择成功");
-      
+
     } catch (error) {
       console.error('Error picking thumbnail:', error);
       Alert.alert("错误", "选择缩略图时发生错误");
@@ -85,7 +85,7 @@ export default function UploadScreen() {
           ),
         }}
       />
-      
+
       <View className="flex-1 p-6">
         {/* 上传进度 */}
         {uploading && (
@@ -95,7 +95,7 @@ export default function UploadScreen() {
               <Text className="text-blue-600 text-sm">{uploadProgress}%</Text>
             </View>
             <View className="w-full bg-blue-200 rounded-full h-2">
-              <View 
+              <View
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
