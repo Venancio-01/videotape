@@ -1,13 +1,14 @@
-import React from 'react';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { useDatabaseInitialization } from '../hooks/useDatabaseInitialization';
+import type React from "react";
+import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useDatabaseInitialization } from "../hooks/useDatabaseInitialization";
 
 interface DatabaseErrorHandlerProps {
   children: React.ReactNode;
 }
 
 export function DatabaseErrorHandler({ children }: DatabaseErrorHandlerProps) {
-  const { isInitialized, isInitializing, error, retryCount, reinitialize } = useDatabaseInitialization();
+  const { isInitialized, isInitializing, error, retryCount, reinitialize } =
+    useDatabaseInitialization();
   const MAX_RETRIES = 3;
 
   if (isInitializing) {
@@ -31,10 +32,7 @@ export function DatabaseErrorHandler({ children }: DatabaseErrorHandlerProps) {
           <Text style={styles.errorDetails}>
             这可能是由于权限问题或存储空间不足导致的。请确保应用有足够的权限访问存储空间。
           </Text>
-          <TouchableOpacity
-            onPress={reinitialize}
-            style={styles.retryButton}
-          >
+          <TouchableOpacity onPress={reinitialize} style={styles.retryButton}>
             <Text style={styles.retryButtonText}>重试初始化</Text>
           </TouchableOpacity>
         </View>
@@ -48,15 +46,15 @@ export function DatabaseErrorHandler({ children }: DatabaseErrorHandlerProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
   loadingContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 30,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -67,15 +65,15 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
   errorContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 24,
     borderRadius: 12,
     margin: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -87,35 +85,35 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#d32f2f',
+    fontWeight: "bold",
+    color: "#d32f2f",
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorMessage: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 24,
   },
   errorDetails: {
     fontSize: 14,
-    color: '#888',
+    color: "#888",
     marginBottom: 24,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 20,
   },
   retryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   retryButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
