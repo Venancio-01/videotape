@@ -55,6 +55,9 @@ import {
   UserPlus,
   Users,
   X,
+  FolderOpen,
+  Play,
+  MoreVertical
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -123,6 +126,9 @@ interopIcon(Terminal);
 interopIcon(AlertTriangle);
 interopIcon(Code);
 interopIcon(CheckSquare);
+interopIcon(FolderOpen);
+interopIcon(Play);
+interopIcon(MoreVertical);
 
 export {
   Activity,
@@ -179,4 +185,7 @@ export {
   UserPlus,
   Users,
   X,
+  FolderOpen,
+  Play,
+  MoreVertical
 };

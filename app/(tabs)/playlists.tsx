@@ -12,13 +12,12 @@ import { TouchableOpacity, View } from "react-native";
 export default function PlaylistsScreen() {
   const { db } = useDatabase();
 
-  const { data: playlists, error } = useLiveQuery(() => {
-    if (!db) return [];
-    return db
+  const { data: playlists } = useLiveQuery(
+    db
       .select()
       .from(playlistTable)
-      .orderBy(desc(playlistTable.createdAt));
-  });
+      .orderBy(desc(playlistTable.createdAt))
+  );
 
   if (!db) {
     return (

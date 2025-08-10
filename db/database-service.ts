@@ -72,6 +72,16 @@ export class DatabaseService {
     return Array.isArray(videos) ? videos : [];
   }
 
+  async getVideos(limit = 20, offset = 0) {
+    const db = this.getDb();
+    return db
+      .select()
+      .from(videoTable)
+      .orderBy(desc(videoTable.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
   /**
    * 根据ID获取视频
    */

@@ -2,15 +2,14 @@ import { Plus } from "@/components/Icons";
 import { Text } from "@/components/ui/text";
 import { VideoCard } from "@/components/video";
 import { useDatabase } from "@/db/provider";
-import { type Video, videoTable } from "@/db/schema";
+import { videoTable, type Video } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
-import { desc, eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Link, Stack } from "expo-router";
 import * as React from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useMigrationHelper } from "@/db/drizzle";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 export default function VideoHome() {
   const { success, error } = useMigrationHelper();
@@ -33,54 +32,36 @@ export default function VideoHome() {
 }
 
 function ScreenContent() {
-  const { db } = useDatabase();
+  const { db, databaseService } = useDatabase();
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
-  // const { data: videos, error } = useLiveQuery(() => {
-  //   if (!db) return [];
-  //   return db.select().from(videoTable).orderBy(desc(videoTable.createdAt));
-  // }, []);
-
-  const renderItem = React.useCallback(
-    ({ item }: { item: Video }) => {
-      if (!item.id) return null; // 防止 id 不存在时报错
-
-      return (
-        <VideoCard
-          {...item}
-          id={item.id}
-          title={item.title || "无标题"}
-          isFavorite={Boolean(item.isFavorite)}
-          resolution={
-            item.resolutionWidth && item.resolutionHeight
-              ? { width: Number(item.resolutionWidth), height: Number(item.resolutionHeight) }
-              : undefined
-          }
-          onToggleFavorite={(videoId) => {
-            console.log("Toggle favorite for video:", videoId);
-          }}
-        />
-      );
-    },
-    [],
+  const { data } = useLiveQuery(
+    db.select().from(videoTable)
   );
 
-  if (!db) {
-    return (
-      <View className="flex-1 items-center justify-center bg-secondary/30">
-        <Text>Loading database...</Text>
-      </View>
-    );
-  }
+  const renderItem = React.useCallback(({ item }: { item: Video }) => {
+    if (!item.id) return null; // 防止 id 不存在时报错
 
-  if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-secondary/30">
-        <Text className="text-destructive pb-2">Error Loading data</Text>
-      </View>
+      <VideoCard
+        {...item}
+        id={item.id}
+        isFavorite={Boolean(item.isFavorite)}
+        resolution={
+          item.resolutionWidth && item.resolutionHeight
+            ? {
+              width: Number(item.resolutionWidth),
+              height: Number(item.resolutionHeight),
+            }
+            : undefined
+        }
+        onToggleFavorite={(videoId) => {
+          console.log("Toggle favorite for video:", videoId);
+        }}
+      />
     );
-  }
+  }, []);
 
   return (
     <View className="flex flex-col basis-full bg-background p-8">
@@ -106,7 +87,7 @@ function ScreenContent() {
           </View>
         )}
         ItemSeparatorComponent={() => <View className="p-2" />}
-        data={videos}
+        data={data || []}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         ListFooterComponent={<View className="py-4" />}
