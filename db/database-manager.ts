@@ -46,6 +46,21 @@ class DatabaseManager {
     }
 
     try {
+      // 确保文档目录存在
+      const documentDir = FileSystem.documentDirectory;
+      if (!documentDir) {
+        throw new Error("Document directory not available");
+      }
+
+      // 检查并创建数据库目录
+      const dbDir = documentDir.replace('file://', '');
+      try {
+        await FileSystem.makeDirectoryAsync(dbDir, { intermediates: true });
+      } catch (dirError) {
+        // 目录可能已存在，忽略错误
+        console.log("Directory creation status:", dirError);
+      }
+
       // 打开数据库连接
       const expoDb = openDatabaseSync(DATABASE_NAME, {
         enableChangeListener: true,
@@ -59,6 +74,9 @@ class DatabaseManager {
       await expoDb.execAsync("PRAGMA temp_store = MEMORY;");
       await expoDb.execAsync("PRAGMA mmap_size = 268435456;"); // 256MB
 
+      // 验证数据库连接
+      await expoDb.execAsync("SELECT 1;");
+
       this.db = drizzle(expoDb);
       this.isConnected = true;
 
@@ -66,8 +84,53 @@ class DatabaseManager {
       return this.db;
     } catch (error) {
       console.error("Failed to initialize database:", error);
-      throw error;
+      
+      // 尝试清理并重新初始化
+      try {
+        await this.cleanupAndReinitialize();
+        return this.db!;
+      } catch (retryError) {
+        console.error("Database reinitialization failed:", retryError);
+        throw error;
+      }
     }
+  }
+
+  /**
+   * 清理并重新初始化数据库
+   */
+  private async cleanupAndReinitialize(): Promise<void> {
+    console.log("Attempting to cleanup and reinitialize database...");
+    
+    // 关闭现有连接
+    this.isConnected = false;
+    this.db = null;
+    
+    // 删除现有数据库文件
+    const dbPath = `${FileSystem.documentDirectory}${DATABASE_NAME}`;
+    try {
+      await FileSystem.deleteAsync(dbPath);
+      console.log("Deleted existing database file");
+    } catch (deleteError) {
+      console.log("Database file not found or couldn't be deleted:", deleteError);
+    }
+    
+    // 等待一小段时间确保文件系统操作完成
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // 重新打开数据库连接
+    const expoDb = openDatabaseSync(DATABASE_NAME, {
+      enableChangeListener: true,
+    });
+    
+    // 基本配置
+    await expoDb.execAsync("PRAGMA foreign_keys = ON;");
+    await expoDb.execAsync("SELECT 1;");
+    
+    this.db = drizzle(expoDb);
+    this.isConnected = true;
+    
+    console.log("Database reinitialized successfully");
   }
 
   /**

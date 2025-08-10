@@ -1,10 +1,10 @@
 [
   {
-    "id": "cmd-hooks-1754817238177",
-    "type": "hooks",
+    "id": "cmd-swarm-1754817825404",
+    "type": "swarm",
     "success": true,
-    "duration": 13.143394999999998,
-    "timestamp": 1754817238190,
+    "duration": 4.511728000000005,
+    "timestamp": 1754817825408,
     "metadata": {}
   }
 ]

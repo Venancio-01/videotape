@@ -9,6 +9,7 @@ import React, {
 import { databasePerformanceService } from "./database-performance";
 import { databaseService } from "./database-service";
 import { databaseManager, initialize } from "./drizzle";
+import { DatabaseErrorHandler } from "./components/DatabaseErrorHandler";
 
 interface DatabaseContextType {
   db: SQLJsDatabase | ExpoSQLiteDatabase | null;
@@ -34,10 +35,10 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (isInitialized) return;
-
     const initializeDatabase = async () => {
       try {
+        console.log("Initializing database...");
+        
         // 初始化数据库
         const database = await initialize();
         setDb(database);
@@ -45,10 +46,11 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
         // 运行迁移
         await databaseManager.runMigrations();
 
+        console.log("Database initialized and migrations completed successfully");
         setIsInitialized(true);
         setError(null);
       } catch (err) {
-        console.error("Failed to initialize database:", err);
+        console.error("Database initialization failed:", err);
         setError(
           err instanceof Error
             ? err
@@ -59,7 +61,7 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
     };
 
     initializeDatabase();
-  }, [isInitialized]);
+  }, []);
 
   const value: DatabaseContextType = {
     db,
@@ -71,7 +73,9 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
 
   return (
     <DatabaseContext.Provider value={value}>
-      {children}
+      <DatabaseErrorHandler>
+        {children}
+      </DatabaseErrorHandler>
     </DatabaseContext.Provider>
   );
 }
