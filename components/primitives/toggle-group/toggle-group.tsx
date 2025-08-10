@@ -1,5 +1,3 @@
-import * as React from "react";
-import { type GestureResponderEvent, Pressable, View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -8,6 +6,8 @@ import type {
   ViewRef,
 } from "@/components/primitives/types";
 import { ToggleGroupUtils } from "@/components/primitives/utils";
+import * as React from "react";
+import { type GestureResponderEvent, Pressable, View } from "react-native";
 import type { ToggleGroupItemProps, ToggleGroupRootProps } from "./types";
 
 const ToggleGroupContext = React.createContext<ToggleGroupRootProps | null>(

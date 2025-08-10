@@ -1,32 +1,32 @@
 import {
-  eq,
   and,
-  or,
-  desc,
   asc,
-  sql,
+  desc,
+  eq,
   gte,
-  lte,
+  ilike,
   inArray,
   isNull,
+  lte,
   not,
-  ilike
+  or,
+  sql,
 } from "drizzle-orm";
+import { databaseManager } from "./database-manager";
 import {
-  videoTable,
-  watchHistoryTable,
-  playlistTable,
-  playlistVideoTable,
-  tagTable,
-  videoTagTable,
-  settingsTable,
+  bookmarkTable,
   folderTable,
   folderVideoTable,
-  bookmarkTable,
-  searchIndexTable
+  playlistTable,
+  playlistVideoTable,
+  searchIndexTable,
+  settingsTable,
+  tagTable,
+  videoTable,
+  videoTagTable,
+  watchHistoryTable,
 } from "./schema";
-import { databaseManager } from "./database-manager";
-import type { VideoSearchParams, SearchResult, Video } from "./schema";
+import type { SearchResult, Video, VideoSearchParams } from "./schema";
 
 export interface QueryMetrics {
   query: string;
@@ -44,7 +44,10 @@ export interface PerformanceMetrics {
 
 export class DatabasePerformanceService {
   private queryMetrics: QueryMetrics[] = [];
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<
+    string,
+    { data: any; timestamp: number; ttl: number }
+  >();
   private readonly DEFAULT_CACHE_TTL = 5 * 60 * 1000; // 5分钟
 
   /**
@@ -52,7 +55,7 @@ export class DatabasePerformanceService {
    */
   async executeQueryWithMetrics<T>(
     queryName: string,
-    queryFn: () => Promise<T>
+    queryFn: () => Promise<T>,
   ): Promise<T> {
     const startTime = performance.now();
     let success = false;
@@ -75,8 +78,11 @@ export class DatabasePerformanceService {
       });
 
       // 记录慢查询
-      if (duration > 1000) { // 超过1秒的查询
-        console.warn(`Slow query detected: ${queryName} took ${duration.toFixed(2)}ms`);
+      if (duration > 1000) {
+        // 超过1秒的查询
+        console.warn(
+          `Slow query detected: ${queryName} took ${duration.toFixed(2)}ms`,
+        );
       }
     }
 
@@ -101,12 +107,14 @@ export class DatabasePerformanceService {
   getPerformanceMetrics(): PerformanceMetrics {
     const recentQueries = this.queryMetrics.slice(-100); // 最近100条查询
 
-    const averageQueryTime = recentQueries.length > 0
-      ? recentQueries.reduce((sum, q) => sum + q.duration, 0) / recentQueries.length
-      : 0;
+    const averageQueryTime =
+      recentQueries.length > 0
+        ? recentQueries.reduce((sum, q) => sum + q.duration, 0) /
+          recentQueries.length
+        : 0;
 
     const slowQueries = recentQueries
-      .filter(q => q.duration > 1000)
+      .filter((q) => q.duration > 1000)
       .sort((a, b) => b.duration - a.duration);
 
     const cacheStats = this.getCacheStats();
@@ -188,8 +196,9 @@ export class DatabasePerformanceService {
 
     // 限制缓存大小
     if (this.cache.size > 1000) {
-      const entries = Array.from(this.cache.entries())
-        .sort((a, b) => a[1].timestamp - b[1].timestamp);
+      const entries = Array.from(this.cache.entries()).sort(
+        (a, b) => a[1].timestamp - b[1].timestamp,
+      );
 
       const toDelete = entries.slice(0, entries.length - 1000);
       toDelete.forEach(([key]) => this.cache.delete(key));
@@ -199,7 +208,9 @@ export class DatabasePerformanceService {
   /**
    * 优化的视频搜索
    */
-  async optimizedVideoSearch(params: VideoSearchParams): Promise<SearchResult<Video>> {
+  async optimizedVideoSearch(
+    params: VideoSearchParams,
+  ): Promise<SearchResult<Video>> {
     const cacheKey = `video_search_${JSON.stringify(params)}`;
 
     // 检查缓存
@@ -209,7 +220,7 @@ export class DatabasePerformanceService {
     }
 
     const result = await this.executeQueryWithMetrics(
-      'optimized_video_search',
+      "optimized_video_search",
       async () => {
         const db = databaseManager.getDatabase();
         const {
@@ -219,22 +230,22 @@ export class DatabasePerformanceService {
           isFavorite,
           minDuration,
           maxDuration,
-          sortBy = 'created_at',
-          sortOrder = 'desc',
+          sortBy = "created_at",
+          sortOrder = "desc",
           page = 1,
-          pageSize = 20
+          pageSize = 20,
         } = params;
 
         const offset = (page - 1) * pageSize;
-        let whereConditions = [];
+        const whereConditions = [];
 
         // 优化的搜索条件构建
         if (query) {
           whereConditions.push(
             or(
               ilike(videoTable.title, `%${query}%`),
-              ilike(videoTable.description, `%${query}%`)
-            )
+              ilike(videoTable.description, `%${query}%`),
+            ),
           );
         }
 
@@ -269,13 +280,13 @@ export class DatabasePerformanceService {
           play_count: videoTable.playCount,
         }[sortBy];
 
-        const orderByDirection = sortOrder === 'desc' ? desc : asc;
+        const orderByDirection = sortOrder === "desc" ? desc : asc;
         queryBuilder = queryBuilder.orderBy(orderByDirection(orderByColumn));
 
         // 使用子查询优化分页
         const [totalCount] = await db
           .select({ count: sql<number>`COUNT(*)` })
-          .from(queryBuilder.as('count_query'));
+          .from(queryBuilder.as("count_query"));
 
         const items = await queryBuilder.limit(pageSize).offset(offset);
 
@@ -286,7 +297,7 @@ export class DatabasePerformanceService {
           pageSize,
           hasMore: offset + pageSize < totalCount.count,
         };
-      }
+      },
     );
 
     // 缓存结果
@@ -298,8 +309,10 @@ export class DatabasePerformanceService {
   /**
    * 批量操作优化
    */
-  async batchInsertVideos(videos: Array<typeof videoTable.$inferInsert>): Promise<Video[]> {
-    return this.executeQueryWithMetrics('batch_insert_videos', async () => {
+  async batchInsertVideos(
+    videos: Array<typeof videoTable.$inferInsert>,
+  ): Promise<Video[]> {
+    return this.executeQueryWithMetrics("batch_insert_videos", async () => {
       const db = databaseManager.getDatabase();
 
       // 使用事务批量插入
@@ -307,7 +320,10 @@ export class DatabasePerformanceService {
         const insertedVideos = [];
 
         for (const videoData of videos) {
-          const [video] = await tx.insert(videoTable).values(videoData).returning();
+          const [video] = await tx
+            .insert(videoTable)
+            .values(videoData)
+            .returning();
           insertedVideos.push(video);
         }
 
@@ -322,54 +338,61 @@ export class DatabasePerformanceService {
    * 预加载相关数据
    */
   async preloadVideoRelations(videoId: string): Promise<{
-    tags: typeof tagTable.$inferSelect[];
-    playlists: typeof playlistTable.$inferSelect[];
-    bookmarks: typeof bookmarkTable.$inferSelect[];
-    watchHistory: typeof watchHistoryTable.$inferSelect[];
+    tags: (typeof tagTable.$inferSelect)[];
+    playlists: (typeof playlistTable.$inferSelect)[];
+    bookmarks: (typeof bookmarkTable.$inferSelect)[];
+    watchHistory: (typeof watchHistoryTable.$inferSelect)[];
   }> {
     const cacheKey = `video_relations_${videoId}`;
     const cached = this.getCache(cacheKey);
     if (cached) return cached;
 
     const result = await this.executeQueryWithMetrics(
-      'preload_video_relations',
+      "preload_video_relations",
       async () => {
         const db = databaseManager.getDatabase();
 
         // 并行查询所有关联数据
         const [tags, playlists, bookmarks, watchHistory] = await Promise.all([
-          db.select({
-            id: tagTable.id,
-            name: tagTable.name,
-            color: tagTable.color,
-          })
-          .from(tagTable)
-          .innerJoin(videoTagTable, eq(videoTagTable.tagId, tagTable.id))
-          .where(eq(videoTagTable.videoId, videoId)),
+          db
+            .select({
+              id: tagTable.id,
+              name: tagTable.name,
+              color: tagTable.color,
+            })
+            .from(tagTable)
+            .innerJoin(videoTagTable, eq(videoTagTable.tagId, tagTable.id))
+            .where(eq(videoTagTable.videoId, videoId)),
 
-          db.select({
-            id: playlistTable.id,
-            name: playlistTable.name,
-            description: playlistTable.description,
-          })
-          .from(playlistTable)
-          .innerJoin(playlistVideoTable, eq(playlistVideoTable.playlistId, playlistTable.id))
-          .where(eq(playlistVideoTable.videoId, videoId)),
+          db
+            .select({
+              id: playlistTable.id,
+              name: playlistTable.name,
+              description: playlistTable.description,
+            })
+            .from(playlistTable)
+            .innerJoin(
+              playlistVideoTable,
+              eq(playlistVideoTable.playlistId, playlistTable.id),
+            )
+            .where(eq(playlistVideoTable.videoId, videoId)),
 
-          db.select()
-          .from(bookmarkTable)
-          .where(eq(bookmarkTable.videoId, videoId))
-          .orderBy(asc(bookmarkTable.position)),
+          db
+            .select()
+            .from(bookmarkTable)
+            .where(eq(bookmarkTable.videoId, videoId))
+            .orderBy(asc(bookmarkTable.position)),
 
-          db.select()
-          .from(watchHistoryTable)
-          .where(eq(watchHistoryTable.videoId, videoId))
-          .orderBy(desc(watchHistoryTable.watchedAt))
-          .limit(10),
+          db
+            .select()
+            .from(watchHistoryTable)
+            .where(eq(watchHistoryTable.videoId, videoId))
+            .orderBy(desc(watchHistoryTable.watchedAt))
+            .limit(10),
         ]);
 
         return { tags, playlists, bookmarks, watchHistory };
-      }
+      },
     );
 
     this.setCache(cacheKey, result, 5 * 60 * 1000); // 缓存5分钟
@@ -380,7 +403,7 @@ export class DatabasePerformanceService {
    * 数据库维护操作
    */
   async performMaintenance(): Promise<void> {
-    await this.executeQueryWithMetrics('database_maintenance', async () => {
+    await this.executeQueryWithMetrics("database_maintenance", async () => {
       const db = databaseManager.getDatabase();
 
       // 清理过期数据
@@ -391,7 +414,7 @@ export class DatabasePerformanceService {
         .where(lte(watchHistoryTable.watchedAt, thirtyDaysAgo.toISOString()));
 
       // 重建索引（SQLite不支持，但可以分析索引使用情况）
-      console.log('Database maintenance completed');
+      console.log("Database maintenance completed");
     });
   }
 
@@ -407,9 +430,17 @@ export class DatabasePerformanceService {
 
     const tableSizes: Record<string, number> = {};
     const tables = [
-      'videos', 'watch_history', 'playlists', 'playlist_videos',
-      'tags', 'video_tags', 'settings', 'folders', 'folder_videos',
-      'bookmarks', 'search_index'
+      "videos",
+      "watch_history",
+      "playlists",
+      "playlist_videos",
+      "tags",
+      "video_tags",
+      "settings",
+      "folders",
+      "folder_videos",
+      "bookmarks",
+      "search_index",
     ];
 
     for (const tableName of tables) {

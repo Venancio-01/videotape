@@ -2,13 +2,11 @@
  * 中间件类型定义
  */
 
-import { type Store } from 'zustand';
-import { type AsyncStorage } from '@react-native-async-storage/async-storage';
+import type { AsyncStorage } from "@react-native-async-storage/async-storage";
+import type { Store } from "zustand";
 
 // 基础中间件接口
-export interface StoreMiddleware<T> {
-  (store: Store<T>): Store<T>;
-}
+export type StoreMiddleware<T> = (store: Store<T>) => Store<T>;
 
 // 持久化中间件配置
 export interface PersistMiddlewareConfig<T> {
@@ -31,7 +29,7 @@ export interface PersistMiddlewareConfig<T> {
 // 日志中间件配置
 export interface LoggerMiddlewareConfig {
   enabled: boolean;
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   predicate?: (state: any, action: string) => boolean;
   collapse?: boolean;
   diff?: boolean;
@@ -62,7 +60,7 @@ export interface SyncMiddlewareConfig {
   onSyncComplete?: () => void;
   onSyncError?: (error: Error) => void;
   onSyncProgress?: (progress: number) => void;
-  syncStrategy?: 'immediate' | 'debounced' | 'throttled';
+  syncStrategy?: "immediate" | "debounced" | "throttled";
 }
 
 // 开发工具中间件配置
@@ -137,7 +135,7 @@ export interface CacheMiddlewareConfig {
   enabled: boolean;
   maxSize?: number; // 最大缓存条目数
   ttl?: number; // 缓存时间（毫秒）
-  strategy?: 'lru' | 'fifo' | 'lfu';
+  strategy?: "lru" | "fifo" | "lfu";
   serialize?: (data: any) => string;
   deserialize?: (data: string) => any;
   onCacheHit?: (key: string, data: any) => void;
@@ -174,7 +172,7 @@ export interface SecurityMiddlewareConfig {
 }
 
 export interface SecurityViolation {
-  type: 'size_limit' | 'invalid_field' | 'encryption_error' | 'sanitize_error';
+  type: "size_limit" | "invalid_field" | "encryption_error" | "sanitize_error";
   message: string;
   details?: any;
 }

@@ -2,21 +2,28 @@
  * 视频 Store Hook - 提供视频状态管理的便捷接口
  */
 
-import { useVideoStore as baseUseVideoStore, videoSelectors } from '@/stores/videoStore';
-import { useVideoSelector } from '@/stores/videoStore';
-import { useMemo } from 'react';
+import {
+  useVideoStore as baseUseVideoStore,
+  videoSelectors,
+} from "@/stores/videoStore";
+import { useVideoSelector } from "@/stores/videoStore";
+import { useMemo } from "react";
 
 // 基础 Hook
 export const useVideoStore = baseUseVideoStore;
 
 // 选择器 Hooks
 export const useAllVideos = () => useVideoSelector(videoSelectors.getAllVideos);
-export const useCurrentVideo = () => useVideoSelector(videoSelectors.getCurrentVideo);
+export const useCurrentVideo = () =>
+  useVideoSelector(videoSelectors.getCurrentVideo);
 export const useIsPlaying = () => useVideoSelector(videoSelectors.getIsPlaying);
 export const useIsLoading = () => useVideoSelector(videoSelectors.getIsLoading);
-export const useFavoriteVideos = () => useVideoSelector(videoSelectors.getFavoriteVideos);
-export const useFilteredVideos = () => useVideoSelector(videoSelectors.getFilteredVideos);
-export const useVideoStats = () => useVideoSelector(videoSelectors.getVideoStats);
+export const useFavoriteVideos = () =>
+  useVideoSelector(videoSelectors.getFavoriteVideos);
+export const useFilteredVideos = () =>
+  useVideoSelector(videoSelectors.getFilteredVideos);
+export const useVideoStats = () =>
+  useVideoSelector(videoSelectors.getVideoStats);
 
 // 操作 Hooks
 export const useVideoActions = () => {
@@ -31,10 +38,14 @@ export const useVideoActions = () => {
   const stopVideo = useVideoStore((state) => state.stopVideo);
   const toggleFavorite = useVideoStore((state) => state.toggleFavorite);
   const addToFavorites = useVideoStore((state) => state.addToFavorites);
-  const removeFromFavorites = useVideoStore((state) => state.removeFromFavorites);
+  const removeFromFavorites = useVideoStore(
+    (state) => state.removeFromFavorites,
+  );
   const setFavorites = useVideoStore((state) => state.setFavorites);
   const addToWatchHistory = useVideoStore((state) => state.addToWatchHistory);
-  const updateWatchProgress = useVideoStore((state) => state.updateWatchProgress);
+  const updateWatchProgress = useVideoStore(
+    (state) => state.updateWatchProgress,
+  );
   const clearWatchHistory = useVideoStore((state) => state.clearWatchHistory);
   const setSearchQuery = useVideoStore((state) => state.setSearchQuery);
   const setFilter = useVideoStore((state) => state.setFilter);
@@ -80,7 +91,9 @@ export const useVideoSearch = () => {
   const searchQuery = useVideoStore((state) => state.searchQuery);
   const setSearchQuery = useVideoStore((state) => state.setSearchQuery);
   const clearFilters = useVideoStore((state) => state.clearFilters);
-  const searchSuggestions = useVideoSelector(videoSelectors.getSearchSuggestions);
+  const searchSuggestions = useVideoSelector(
+    videoSelectors.getSearchSuggestions,
+  );
 
   return {
     searchQuery,
@@ -115,7 +128,9 @@ export const useVideoFavorites = () => {
   const favorites = useVideoSelector(videoSelectors.getFavorites);
   const toggleFavorite = useVideoStore((state) => state.toggleFavorite);
   const addToFavorites = useVideoStore((state) => state.addToFavorites);
-  const removeFromFavorites = useVideoStore((state) => state.removeFromFavorites);
+  const removeFromFavorites = useVideoStore(
+    (state) => state.removeFromFavorites,
+  );
   const favoritesCount = useVideoSelector(videoSelectors.getFavoritesCount);
 
   const isFavorite = (videoId: string) => {
@@ -140,7 +155,9 @@ export const useVideoPlayback = () => {
   const pauseVideo = useVideoStore((state) => state.pauseVideo);
   const resumeVideo = useVideoStore((state) => state.resumeVideo);
   const stopVideo = useVideoStore((state) => state.stopVideo);
-  const updateWatchProgress = useVideoStore((state) => state.updateWatchProgress);
+  const updateWatchProgress = useVideoStore(
+    (state) => state.updateWatchProgress,
+  );
 
   return {
     currentVideo,
@@ -158,9 +175,13 @@ export const useVideoPlayback = () => {
 export const useVideoHistory = () => {
   const watchHistory = useVideoStore((state) => state.watchHistory);
   const addToWatchHistory = useVideoStore((state) => state.addToWatchHistory);
-  const updateWatchProgress = useVideoStore((state) => state.updateWatchProgress);
+  const updateWatchProgress = useVideoStore(
+    (state) => state.updateWatchProgress,
+  );
   const clearWatchHistory = useVideoStore((state) => state.clearWatchHistory);
-  const recentHistory = useVideoSelector((state) => videoSelectors.getRecentHistory(state, 10));
+  const recentHistory = useVideoSelector((state) =>
+    videoSelectors.getRecentHistory(state, 10),
+  );
 
   return {
     watchHistory,
@@ -194,25 +215,27 @@ export const useVideoBatchOperations = () => {
   const videos = useVideoSelector(videoSelectors.getAllVideos);
   const removeVideo = useVideoStore((state) => state.removeVideo);
   const addToFavorites = useVideoStore((state) => state.addToFavorites);
-  const removeFromFavorites = useVideoStore((state) => state.removeFromFavorites);
+  const removeFromFavorites = useVideoStore(
+    (state) => state.removeFromFavorites,
+  );
 
   const removeMultiple = (videoIds: string[]) => {
-    videoIds.forEach(id => removeVideo(id));
+    videoIds.forEach((id) => removeVideo(id));
   };
 
   const addMultipleToFavorites = (videoIds: string[]) => {
-    videoIds.forEach(id => addToFavorites(id));
+    videoIds.forEach((id) => addToFavorites(id));
   };
 
   const removeMultipleFromFavorites = (videoIds: string[]) => {
-    videoIds.forEach(id => removeFromFavorites(id));
+    videoIds.forEach((id) => removeFromFavorites(id));
   };
 
-  const selectAll = () => videos.map(v => v.id);
-  const selectByCategory = (category: string) => 
-    videos.filter(v => v.category === category).map(v => v.id);
-  const selectByTag = (tag: string) => 
-    videos.filter(v => v.tags.includes(tag)).map(v => v.id);
+  const selectAll = () => videos.map((v) => v.id);
+  const selectByCategory = (category: string) =>
+    videos.filter((v) => v.category === category).map((v) => v.id);
+  const selectByTag = (tag: string) =>
+    videos.filter((v) => v.tags.includes(tag)).map((v) => v.id);
 
   return {
     removeMultiple,
@@ -245,10 +268,10 @@ export const useVideoManager = () => {
     currentVideo,
     favorites,
     stats,
-    
+
     // 操作
     ...actions,
-    
+
     // 功能模块
     search,
     pagination,
@@ -257,7 +280,7 @@ export const useVideoManager = () => {
     history,
     monitor,
     batchOps,
-    
+
     // 便捷属性
     hasVideos: videos.length > 0,
     hasCurrentVideo: currentVideo !== null,

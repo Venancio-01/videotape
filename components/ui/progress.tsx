@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import * as React from "react";
 import { Platform } from "react-native";
 import Animated, {
@@ -7,7 +8,6 @@ import Animated, {
   useDerivedValue,
   withSpring,
 } from "react-native-reanimated";
-import { cn } from "@/lib/utils";
 import * as ProgressPrimitive from "../primitives/progress";
 
 const Progress = React.forwardRef<

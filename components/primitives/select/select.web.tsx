@@ -1,6 +1,3 @@
-import * as Select from "@radix-ui/react-select";
-import * as React from "react";
-import { Pressable, Text, View } from "react-native";
 import {
   useAugmentedRef,
   useControllableState,
@@ -16,6 +13,9 @@ import type {
   TextRef,
   ViewRef,
 } from "@/components/primitives/types";
+import * as Select from "@radix-ui/react-select";
+import * as React from "react";
+import { Pressable, Text, View } from "react-native";
 import type {
   RootContext,
   SelectContentProps,

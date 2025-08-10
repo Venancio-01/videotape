@@ -1,11 +1,3 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import * as React from "react";
-import {
-  type GestureResponderEvent,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 import {
   useAugmentedRef,
   useControllableState,
@@ -19,6 +11,14 @@ import type {
   TextRef,
   ViewRef,
 } from "@/components/primitives/types";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import * as React from "react";
+import {
+  type GestureResponderEvent,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import type {
   AlertDialogContentProps,
   AlertDialogOverlayProps,

@@ -2,29 +2,42 @@
  * 队列 Store Hook - 提供队列状态管理的便捷接口
  */
 
-import { useQueueStore as baseUseQueueStore, queueSelectors } from '@/stores/queueStore';
-import { useQueueSelector } from '@/stores/queueStore';
-import { useMemo } from 'react';
+import {
+  useQueueStore as baseUseQueueStore,
+  queueSelectors,
+} from "@/stores/queueStore";
+import { useQueueSelector } from "@/stores/queueStore";
+import { useMemo } from "react";
 
 // 基础 Hook
 export const useQueueStore = baseUseQueueStore;
 
 // 选择器 Hooks
 export const useQueue = () => useQueueSelector(queueSelectors.getQueue);
-export const useCurrentQueueIndex = () => useQueueSelector(queueSelectors.getCurrentQueueIndex);
-export const useCurrentQueueItem = () => useQueueSelector(queueSelectors.getCurrentQueueItem);
-export const useQueueLength = () => useQueueSelector(queueSelectors.getQueueLength);
-export const useIsQueueEmpty = () => useQueueSelector(queueSelectors.getIsQueueEmpty);
+export const useCurrentQueueIndex = () =>
+  useQueueSelector(queueSelectors.getCurrentQueueIndex);
+export const useCurrentQueueItem = () =>
+  useQueueSelector(queueSelectors.getCurrentQueueItem);
+export const useQueueLength = () =>
+  useQueueSelector(queueSelectors.getQueueLength);
+export const useIsQueueEmpty = () =>
+  useQueueSelector(queueSelectors.getIsQueueEmpty);
 export const useHistory = () => useQueueSelector(queueSelectors.getHistory);
 export const usePlaylists = () => useQueueSelector(queueSelectors.getPlaylists);
-export const useCurrentPlaylist = () => useQueueSelector(queueSelectors.getCurrentPlaylist);
-export const usePlaylistCount = () => useQueueSelector(queueSelectors.getPlaylistCount);
-export const useRepeatMode = () => useQueueSelector(queueSelectors.getRepeatMode);
-export const useShuffleMode = () => useQueueSelector(queueSelectors.getShuffleMode);
-export const useQueueStats = () => useQueueSelector(queueSelectors.getQueueStats);
+export const useCurrentPlaylist = () =>
+  useQueueSelector(queueSelectors.getCurrentPlaylist);
+export const usePlaylistCount = () =>
+  useQueueSelector(queueSelectors.getPlaylistCount);
+export const useRepeatMode = () =>
+  useQueueSelector(queueSelectors.getRepeatMode);
+export const useShuffleMode = () =>
+  useQueueSelector(queueSelectors.getShuffleMode);
+export const useQueueStats = () =>
+  useQueueSelector(queueSelectors.getQueueStats);
 
 // 导航 Hooks
-export const usePlaybackNavigation = () => useQueueSelector(queueSelectors.getPlaybackNavigation);
+export const usePlaybackNavigation = () =>
+  useQueueSelector(queueSelectors.getPlaybackNavigation);
 
 // 操作 Hooks
 export const useQueueActions = () => {
@@ -34,7 +47,9 @@ export const useQueueActions = () => {
   const removeFromQueue = useQueueStore((state) => state.removeFromQueue);
   const moveInQueue = useQueueStore((state) => state.moveInQueue);
   const clearQueue = useQueueStore((state) => state.clearQueue);
-  const setCurrentQueueIndex = useQueueStore((state) => state.setCurrentQueueIndex);
+  const setCurrentQueueIndex = useQueueStore(
+    (state) => state.setCurrentQueueIndex,
+  );
   const addToHistory = useQueueStore((state) => state.addToHistory);
   const removeFromHistory = useQueueStore((state) => state.removeFromHistory);
   const clearHistory = useQueueStore((state) => state.clearHistory);
@@ -51,9 +66,13 @@ export const useQueueActions = () => {
   const playPrevious = useQueueStore((state) => state.playPrevious);
   const playAtIndex = useQueueStore((state) => state.playAtIndex);
   const addMultipleToQueue = useQueueStore((state) => state.addMultipleToQueue);
-  const removeMultipleFromQueue = useQueueStore((state) => state.removeMultipleFromQueue);
+  const removeMultipleFromQueue = useQueueStore(
+    (state) => state.removeMultipleFromQueue,
+  );
   const shuffleQueue = useQueueStore((state) => state.shuffleQueue);
-  const loadPlaylistToQueue = useQueueStore((state) => state.loadPlaylistToQueue);
+  const loadPlaylistToQueue = useQueueStore(
+    (state) => state.loadPlaylistToQueue,
+  );
   const setLoading = useQueueStore((state) => state.setLoading);
   const setError = useQueueStore((state) => state.setError);
   const clearError = useQueueStore((state) => state.clearError);
@@ -109,7 +128,8 @@ export const useQueueManager = () => {
   const addToQueue = (video: any) => actions.addToQueue(video);
   const addToQueueNext = (video: any) => actions.addToQueueNext(video);
   const removeFromQueue = (index: number) => actions.removeFromQueue(index);
-  const moveItem = (fromIndex: number, toIndex: number) => actions.moveInQueue(fromIndex, toIndex);
+  const moveItem = (fromIndex: number, toIndex: number) =>
+    actions.moveInQueue(fromIndex, toIndex);
   const clearQueue = () => actions.clearQueue();
   const shuffleQueue = () => actions.shuffleQueue();
 
@@ -145,10 +165,11 @@ export const useQueueHistory = () => {
   const actions = useQueueActions();
 
   const addToHistory = (video: any) => actions.addToHistory(video);
-  const removeFromHistory = (videoId: string) => actions.removeFromHistory(videoId);
+  const removeFromHistory = (videoId: string) =>
+    actions.removeFromHistory(videoId);
   const clearHistory = () => actions.clearHistory();
 
-  const getRecentHistory = (limit: number = 10) => {
+  const getRecentHistory = (limit = 10) => {
     return history.slice(0, limit);
   };
 
@@ -171,11 +192,16 @@ export const usePlaylistManager = () => {
   const actions = useQueueActions();
 
   const addPlaylist = (playlist: any) => actions.addPlaylist(playlist);
-  const updatePlaylist = (playlistId: string, updates: any) => actions.updatePlaylist(playlistId, updates);
-  const removePlaylist = (playlistId: string) => actions.removePlaylist(playlistId);
-  const setCurrentPlaylist = (playlist: any) => actions.setCurrentPlaylist(playlist);
-  const playPlaylist = (playlist: any, startIndex?: number) => actions.playPlaylist(playlist, startIndex);
-  const loadPlaylistToQueue = (playlist: any) => actions.loadPlaylistToQueue(playlist);
+  const updatePlaylist = (playlistId: string, updates: any) =>
+    actions.updatePlaylist(playlistId, updates);
+  const removePlaylist = (playlistId: string) =>
+    actions.removePlaylist(playlistId);
+  const setCurrentPlaylist = (playlist: any) =>
+    actions.setCurrentPlaylist(playlist);
+  const playPlaylist = (playlist: any, startIndex?: number) =>
+    actions.playPlaylist(playlist, startIndex);
+  const loadPlaylistToQueue = (playlist: any) =>
+    actions.loadPlaylistToQueue(playlist);
 
   const getPlaylistById = (playlistId: string) => {
     return useQueueSelector(queueSelectors.getPlaylistById(playlistId));
@@ -208,12 +234,13 @@ export const useQueueModes = () => {
   const shuffleMode = useShuffleMode();
   const actions = useQueueActions();
 
-  const setRepeatMode = (mode: 'none' | 'single' | 'all') => actions.setRepeatMode(mode);
+  const setRepeatMode = (mode: "none" | "single" | "all") =>
+    actions.setRepeatMode(mode);
   const toggleShuffle = () => actions.toggleShuffle();
   const setShuffle = (shuffle: boolean) => actions.setShuffle(shuffle);
 
   const cycleRepeatMode = () => {
-    const modes: ('none' | 'single' | 'all')[] = ['none', 'single', 'all'];
+    const modes: ("none" | "single" | "all")[] = ["none", "single", "all"];
     const currentIndex = modes.indexOf(repeatMode);
     const nextIndex = (currentIndex + 1) % modes.length;
     setRepeatMode(modes[nextIndex]);
@@ -226,9 +253,9 @@ export const useQueueModes = () => {
     toggleShuffle,
     setShuffle,
     cycleRepeatMode,
-    isRepeatNone: repeatMode === 'none',
-    isRepeatSingle: repeatMode === 'single',
-    isRepeatAll: repeatMode === 'all',
+    isRepeatNone: repeatMode === "none",
+    isRepeatSingle: repeatMode === "single",
+    isRepeatAll: repeatMode === "all",
   };
 };
 
@@ -237,8 +264,10 @@ export const useQueueBatchOperations = () => {
   const queue = useQueue();
   const actions = useQueueActions();
 
-  const addMultipleToQueue = (videos: any[]) => actions.addMultipleToQueue(videos);
-  const removeMultipleFromQueue = (indices: number[]) => actions.removeMultipleFromQueue(indices);
+  const addMultipleToQueue = (videos: any[]) =>
+    actions.addMultipleToQueue(videos);
+  const removeMultipleFromQueue = (indices: number[]) =>
+    actions.removeMultipleFromQueue(indices);
 
   const selectAll = () => queue.map((_, index) => index);
   const selectRange = (startIndex: number, endIndex: number) => {
@@ -251,14 +280,14 @@ export const useQueueBatchOperations = () => {
 
   const moveToTop = (indices: number[]) => {
     indices.sort((a, b) => a - b);
-    const items = indices.map(i => queue[i]);
+    const items = indices.map((i) => queue[i]);
     const newQueue = queue.filter((_, i) => !indices.includes(i));
     return [...items, ...newQueue];
   };
 
   const moveToBottom = (indices: number[]) => {
     indices.sort((a, b) => a - b);
-    const items = indices.map(i => queue[i]);
+    const items = indices.map((i) => queue[i]);
     const newQueue = queue.filter((_, i) => !indices.includes(i));
     return [...newQueue, ...items];
   };
@@ -284,7 +313,10 @@ export const useQueueStatistics = () => {
     ...stats,
     queueItems: queue.length,
     historyItems: history.length,
-    playlistItems: playlists.reduce((total, playlist) => total + playlist.videos.length, 0),
+    playlistItems: playlists.reduce(
+      (total, playlist) => total + playlist.videos.length,
+      0,
+    ),
   };
 };
 
@@ -303,21 +335,21 @@ export const useQueueManager = () => {
     // 数据
     queue,
     currentQueueItem,
-    
+
     // 导航
     ...navigation,
-    
+
     // 模式
     ...modes,
-    
+
     // 功能模块
     history,
     playlists,
     stats,
-    
+
     // 操作
     ...actions,
-    
+
     // 便捷属性
     isQueueEmpty: queue.length === 0,
     hasCurrentItem: currentQueueItem !== null,

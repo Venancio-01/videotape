@@ -1,10 +1,10 @@
-import * as React from "react";
-import { View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   SlottableViewProps,
   ViewRef,
 } from "@/components/primitives/types";
+import * as React from "react";
+import { View } from "react-native";
 import type { SeparatorRootProps } from "./types";
 
 const Root = React.forwardRef<ViewRef, SlottableViewProps & SeparatorRootProps>(

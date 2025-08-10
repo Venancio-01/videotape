@@ -1,4 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { ChevronRight } from "@/components/Icons";
+import { cn } from "@/lib/utils";
+import { type VariantProps, cva } from "class-variance-authority";
 import { Link } from "expo-router";
 import type { LinkProps } from "expo-router/build/link/Link";
 import type { ExpoRouter } from "expo-router/types/expo-router";
@@ -11,8 +13,6 @@ import {
   View,
   type ViewProps,
 } from "react-native";
-import { ChevronRight } from "@/components/Icons";
-import { cn } from "@/lib/utils";
 import { Muted } from "./typography";
 
 const listItemTextVariants = cva(

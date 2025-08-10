@@ -1,11 +1,11 @@
-import { View, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { useState } from "react";
-import { Stack, useRouter } from "expo-router";
-import { Text } from "@/components/ui/text";
+import { ArrowLeft, FileVideo, FolderOpen, Upload } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, FileVideo, FolderOpen } from "@/components/Icons";
+import { Text } from "@/components/ui/text";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
+import { Stack, useRouter } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
 
 export default function UploadScreen() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function UploadScreen() {
   const pickVideo = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['video/*'],
+        type: ["video/*"],
         copyToCacheDirectory: true,
         multiple: false,
       });
@@ -25,7 +25,7 @@ export default function UploadScreen() {
       }
 
       const file = result.assets[0];
-      console.log('Selected video:', file);
+      console.log("Selected video:", file);
 
       // TODO: 实现视频文件处理和保存到数据库
       Alert.alert(
@@ -33,12 +33,11 @@ export default function UploadScreen() {
         `文件名: ${file.name}\n大小: ${(file.size / 1024 / 1024).toFixed(2)} MB`,
         [
           { text: "取消", style: "cancel" },
-          { text: "确定", onPress: () => router.back() }
-        ]
+          { text: "确定", onPress: () => router.back() },
+        ],
       );
-
     } catch (error) {
-      console.error('Error picking video:', error);
+      console.error("Error picking video:", error);
       Alert.alert("错误", "选择视频文件时发生错误");
     }
   };
@@ -57,13 +56,12 @@ export default function UploadScreen() {
       }
 
       const image = result.assets[0];
-      console.log('Selected thumbnail:', image);
+      console.log("Selected thumbnail:", image);
 
       // TODO: 处理缩略图
       Alert.alert("缩略图已选择", "缩略图选择成功");
-
     } catch (error) {
-      console.error('Error picking thumbnail:', error);
+      console.error("Error picking thumbnail:", error);
       Alert.alert("错误", "选择缩略图时发生错误");
     }
   };
@@ -156,12 +154,9 @@ export default function UploadScreen() {
           <Text className="text-blue-900 font-medium mb-2">提示</Text>
           <Text className="text-blue-700 text-sm leading-relaxed">
             • 支持常见的视频格式
-            {"\n"}
-            • 大文件上传可能需要一些时间
-            {"\n"}
-            • 视频文件将保存在本地设备上
-            {"\n"}
-            • 可以为视频选择自定义缩略图
+            {"\n"}• 大文件上传可能需要一些时间
+            {"\n"}• 视频文件将保存在本地设备上
+            {"\n"}• 可以为视频选择自定义缩略图
           </Text>
         </View>
       </View>

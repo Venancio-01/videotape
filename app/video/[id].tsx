@@ -1,14 +1,8 @@
-import { eq } from "drizzle-orm";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { AVPlaybackStatus, Video } from "expo-av";
-import * as React from "react";
-import { Alert, Pressable, View, Dimensions } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useDatabase } from "@/db/provider";
 import { videoTable } from "@/db/schema";
-import { videoService } from "@/services/videoService";
 import {
   ArrowLeft,
   Heart,
@@ -20,6 +14,12 @@ import {
   SkipForward,
   Volume2,
 } from "@/lib/icons";
+import { videoService } from "@/services/videoService";
+import { eq } from "drizzle-orm";
+import { AVPlaybackStatus, Video } from "expo-av";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import * as React from "react";
+import { Alert, Dimensions, Pressable, View } from "react-native";
 
 export default function VideoPlayerScreen() {
   const router = useRouter();

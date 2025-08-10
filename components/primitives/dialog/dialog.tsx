@@ -1,11 +1,3 @@
-import * as React from "react";
-import {
-  BackHandler,
-  type GestureResponderEvent,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 import { useControllableState } from "@/components/primitives/hooks";
 import { Portal as RNPPortal } from "@/components/primitives/portal";
 import * as Slot from "@/components/primitives/slot";
@@ -17,6 +9,14 @@ import type {
   TextRef,
   ViewRef,
 } from "@/components/primitives/types";
+import * as React from "react";
+import {
+  BackHandler,
+  type GestureResponderEvent,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import type {
   DialogContentProps,
   DialogOverlayProps,

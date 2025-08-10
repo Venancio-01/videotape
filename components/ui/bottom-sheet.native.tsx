@@ -96,12 +96,16 @@ const BottomSheetContent = React.forwardRef<
     const { colors } = useTheme();
     const { sheetRef } = useBottomSheetContext();
 
-    React.useImperativeHandle(ref, () => {
-      if (!sheetRef.current) {
-        return {} as BottomSheetModalMethods;
-      }
-      return sheetRef.current;
-    }, [sheetRef.current]);
+    React.useImperativeHandle(
+      ref,
+      () => {
+        if (!sheetRef.current) {
+          return {} as BottomSheetModalMethods;
+        }
+        return sheetRef.current;
+      },
+      [sheetRef.current],
+    );
 
     const renderBackdrop = React.useCallback(
       (props: BottomSheetBackdropProps) => {

@@ -1,20 +1,23 @@
-import { FlashList } from "@shopify/flash-list";
-import { desc } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack } from "expo-router";
-import { TouchableOpacity, View } from "react-native";
 import { FolderOpen, MoreVertical, Play, Plus } from "@/components/Icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useDatabase } from "@/db/provider";
 import { type Playlist, playlistTable } from "@/db/schema";
+import { FlashList } from "@shopify/flash-list";
+import { desc } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { Stack } from "expo-router";
+import { TouchableOpacity, View } from "react-native";
 
 export default function PlaylistsScreen() {
   const { db } = useDatabase();
 
   const { data: playlists, error } = useLiveQuery(() => {
     if (!db) return [];
-    return db.select().from(playlistTable).orderBy(desc(playlistTable.createdAt));
+    return db
+      .select()
+      .from(playlistTable)
+      .orderBy(desc(playlistTable.createdAt));
   });
 
   if (!db) {

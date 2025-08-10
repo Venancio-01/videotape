@@ -2,22 +2,24 @@
  * 持久化中间件 - 基于 Zustand persist 的增强版本
  */
 
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { type StateStorage } from 'zustand/middleware';
-import { StateUtils } from '@/utils/stateUtils';
+import { StateUtils } from "@/utils/stateUtils";
+import { createJSONStorage, persist } from "zustand/middleware";
+import type { StateStorage } from "zustand/middleware";
 
 // AsyncStorage 适配器
 export const createAsyncStorageAdapter = (): StateStorage => {
   // 在 React Native 环境中使用 AsyncStorage
   try {
-    const { AsyncStorage } = require('@react-native-async-storage/async-storage');
+    const {
+      AsyncStorage,
+    } = require("@react-native-async-storage/async-storage");
     return {
       getItem: async (name: string): Promise<string | null> => {
         try {
           const value = await AsyncStorage.getItem(name);
           return value;
         } catch (error) {
-          console.error('AsyncStorage getItem error:', error);
+          console.error("AsyncStorage getItem error:", error);
           return null;
         }
       },
@@ -25,14 +27,14 @@ export const createAsyncStorageAdapter = (): StateStorage => {
         try {
           await AsyncStorage.setItem(name, value);
         } catch (error) {
-          console.error('AsyncStorage setItem error:', error);
+          console.error("AsyncStorage setItem error:", error);
         }
       },
       removeItem: async (name: string): Promise<void> => {
         try {
           await AsyncStorage.removeItem(name);
         } catch (error) {
-          console.error('AsyncStorage removeItem error:', error);
+          console.error("AsyncStorage removeItem error:", error);
         }
       },
     };
@@ -43,7 +45,7 @@ export const createAsyncStorageAdapter = (): StateStorage => {
         try {
           return localStorage.getItem(name);
         } catch (error) {
-          console.error('localStorage getItem error:', error);
+          console.error("localStorage getItem error:", error);
           return null;
         }
       },
@@ -51,14 +53,14 @@ export const createAsyncStorageAdapter = (): StateStorage => {
         try {
           localStorage.setItem(name, value);
         } catch (error) {
-          console.error('localStorage setItem error:', error);
+          console.error("localStorage setItem error:", error);
         }
       },
       removeItem: (name: string): void => {
         try {
           localStorage.removeItem(name);
         } catch (error) {
-          console.error('localStorage removeItem error:', error);
+          console.error("localStorage removeItem error:", error);
         }
       },
     };
@@ -71,28 +73,28 @@ export const createCustomJSONStorage = (storage?: StateStorage) => {
     // 自定义序列化器，处理特殊类型
     replacer: (key, value) => {
       if (value instanceof Set) {
-        return { __type: 'Set', value: Array.from(value) };
+        return { __type: "Set", value: Array.from(value) };
       }
       if (value instanceof Map) {
-        return { __type: 'Map', value: Array.from(value.entries()) };
+        return { __type: "Map", value: Array.from(value.entries()) };
       }
       if (value instanceof Date) {
-        return { __type: 'Date', value: value.toISOString() };
+        return { __type: "Date", value: value.toISOString() };
       }
-      if (typeof value === 'function') {
+      if (typeof value === "function") {
         return undefined; // 不序列化函数
       }
       return value;
     },
     // 自定义反序列化器
     reviver: (key, value) => {
-      if (value && typeof value === 'object' && value.__type) {
+      if (value && typeof value === "object" && value.__type) {
         switch (value.__type) {
-          case 'Set':
+          case "Set":
             return new Set(value.value);
-          case 'Map':
+          case "Map":
             return new Map(value.value);
-          case 'Date':
+          case "Date":
             return new Date(value.value);
           default:
             return value;
@@ -108,7 +110,9 @@ export interface PersistConfig<T> {
   name: string;
   storage?: StateStorage;
   partialize?: (state: T) => Partial<T>;
-  onRehydrateStorage?: (state?: T) => ((state?: T, error?: Error) => void) | void;
+  onRehydrateStorage?: (
+    state?: T,
+  ) => ((state?: T, error?: Error) => void) | void;
   version?: number;
   migrate?: (persistedState: any, version: number) => T;
   merge?: (persistedState: Partial<T>, currentState: T) => T;
@@ -118,9 +122,7 @@ export interface PersistConfig<T> {
 }
 
 // 创建持久化中间件
-export const createPersistMiddleware = <T>(
-  config: PersistConfig<T>
-) => {
+export const createPersistMiddleware = <T>(config: PersistConfig<T>) => {
   const {
     name,
     storage = createAsyncStorageAdapter(),
@@ -178,13 +180,18 @@ export const createPersistMiddleware = <T>(
 export const PersistConfigs = {
   // 视频存储配置
   videoStore: {
-    name: 'videotape-video-storage',
+    name: "videotape-video-storage",
     version: 1,
     partialize: (state: any) => ({
       favorites: Array.from(state.favorites || []),
-      searchQuery: state.searchQuery || '',
+      searchQuery: state.searchQuery || "",
       watchHistory: state.watchHistory || [],
-      pagination: state.pagination || { page: 1, pageSize: 20, total: 0, hasMore: true },
+      pagination: state.pagination || {
+        page: 1,
+        pageSize: 20,
+        total: 0,
+        hasMore: true,
+      },
     }),
     migrate: (persistedState: any, version: number) => {
       if (version === 0) {
@@ -192,7 +199,12 @@ export const PersistConfigs = {
         return {
           ...persistedState,
           favorites: new Set(persistedState.favorites || []),
-          pagination: persistedState.pagination || { page: 1, pageSize: 20, total: 0, hasMore: true },
+          pagination: persistedState.pagination || {
+            page: 1,
+            pageSize: 20,
+            total: 0,
+            hasMore: true,
+          },
         };
       }
       return persistedState;
@@ -201,21 +213,21 @@ export const PersistConfigs = {
 
   // 播放存储配置
   playbackStore: {
-    name: 'videotape-playback-storage',
+    name: "videotape-playback-storage",
     version: 1,
     partialize: (state: any) => ({
       volume: state.volume || 1.0,
       playbackRate: state.playbackRate || 1.0,
       isLooping: state.isLooping || false,
       isMuted: state.isMuted || false,
-      repeatMode: state.repeatMode || 'none',
+      repeatMode: state.repeatMode || "none",
       shuffleMode: state.shuffleMode || false,
     }),
   },
 
   // 队列存储配置
   queueStore: {
-    name: 'videotape-queue-storage',
+    name: "videotape-queue-storage",
     version: 1,
     partialize: (state: any) => ({
       queue: state.queue || [],
@@ -223,40 +235,45 @@ export const PersistConfigs = {
       history: state.history || [],
       playlists: state.playlists || [],
       isShuffleOn: state.isShuffleOn || false,
-      repeatMode: state.repeatMode || 'none',
+      repeatMode: state.repeatMode || "none",
     }),
   },
 
   // 设置存储配置
   settingsStore: {
-    name: 'videotape-settings-storage',
+    name: "videotape-settings-storage",
     version: 1,
     partialize: (state: any) => ({
-      theme: state.theme || 'system',
-      language: state.language || 'zh-CN',
-      fontSize: state.fontSize || 'medium',
+      theme: state.theme || "system",
+      language: state.language || "zh-CN",
+      fontSize: state.fontSize || "medium",
       defaultPlaybackSpeed: state.defaultPlaybackSpeed || 1.0,
       defaultVolume: state.defaultVolume || 1.0,
-      defaultQuality: state.defaultQuality || 'auto',
+      defaultQuality: state.defaultQuality || "auto",
       autoPlay: state.autoPlay !== undefined ? state.autoPlay : true,
       autoNext: state.autoNext !== undefined ? state.autoNext : true,
       maxCacheSize: state.maxCacheSize || 1024,
       cacheRetentionDays: state.cacheRetentionDays || 30,
-      autoClearCache: state.autoClearCache !== undefined ? state.autoClearCache : true,
-      analyticsEnabled: state.analyticsEnabled !== undefined ? state.analyticsEnabled : false,
-      crashReportingEnabled: state.crashReportingEnabled !== undefined ? state.crashReportingEnabled : true,
+      autoClearCache:
+        state.autoClearCache !== undefined ? state.autoClearCache : true,
+      analyticsEnabled:
+        state.analyticsEnabled !== undefined ? state.analyticsEnabled : false,
+      crashReportingEnabled:
+        state.crashReportingEnabled !== undefined
+          ? state.crashReportingEnabled
+          : true,
       debugMode: state.debugMode !== undefined ? state.debugMode : false,
-      logLevel: state.logLevel || 'info',
+      logLevel: state.logLevel || "info",
     }),
   },
 
   // UI 存储配置
   uiStore: {
-    name: 'videotape-ui-storage',
+    name: "videotape-ui-storage",
     version: 1,
     partialize: (state: any) => ({
-      theme: state.theme || 'system',
-      colorScheme: state.colorScheme || 'light',
+      theme: state.theme || "system",
+      colorScheme: state.colorScheme || "light",
       isSidebarOpen: state.isSidebarOpen || false,
       notifications: state.notifications || [],
     }),
@@ -268,8 +285,8 @@ export const PersistUtils = {
   // 清理所有持久化数据
   clearAllPersistedData: async () => {
     const storage = createAsyncStorageAdapter();
-    const keys = Object.values(PersistConfigs).map(config => config.name);
-    
+    const keys = Object.values(PersistConfigs).map((config) => config.name);
+
     for (const key of keys) {
       try {
         await storage.removeItem(key);
@@ -283,7 +300,7 @@ export const PersistUtils = {
   getStorageUsage: async () => {
     const storage = createAsyncStorageAdapter();
     const usage: Record<string, number> = {};
-    
+
     for (const config of Object.values(PersistConfigs)) {
       try {
         const value = await storage.getItem(config.name);
@@ -294,7 +311,7 @@ export const PersistUtils = {
         console.error(`Failed to get storage usage for ${config.name}:`, error);
       }
     }
-    
+
     return usage;
   },
 
@@ -302,7 +319,7 @@ export const PersistUtils = {
   backupPersistedData: async () => {
     const storage = createAsyncStorageAdapter();
     const backup: Record<string, string> = {};
-    
+
     for (const config of Object.values(PersistConfigs)) {
       try {
         const value = await storage.getItem(config.name);
@@ -313,14 +330,14 @@ export const PersistUtils = {
         console.error(`Failed to backup data for ${config.name}:`, error);
       }
     }
-    
+
     return backup;
   },
 
   // 恢复持久化数据
   restorePersistedData: async (backup: Record<string, string>) => {
     const storage = createAsyncStorageAdapter();
-    
+
     for (const [key, value] of Object.entries(backup)) {
       try {
         await storage.setItem(key, value);
@@ -332,42 +349,45 @@ export const PersistUtils = {
 
   // 导出持久化配置
   exportConfigs: () => {
-    return Object.keys(PersistConfigs).reduce((acc, key) => {
-      acc[key] = PersistConfigs[key as keyof typeof PersistConfigs];
-      return acc;
-    }, {} as Record<string, PersistConfig<any>>);
+    return Object.keys(PersistConfigs).reduce(
+      (acc, key) => {
+        acc[key] = PersistConfigs[key as keyof typeof PersistConfigs];
+        return acc;
+      },
+      {} as Record<string, PersistConfig<any>>,
+    );
   },
 };
 
 // 性能监控的持久化中间件包装器
 export const withPerformanceMonitoring = <T>(
-  persistMiddleware: ReturnType<typeof createPersistMiddleware<T>>
+  persistMiddleware: ReturnType<typeof createPersistMiddleware<T>>,
 ) => {
   const performanceMonitor = StateUtils.createPerformanceMonitor();
-  
+
   return (stateCreator: any) => {
     const store = persistMiddleware(stateCreator);
-    
+
     // 包装 getState 方法以监控性能
     const originalGetState = store.getState;
     store.getState = () => {
       const start = performance.now();
       const result = originalGetState();
       const duration = performance.now() - start;
-      performanceMonitor.recordMetric('getState', duration);
+      performanceMonitor.recordMetric("getState", duration);
       return result;
     };
-    
+
     // 包装 setState 方法以监控性能
     const originalSetState = store.setState;
     store.setState = (...args: any[]) => {
       const start = performance.now();
       const result = originalSetState(...args);
       const duration = performance.now() - start;
-      performanceMonitor.recordMetric('setState', duration);
+      performanceMonitor.recordMetric("setState", duration);
       return result;
     };
-    
+
     return store;
   };
 };

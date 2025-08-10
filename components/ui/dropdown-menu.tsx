@@ -1,12 +1,3 @@
-import * as React from "react";
-import {
-  Platform,
-  type StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  type ViewStyle,
-} from "react-native";
 import {
   Check,
   ChevronDown,
@@ -16,6 +7,15 @@ import {
 import * as DropdownMenuPrimitive from "@/components/primitives/dropdown-menu";
 import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
+import * as React from "react";
+import {
+  Platform,
+  type StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  type ViewStyle,
+} from "react-native";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 

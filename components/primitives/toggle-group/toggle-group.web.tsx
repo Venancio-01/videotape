@@ -1,6 +1,3 @@
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import * as React from "react";
-import { type GestureResponderEvent, Pressable, View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -9,6 +6,9 @@ import type {
   ViewRef,
 } from "@/components/primitives/types";
 import { ToggleGroupUtils } from "@/components/primitives/utils";
+import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import * as React from "react";
+import { type GestureResponderEvent, Pressable, View } from "react-native";
 import type { ToggleGroupItemProps, ToggleGroupRootProps } from "./types";
 
 const ToggleGroupContext = React.createContext<ToggleGroupRootProps | null>(
@@ -47,9 +47,9 @@ const Root = React.forwardRef<
         }
       >
         <ToggleGroup.Root
-          type={type as any}
-          value={value as any}
-          onValueChange={onValueChange as any}
+          type={type}
+          value={value}
+          onValueChange={onValueChange}
           disabled={disabled}
           rovingFocus={rovingFocus}
           orientation={orientation}

@@ -1,4 +1,11 @@
 import "./global.css";
+import { PortalHost } from "@/components/primitives/portal";
+import { DatabaseProvider } from "@/db/provider";
+import { useFrameworkReady } from "@/hooks/useFrameworkReady";
+import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
+import { DARK_THEME, LIGHT_THEME } from "@/lib/constants";
+import { getItem, setItem } from "@/lib/storage";
+import { useColorScheme } from "@/lib/useColorScheme";
 import {
   Inter_400Regular,
   Inter_600SemiBold,
@@ -11,13 +18,6 @@ import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { PortalHost } from "@/components/primitives/portal";
-import { DatabaseProvider } from "@/db/provider";
-import { useFrameworkReady } from "@/hooks/useFrameworkReady";
-import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
-import { DARK_THEME, LIGHT_THEME } from "@/lib/constants";
-import { getItem, setItem } from "@/lib/storage";
-import { useColorScheme } from "@/lib/useColorScheme";
 
 export {
   // Catch any errors thrown by the Layout component.

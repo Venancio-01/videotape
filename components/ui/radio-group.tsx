@@ -1,7 +1,7 @@
-import * as React from "react";
-import { View } from "react-native";
 import * as RadioGroupPrimitive from "@/components/primitives/radio-group";
 import { cn } from "@/lib/utils";
+import * as React from "react";
+import { View } from "react-native";
 
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,

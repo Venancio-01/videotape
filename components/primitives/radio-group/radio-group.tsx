@@ -1,5 +1,3 @@
-import * as React from "react";
-import { type GestureResponderEvent, Pressable, View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   ForceMountable,
@@ -8,6 +6,8 @@ import type {
   SlottableViewProps,
   ViewRef,
 } from "@/components/primitives/types";
+import * as React from "react";
+import { type GestureResponderEvent, Pressable, View } from "react-native";
 import type { RadioGroupItemProps, RadioGroupRootProps } from "./types";
 
 const RadioGroupContext = React.createContext<RadioGroupRootProps | null>(null);

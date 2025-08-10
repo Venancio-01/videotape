@@ -1,4 +1,4 @@
-import { drizzle, type SQLJsDatabase } from "drizzle-orm/sql-js";
+import { type SQLJsDatabase, drizzle } from "drizzle-orm/sql-js";
 import { useEffect, useReducer } from "react";
 import initSqlJs from "sql.js";
 import { useDatabase } from "./provider";

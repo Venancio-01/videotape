@@ -1,13 +1,3 @@
-import * as React from "react";
-import {
-  BackHandler,
-  type GestureResponderEvent,
-  type LayoutChangeEvent,
-  type LayoutRectangle,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 import {
   type LayoutPosition,
   useAugmentedRef,
@@ -26,6 +16,16 @@ import type {
   TextRef,
   ViewRef,
 } from "@/components/primitives/types";
+import * as React from "react";
+import {
+  BackHandler,
+  type GestureResponderEvent,
+  type LayoutChangeEvent,
+  type LayoutRectangle,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import type {
   RootContext,
   SelectContentProps,

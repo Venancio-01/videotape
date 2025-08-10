@@ -1,3 +1,9 @@
+import { Plus } from "@/components/Icons";
+import { Text } from "@/components/ui/text";
+import { VideoCard } from "@/components/video";
+import { useMigrationHelper } from "@/db/drizzle";
+import { useDatabase } from "@/db/provider";
+import { type Video, videoTable } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { desc, eq } from "drizzle-orm";
@@ -5,12 +11,6 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Link, Stack } from "expo-router";
 import * as React from "react";
 import { Platform, Pressable, View } from "react-native";
-import { Plus } from "@/components/Icons";
-import { Text } from "@/components/ui/text";
-import { VideoCard } from "@/components/video";
-import { useMigrationHelper } from "@/db/drizzle";
-import { useDatabase } from "@/db/provider";
-import { type Video, videoTable } from "@/db/schema";
 
 export default function VideoHome() {
   const { success, error } = useMigrationHelper();

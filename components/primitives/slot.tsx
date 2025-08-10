@@ -31,8 +31,8 @@ const Pressable = React.forwardRef<
   >(isTextChildren(children) ? <></> : children, {
     ...mergeProps(pressableSlotProps, children.props),
     ref: forwardedRef
-      ? composeRefs(forwardedRef, (children as any).ref)
-      : (children as any).ref,
+      ? composeRefs(forwardedRef, (children).ref)
+      : (children).ref,
   });
 });
 
@@ -53,8 +53,8 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
     >(isTextChildren(children) ? <></> : children, {
       ...mergeProps(viewSlotProps, children.props),
       ref: forwardedRef
-        ? composeRefs(forwardedRef, (children as any).ref)
-        : (children as any).ref,
+        ? composeRefs(forwardedRef, (children).ref)
+        : (children).ref,
     });
   },
 );
@@ -76,8 +76,8 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
     >(isTextChildren(children) ? <></> : children, {
       ...mergeProps(textSlotProps, children.props),
       ref: forwardedRef
-        ? composeRefs(forwardedRef, (children as any).ref)
-        : (children as any).ref,
+        ? composeRefs(forwardedRef, (children).ref)
+        : (children).ref,
     });
   },
 );
@@ -105,8 +105,8 @@ const Image = React.forwardRef<
   >(isTextChildren(children) ? <></> : children, {
     ...mergeProps(imageSlotProps, children.props),
     ref: forwardedRef
-      ? composeRefs(forwardedRef, (children as any).ref)
-      : (children as any).ref,
+      ? composeRefs(forwardedRef, (children).ref)
+      : (children).ref,
   });
 });
 

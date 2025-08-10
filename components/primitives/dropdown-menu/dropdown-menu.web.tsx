@@ -1,11 +1,3 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import * as React from "react";
-import {
-  type GestureResponderEvent,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 import { useAugmentedRef } from "@/components/primitives/hooks";
 import * as Slot from "@/components/primitives/slot";
 import type {
@@ -19,6 +11,14 @@ import type {
   ViewRef,
 } from "@/components/primitives/types";
 import { EmptyGestureResponderEvent } from "@/components/primitives/utils";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as React from "react";
+import {
+  type GestureResponderEvent,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import type {
   DropdownMenuCheckboxItemProps,
   DropdownMenuItemProps,

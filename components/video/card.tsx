@@ -1,11 +1,11 @@
-import { Link } from "expo-router";
-import type React from "react";
-import { Image, Pressable, View } from "react-native";
 import { Clock, Heart, Play } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { formatDuration } from "@/lib/utils";
+import { Link } from "expo-router";
+import type React from "react";
+import { Image, Pressable, View } from "react-native";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
 

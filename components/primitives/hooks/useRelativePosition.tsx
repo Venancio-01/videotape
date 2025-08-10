@@ -1,11 +1,11 @@
+import type { Insets } from "@/components/primitives/types";
 import * as React from "react";
 import {
   type LayoutRectangle,
   type ScaledSize,
-  useWindowDimensions,
   type ViewStyle,
+  useWindowDimensions,
 } from "react-native";
-import type { Insets } from "@/components/primitives/types";
 
 const POSITION_ABSOLUTE: ViewStyle = {
   position: "absolute",

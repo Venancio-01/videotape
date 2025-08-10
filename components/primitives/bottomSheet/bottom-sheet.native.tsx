@@ -1,3 +1,6 @@
+import { X } from "@/lib/icons/Times";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
 import type {
   BottomSheetBackdropProps,
   BottomSheetFooterProps as GBottomSheetFooterProps,
@@ -22,9 +25,6 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { X } from "@/lib/icons/Times";
-import { useColorScheme } from "@/lib/useColorScheme";
-import { cn } from "@/lib/utils";
 import { Button } from "../../ui";
 import * as Slot from "../slot";
 
@@ -93,12 +93,16 @@ const BottomSheetContent = React.forwardRef<
     const { colors } = useTheme();
     const { sheetRef } = useBottomSheetContext();
 
-    React.useImperativeHandle(ref, () => {
-      if (!sheetRef.current) {
-        return {} as BottomSheetModalMethods;
-      }
-      return sheetRef.current;
-    }, [sheetRef.current]);
+    React.useImperativeHandle(
+      ref,
+      () => {
+        if (!sheetRef.current) {
+          return {} as BottomSheetModalMethods;
+        }
+        return sheetRef.current;
+      },
+      [sheetRef.current],
+    );
 
     const renderBackdrop = React.useCallback(
       (props: BottomSheetBackdropProps) => {

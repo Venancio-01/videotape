@@ -1,50 +1,50 @@
-import { 
-  eq, 
-  and, 
-  or, 
-  ilike, 
-  desc, 
-  asc, 
-  sql, 
+import {
+  and,
+  asc,
   count,
+  desc,
+  eq,
   gte,
-  lte,
+  ilike,
   inArray,
   isNull,
-  not
+  lte,
+  not,
+  or,
+  sql,
 } from "drizzle-orm";
-import { 
-  videoTable, 
-  watchHistoryTable, 
-  playlistTable, 
-  playlistVideoTable, 
-  tagTable, 
-  videoTagTable, 
-  settingsTable, 
-  folderTable, 
-  folderVideoTable, 
-  bookmarkTable, 
-  searchIndexTable 
-} from "./schema";
-import { 
-  type Video, 
-  type WatchHistory, 
-  type Playlist, 
-  type PlaylistVideo, 
-  type Tag, 
-  type Settings, 
-  type Folder, 
-  type Bookmark, 
-  type VideoWithHistory, 
-  type PlaylistWithVideos, 
-  type FolderWithVideos, 
-  type VideoWithRelations, 
-  type VideoSearchParams, 
-  type SearchResult, 
-  type VideoStats,
-  type UserStats
-} from "./schema";
 import { databaseManager } from "./database-manager";
+import {
+  bookmarkTable,
+  folderTable,
+  folderVideoTable,
+  playlistTable,
+  playlistVideoTable,
+  searchIndexTable,
+  settingsTable,
+  tagTable,
+  videoTable,
+  videoTagTable,
+  watchHistoryTable,
+} from "./schema";
+import type {
+  Bookmark,
+  Folder,
+  FolderWithVideos,
+  Playlist,
+  PlaylistVideo,
+  PlaylistWithVideos,
+  SearchResult,
+  Settings,
+  Tag,
+  UserStats,
+  Video,
+  VideoSearchParams,
+  VideoStats,
+  VideoWithHistory,
+  VideoWithRelations,
+  WatchHistory,
+} from "./schema";
 
 export class DatabaseService {
   private getDb() {
@@ -56,7 +56,9 @@ export class DatabaseService {
   /**
    * 创建视频记录
    */
-  async createVideo(videoData: Omit<typeof videoTable.$inferInsert, 'id'>): Promise<Video> {
+  async createVideo(
+    videoData: Omit<typeof videoTable.$inferInsert, "id">,
+  ): Promise<Video> {
     const db = this.getDb();
     const [video] = await db.insert(videoTable).values(videoData).returning();
     return video;
@@ -65,9 +67,14 @@ export class DatabaseService {
   /**
    * 批量创建视频记录
    */
-  async batchCreateVideos(videoDataList: Omit<typeof videoTable.$inferInsert, 'id'>[]): Promise<Video[]> {
+  async batchCreateVideos(
+    videoDataList: Omit<typeof videoTable.$inferInsert, "id">[],
+  ): Promise<Video[]> {
     const db = this.getDb();
-    const videos = await db.insert(videoTable).values(videoDataList).returning();
+    const videos = await db
+      .insert(videoTable)
+      .values(videoDataList)
+      .returning();
     return Array.isArray(videos) ? videos : [];
   }
 
@@ -76,7 +83,10 @@ export class DatabaseService {
    */
   async getVideoById(id: string): Promise<Video | null> {
     const db = this.getDb();
-    const [video] = await db.select().from(videoTable).where(eq(videoTable.id, id));
+    const [video] = await db
+      .select()
+      .from(videoTable)
+      .where(eq(videoTable.id, id));
     return video || null;
   }
 
@@ -85,7 +95,10 @@ export class DatabaseService {
    */
   async getVideoByFilePath(filePath: string): Promise<Video | null> {
     const db = this.getDb();
-    const [video] = await db.select().from(videoTable).where(eq(videoTable.filePath, filePath));
+    const [video] = await db
+      .select()
+      .from(videoTable)
+      .where(eq(videoTable.filePath, filePath));
     return video || null;
   }
 
@@ -94,29 +107,29 @@ export class DatabaseService {
    */
   async searchVideos(params: VideoSearchParams): Promise<SearchResult<Video>> {
     const db = this.getDb();
-    const { 
-      query, 
-      category, 
-      tags, 
-      isFavorite, 
-      minDuration, 
-      maxDuration, 
-      sortBy = 'created_at', 
-      sortOrder = 'desc', 
-      page = 1, 
-      pageSize = 20 
+    const {
+      query,
+      category,
+      tags,
+      isFavorite,
+      minDuration,
+      maxDuration,
+      sortBy = "created_at",
+      sortOrder = "desc",
+      page = 1,
+      pageSize = 20,
     } = params;
 
     const offset = (page - 1) * pageSize;
-    let whereConditions = [];
+    const whereConditions = [];
 
     // 搜索查询
     if (query) {
       whereConditions.push(
         or(
           ilike(videoTable.title, `%${query}%`),
-          ilike(videoTable.description, `%${query}%`)
-        )
+          ilike(videoTable.description, `%${query}%`),
+        ),
       );
     }
 
@@ -151,11 +164,12 @@ export class DatabaseService {
 
     // 构建基础查询
     const baseQuery = db.select().from(videoTable);
-    
+
     // 应用where条件
-    const filteredQuery = whereConditions.length > 0 
-      ? baseQuery.where(and(...whereConditions))
-      : baseQuery;
+    const filteredQuery =
+      whereConditions.length > 0
+        ? baseQuery.where(and(...whereConditions))
+        : baseQuery;
 
     // 排序
     const orderByColumn = {
@@ -166,14 +180,14 @@ export class DatabaseService {
       play_count: videoTable.playCount,
     }[sortBy];
 
-    const orderByDirection = sortOrder === 'desc' ? desc : asc;
+    const orderByDirection = sortOrder === "desc" ? desc : asc;
     const sortedQuery = filteredQuery.orderBy(orderByDirection(orderByColumn));
 
     // 获取总数 - 使用子查询
     const countQuery = db
       .select({ count: sql<number>`COUNT(*)` })
-      .from(filteredQuery.as('videos_filtered'));
-    
+      .from(filteredQuery.as("videos_filtered"));
+
     const [totalCount] = await countQuery;
 
     // 获取分页数据
@@ -191,7 +205,10 @@ export class DatabaseService {
   /**
    * 更新视频信息
    */
-  async updateVideo(id: string, updateData: Partial<Omit<typeof videoTable.$inferSelect, 'id'>>): Promise<Video> {
+  async updateVideo(
+    id: string,
+    updateData: Partial<Omit<typeof videoTable.$inferSelect, "id">>,
+  ): Promise<Video> {
     const db = this.getDb();
     const [video] = await db
       .update(videoTable)
@@ -215,14 +232,16 @@ export class DatabaseService {
    */
   async getVideoStats(): Promise<VideoStats> {
     const db = this.getDb();
-    
-    const [stats] = await db.select({
-      totalVideos: sql<number>`COUNT(*)`,
-      totalDuration: sql<number>`SUM(duration)`,
-      totalSize: sql<number>`SUM(file_size)`,
-      totalPlayCount: sql<number>`SUM(play_count)`,
-      averageRating: sql<number>`AVG(rating)`,
-    }).from(videoTable);
+
+    const [stats] = await db
+      .select({
+        totalVideos: sql<number>`COUNT(*)`,
+        totalDuration: sql<number>`SUM(duration)`,
+        totalSize: sql<number>`SUM(file_size)`,
+        totalPlayCount: sql<number>`SUM(play_count)`,
+        averageRating: sql<number>`AVG(rating)`,
+      })
+      .from(videoTable);
 
     const categoryStats = await db
       .select({
@@ -232,10 +251,13 @@ export class DatabaseService {
       .from(videoTable)
       .groupBy(videoTable.category);
 
-    const categories = categoryStats.reduce((acc, stat) => {
-      acc[stat.category] = stat.count;
-      return acc;
-    }, {} as Record<string, number>);
+    const categories = categoryStats.reduce(
+      (acc, stat) => {
+        acc[stat.category] = stat.count;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return {
       totalVideos: stats.totalVideos || 0,
@@ -252,14 +274,19 @@ export class DatabaseService {
   /**
    * 记录观看历史
    */
-  async recordWatchHistory(historyData: Omit<typeof watchHistoryTable.$inferInsert, 'id'>): Promise<WatchHistory> {
+  async recordWatchHistory(
+    historyData: Omit<typeof watchHistoryTable.$inferInsert, "id">,
+  ): Promise<WatchHistory> {
     const db = this.getDb();
-    
+
     // 开始事务
     const result = await db.transaction(async (tx) => {
       // 插入观看历史
-      const [history] = await tx.insert(watchHistoryTable).values(historyData).returning();
-      
+      const [history] = await tx
+        .insert(watchHistoryTable)
+        .values(historyData)
+        .returning();
+
       // 更新视频的观看进度和统计
       await tx
         .update(videoTable)
@@ -269,7 +296,7 @@ export class DatabaseService {
           playCount: sql`${videoTable.playCount} + 1`,
         })
         .where(eq(videoTable.id, historyData.videoId));
-      
+
       return history;
     });
 
@@ -279,7 +306,10 @@ export class DatabaseService {
   /**
    * 获取视频的观看历史
    */
-  async getVideoWatchHistory(videoId: string, limit = 10): Promise<WatchHistory[]> {
+  async getVideoWatchHistory(
+    videoId: string,
+    limit = 10,
+  ): Promise<WatchHistory[]> {
     const db = this.getDb();
     return db
       .select()
@@ -294,18 +324,25 @@ export class DatabaseService {
   /**
    * 创建播放列表
    */
-  async createPlaylist(playlistData: Omit<typeof playlistTable.$inferInsert, 'id'>): Promise<Playlist> {
+  async createPlaylist(
+    playlistData: Omit<typeof playlistTable.$inferInsert, "id">,
+  ): Promise<Playlist> {
     const db = this.getDb();
-    const [playlist] = await db.insert(playlistTable).values(playlistData).returning();
+    const [playlist] = await db
+      .insert(playlistTable)
+      .values(playlistData)
+      .returning();
     return playlist;
   }
 
   /**
    * 获取播放列表及其视频
    */
-  async getPlaylistWithVideos(playlistId: string): Promise<PlaylistWithVideos | null> {
+  async getPlaylistWithVideos(
+    playlistId: string,
+  ): Promise<PlaylistWithVideos | null> {
     const db = this.getDb();
-    
+
     const [playlist] = await db
       .select()
       .from(playlistTable)
@@ -337,13 +374,16 @@ export class DatabaseService {
         notes: playlistVideoTable.notes,
       })
       .from(videoTable)
-      .innerJoin(playlistVideoTable, eq(videoTable.id, playlistVideoTable.videoId))
+      .innerJoin(
+        playlistVideoTable,
+        eq(videoTable.id, playlistVideoTable.videoId),
+      )
       .where(eq(playlistVideoTable.playlistId, playlistId))
       .orderBy(playlistVideoTable.position);
 
     return {
       ...playlist,
-      videos: videos.map(v => ({
+      videos: videos.map((v) => ({
         id: v.id,
         title: v.title,
         filePath: v.filePath,
@@ -371,10 +411,14 @@ export class DatabaseService {
   /**
    * 添加视频到播放列表
    */
-  async addVideoToPlaylist(playlistId: string, videoId: string, options?: {
-    customTitle?: string;
-    notes?: string;
-  }): Promise<void> {
+  async addVideoToPlaylist(
+    playlistId: string,
+    videoId: string,
+    options?: {
+      customTitle?: string;
+      notes?: string;
+    },
+  ): Promise<void> {
     const db = this.getDb();
 
     await db.transaction(async (tx) => {
@@ -400,7 +444,7 @@ export class DatabaseService {
       // 更新播放列表的视频计数
       await tx
         .update(playlistTable)
-        .set({ 
+        .set({
           videoCount: sql`${playlistTable.videoCount} + 1`,
           updatedAt: sql`(CURRENT_TIMESTAMP)`,
         })
@@ -413,7 +457,9 @@ export class DatabaseService {
   /**
    * 创建标签
    */
-  async createTag(tagData: Omit<typeof tagTable.$inferInsert, 'id'>): Promise<Tag> {
+  async createTag(
+    tagData: Omit<typeof tagTable.$inferInsert, "id">,
+  ): Promise<Tag> {
     const db = this.getDb();
     const [tag] = await db.insert(tagTable).values(tagData).returning();
     return tag;
@@ -448,13 +494,13 @@ export class DatabaseService {
     const [settings] = await db
       .select()
       .from(settingsTable)
-      .where(eq(settingsTable.id, 'default'));
-    
+      .where(eq(settingsTable.id, "default"));
+
     if (!settings) {
       // 如果没有设置，创建默认设置
       const [defaultSettings] = await db
         .insert(settingsTable)
-        .values({ id: 'default' })
+        .values({ id: "default" })
         .returning();
       return defaultSettings;
     }
@@ -465,12 +511,14 @@ export class DatabaseService {
   /**
    * 更新用户设置
    */
-  async updateSettings(updateData: Partial<Omit<typeof settingsTable.$inferSelect, 'id'>>): Promise<Settings> {
+  async updateSettings(
+    updateData: Partial<Omit<typeof settingsTable.$inferSelect, "id">>,
+  ): Promise<Settings> {
     const db = this.getDb();
     const [settings] = await db
       .update(settingsTable)
       .set({ ...updateData, updatedAt: sql`(CURRENT_TIMESTAMP)` })
-      .where(eq(settingsTable.id, 'default'))
+      .where(eq(settingsTable.id, "default"))
       .returning();
     return settings;
   }
@@ -480,7 +528,9 @@ export class DatabaseService {
   /**
    * 创建文件夹
    */
-  async createFolder(folderData: Omit<typeof folderTable.$inferInsert, 'id'>): Promise<Folder> {
+  async createFolder(
+    folderData: Omit<typeof folderTable.$inferInsert, "id">,
+  ): Promise<Folder> {
     const db = this.getDb();
     const result = await db.insert(folderTable).values(folderData).returning();
     const folder = Array.isArray(result) ? result[0] : result;
@@ -490,9 +540,11 @@ export class DatabaseService {
   /**
    * 获取文件夹及其子文件夹和视频
    */
-  async getFolderWithContents(folderId: string): Promise<FolderWithVideos | null> {
+  async getFolderWithContents(
+    folderId: string,
+  ): Promise<FolderWithVideos | null> {
     const db = this.getDb();
-    
+
     const [folder] = await db
       .select()
       .from(folderTable)
@@ -544,9 +596,14 @@ export class DatabaseService {
   /**
    * 创建书签
    */
-  async createBookmark(bookmarkData: Omit<typeof bookmarkTable.$inferInsert, 'id'>): Promise<Bookmark> {
+  async createBookmark(
+    bookmarkData: Omit<typeof bookmarkTable.$inferInsert, "id">,
+  ): Promise<Bookmark> {
     const db = this.getDb();
-    const [bookmark] = await db.insert(bookmarkTable).values(bookmarkData).returning();
+    const [bookmark] = await db
+      .insert(bookmarkTable)
+      .values(bookmarkData)
+      .returning();
     return bookmark;
   }
 
@@ -569,7 +626,7 @@ export class DatabaseService {
    */
   async getUserStats(): Promise<UserStats> {
     const db = this.getDb();
-    
+
     const [watchStats] = await db
       .select({
         totalWatchTime: sql<number>`SUM(watch_time)`,
@@ -610,7 +667,7 @@ export class DatabaseService {
    */
   async getRecommendedVideos(limit = 10): Promise<Video[]> {
     const db = this.getDb();
-    
+
     // 获取用户经常观看的分类
     const favoriteCategories = await db
       .select({
@@ -618,12 +675,15 @@ export class DatabaseService {
         count: sql<number>`COUNT(*)`,
       })
       .from(videoTable)
-      .innerJoin(watchHistoryTable, eq(videoTable.id, watchHistoryTable.videoId))
+      .innerJoin(
+        watchHistoryTable,
+        eq(videoTable.id, watchHistoryTable.videoId),
+      )
       .groupBy(videoTable.category)
       .orderBy(desc(sql`COUNT(*)`))
       .limit(3);
 
-    const categoryNames = favoriteCategories.map(fc => fc.category);
+    const categoryNames = favoriteCategories.map((fc) => fc.category);
 
     // 获取这些分类中的视频，排除已观看的
     const watchedVideoIds = await db
@@ -637,9 +697,14 @@ export class DatabaseService {
       .where(
         and(
           inArray(videoTable.category, categoryNames),
-          not(inArray(videoTable.id, watchedVideoIds.map(wv => wv.videoId))),
-          eq(videoTable.isArchived, false)
-        )
+          not(
+            inArray(
+              videoTable.id,
+              watchedVideoIds.map((wv) => wv.videoId),
+            ),
+          ),
+          eq(videoTable.isArchived, false),
+        ),
       )
       .orderBy(desc(videoTable.playCount), desc(videoTable.rating))
       .limit(limit);

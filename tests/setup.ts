@@ -1,14 +1,14 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock React Native components
-vi.mock('react-native', () => ({
-  ...require('react-native'),
+vi.mock("react-native", () => ({
+  ...require("react-native"),
   // Add any specific mocks needed
 }));
 
 // Mock Expo Router
-vi.mock('expo-router', () => ({
+vi.mock("expo-router", () => ({
   Link: ({ children }: { children: React.ReactNode }) => children,
   useRouter: () => ({
     push: vi.fn(),
@@ -20,9 +20,9 @@ vi.mock('expo-router', () => ({
 }));
 
 // Mock nativewind
-vi.mock('nativewind', () => ({
+vi.mock("nativewind", () => ({
   useColorScheme: () => ({
-    colorScheme: 'light',
+    colorScheme: "light",
     setColorScheme: vi.fn(),
   }),
 }));

@@ -6,9 +6,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { initialize, databaseManager } from "./drizzle";
-import { databaseService } from "./database-service";
 import { databasePerformanceService } from "./database-performance";
+import { databaseService } from "./database-service";
+import { databaseManager, initialize } from "./drizzle";
 
 interface DatabaseContextType {
   db: SQLJsDatabase | ExpoSQLiteDatabase | null;
@@ -48,8 +48,12 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
         setIsInitialized(true);
         setError(null);
       } catch (err) {
-        console.error('Failed to initialize database:', err);
-        setError(err instanceof Error ? err : new Error('Database initialization failed'));
+        console.error("Failed to initialize database:", err);
+        setError(
+          err instanceof Error
+            ? err
+            : new Error("Database initialization failed"),
+        );
         setIsInitialized(false);
       }
     };

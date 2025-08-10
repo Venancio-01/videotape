@@ -326,19 +326,19 @@ interface ErrorHandler {
   // 错误捕获
   captureError(error: Error | string, context?: ErrorContext): Promise<void>;
   captureUnhandledRejection(reason: any): Promise<void>;
-  
+
   // 错误处理
   handleError(error: AppError): Promise<ErrorResult>;
   processError(error: AppError): Promise<void>;
-  
+
   // 错误恢复
   recoverFromError(error: AppError): Promise<RecoveryResult>;
   retryOperation(operation: () => Promise<any>): Promise<any>;
-  
+
   // 错误统计
   getErrorStats(): Promise<ErrorStats>;
   getErrorTrends(): Promise<ErrorTrend[]>;
-  
+
   // 错误报告
   generateErrorReport(options?: ReportOptions): Promise<ErrorReport>;
   exportErrorLogs(format: 'json' | 'csv' | 'txt'): Promise<string>;
@@ -350,25 +350,25 @@ interface ErrorContext {
   method?: string;
   line?: number;
   column?: number;
-  
+
   // 用户信息
   userId?: string;
   sessionId?: string;
-  
+
   // 设备信息
   deviceId?: string;
   platform?: string;
   version?: string;
-  
+
   // 操作信息
   action?: string;
   route?: string;
   params?: Record<string, any>;
-  
+
   // 环境信息
   environment?: 'development' | 'staging' | 'production';
   timestamp?: Date;
-  
+
   // 自定义数据
   custom?: Record<string, any>;
 }
@@ -379,20 +379,20 @@ interface AppError {
   type: ErrorType;
   severity: ErrorSeverity;
   category: ErrorCategory;
-  
+
   // 错误信息
   message: string;
   stack?: string;
   code?: string;
-  
+
   // 上下文信息
   context: ErrorContext;
   cause?: AppError;
-  
+
   // 时间信息
   timestamp: Date;
   count?: number;
-  
+
   // 处理信息
   handled: boolean;
   recovered: boolean;
@@ -407,15 +407,15 @@ interface ErrorRecovery {
   recover(error: AppError): Promise<RecoveryResult>;
   recoverState(error: AppError): Promise<StateRecoveryResult>;
   recoverData(error: AppError): Promise<DataRecoveryResult>;
-  
+
   // 重试操作
   retry<T>(operation: () => Promise<T>, options?: RetryOptions): Promise<T>;
   retryWithBackoff<T>(operation: () => Promise<T>, options?: RetryOptions): Promise<T>;
-  
+
   // 降级操作
   degrade(error: AppError): Promise<DegradationResult>;
   fallback<T>(operation: () => Promise<T>, fallback: () => Promise<T>): Promise<T>;
-  
+
   // 状态检查
   checkRecoveryStatus(errorId: string): Promise<RecoveryStatus>;
   getRecoveryHistory(): Promise<RecoveryRecord[]>;
@@ -450,16 +450,16 @@ interface ErrorPrevention {
   predictErrors(): Promise<ErrorPrediction[]>;
   assessRisk(operation: string): Promise<RiskAssessment>;
   getErrorPatterns(): Promise<ErrorPattern[]>;
-  
+
   // 质量检查
   runQualityChecks(): Promise<QualityCheckResult[]>;
   analyzeCodeQuality(): Promise<CodeQualityAnalysis>;
   checkTestCoverage(): Promise<TestCoverageAnalysis>;
-  
+
   // 预防建议
   getPreventionSuggestions(): Promise<PreventionSuggestion[]>;
   generatePreventionReport(): Promise<PreventionReport>;
-  
+
   // 早期警告
   setupEarlyWarnings(): Promise<void>;
   checkEarlyWarnings(): Promise<EarlyWarning[]>;
@@ -498,72 +498,72 @@ interface AppError {
   type: ErrorType;
   severity: ErrorSeverity;
   category: ErrorCategory;
-  
+
   // 错误描述
   message: string;
   description?: string;
   code?: string;
-  
+
   // 技术信息
   stack?: string;
   stackTrace?: StackFrame[];
   cause?: AppError;
-  
+
   // 上下文信息
   context: ErrorContext;
   environment: EnvironmentInfo;
-  
+
   // 时间信息
   timestamp: Date;
   firstOccurrence?: Date;
   lastOccurrence?: Date;
   count: number;
-  
+
   // 处理信息
   handled: boolean;
   handledBy?: string;
   handledAt?: Date;
   resolution?: string;
-  
+
   // 恢复信息
   recovered: boolean;
   recoveryType?: RecoveryType;
   recoveryTime?: number;
-  
+
   // 影响信息
   affectedUsers: number;
   affectedSessions: string[];
   impact: ErrorImpact;
-  
+
   // 元数据
   tags: string[];
   metadata?: Record<string, any>;
 }
 
-type ErrorType = 
-  | 'javascript' 
-  | 'network' 
-  | 'database' 
-  | 'file' 
-  | 'ui' 
-  | 'video' 
-  | 'audio' 
-  | 'system' 
-  | 'security' 
-  | 'business' 
+type ErrorType =
+  | 'javascript'
+  | 'network'
+  | 'database'
+  | 'file'
+  | 'ui'
+  | 'video'
+  | 'audio'
+  | 'system'
+  | 'security'
+  | 'business'
   | 'unknown';
 
 type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-type ErrorCategory = 
-  | 'runtime' 
-  | 'logic' 
-  | 'validation' 
-  | 'permission' 
-  | 'timeout' 
-  | 'connection' 
-  | 'resource' 
-  | 'compatibility' 
+type ErrorCategory =
+  | 'runtime'
+  | 'logic'
+  | 'validation'
+  | 'permission'
+  | 'timeout'
+  | 'connection'
+  | 'resource'
+  | 'compatibility'
   | 'configuration';
 
 interface ErrorContext {
@@ -571,18 +571,18 @@ interface ErrorContext {
   appVersion: string;
   buildNumber: string;
   environment: 'development' | 'staging' | 'production';
-  
+
   // 用户上下文
   userId?: string;
   sessionId?: string;
   userRole?: string;
-  
+
   // 设备上下文
   deviceId: string;
   platform: string;
   osVersion: string;
   deviceModel: string;
-  
+
   // 位置上下文
   component?: string;
   screen?: string;
@@ -590,15 +590,15 @@ interface ErrorContext {
   method?: string;
   line?: number;
   column?: number;
-  
+
   // 操作上下文
   action?: string;
   params?: Record<string, any>;
-  
+
   // 网络上下文
   networkType?: 'wifi' | 'cellular' | 'none';
   networkStrength?: number;
-  
+
   // 自定义上下文
   custom?: Record<string, any>;
 }
@@ -611,35 +611,35 @@ interface ErrorStats {
   totalErrors: number;
   uniqueErrors: number;
   errorRate: number;
-  
+
   // 类型统计
   errorsByType: Record<ErrorType, number>;
   errorsBySeverity: Record<ErrorSeverity, number>;
   errorsByCategory: Record<ErrorCategory, number>;
-  
+
   // 时间统计
   errorsToday: number;
   errorsThisWeek: number;
   errorsThisMonth: number;
   peakErrorTime: string;
-  
+
   // 处理统计
   handledErrors: number;
   recoveredErrors: number;
   handlingRate: number;
   recoveryRate: number;
-  
+
   // 影响统计
   affectedUsers: number;
   affectedSessions: number;
   averageImpactScore: number;
-  
+
   // 趋势统计
   trend: 'increasing' | 'decreasing' | 'stable';
   trendPercentage: number;
   weeklyTrend: number[];
   monthlyTrend: number[];
-  
+
   // 性能统计
   averageHandlingTime: number;
   averageRecoveryTime: number;
@@ -677,38 +677,38 @@ interface RecoveryRecord {
   id: string;
   errorId: string;
   recoveryType: RecoveryType;
-  
+
   // 时间信息
   timestamp: Date;
   duration: number;
-  
+
   // 恢复结果
   success: boolean;
   recoveredState?: any;
   recoveredData?: any;
-  
+
   // 重试信息
   retryCount: number;
   retryDelay: number;
-  
+
   // 降级信息
   degradationApplied?: DegradationInfo;
-  
+
   // 问题信息
   remainingIssues: string[];
   suggestions: string[];
-  
+
   // 元数据
   metadata?: Record<string, any>;
 }
 
-type RecoveryType = 
-  | 'automatic' 
-  | 'manual' 
-  | 'retry' 
-  | 'fallback' 
-  | 'degradation' 
-  | 'restart' 
+type RecoveryType =
+  | 'automatic'
+  | 'manual'
+  | 'retry'
+  | 'fallback'
+  | 'degradation'
+  | 'restart'
   | 'reset';
 
 interface DegradationInfo {
@@ -719,10 +719,10 @@ interface DegradationInfo {
   estimatedImpact: string;
 }
 
-type DegradationType = 
-  | 'feature_disabled' 
-  | 'performance_reduced' 
-  | 'quality_lowered' 
+type DegradationType =
+  | 'feature_disabled'
+  | 'performance_reduced'
+  | 'quality_lowered'
   | 'functionality_limited';
 
 type DegradationLevel = 'minimal' | 'moderate' | 'significant' | 'severe';
@@ -778,10 +778,10 @@ class GlobalErrorHandler {
   initialize(): void {
     // 设置全局错误处理器
     this.setupGlobalErrorHandlers();
-    
+
     // 设置未处理 Promise 拒绝处理器
     this.setupUnhandledRejectionHandler();
-    
+
     // 设置 React 错误边界
     this.setupReactErrorBoundary();
   }
@@ -792,7 +792,7 @@ class GlobalErrorHandler {
       window.addEventListener('error', (event) => {
         this.handleGlobalError(event.error, event);
       });
-      
+
       window.addEventListener('unhandledrejection', (event) => {
         this.handleUnhandledRejection(event.reason);
       });
@@ -801,7 +801,7 @@ class GlobalErrorHandler {
       process.on('uncaughtException', (error) => {
         this.handleGlobalError(error);
       });
-      
+
       process.on('unhandledRejection', (reason) => {
         this.handleUnhandledRejection(reason);
       });
@@ -811,10 +811,10 @@ class GlobalErrorHandler {
   private setupUnhandledRejectionHandler(): void {
     // 处理未处理的 Promise 拒绝
     const originalUnhandledRejection = window.onunhandledrejection;
-    
+
     window.onunhandledrejection = (event) => {
       this.handleUnhandledRejection(event.reason);
-      
+
       // 调用原始处理器
       if (originalUnhandledRejection) {
         originalUnhandledRejection.call(window, event);
@@ -825,10 +825,10 @@ class GlobalErrorHandler {
   private setupReactErrorBoundary(): void {
     // 创建 React 错误边界组件
     const ErrorBoundary = this.createErrorBoundaryComponent();
-    
+
     // 注册错误边界
     if (typeof window !== 'undefined') {
-      (window as any).ReactErrorBoundary = ErrorBoundary;
+      (window ).ReactErrorBoundary = ErrorBoundary;
     }
   }
 
@@ -963,25 +963,25 @@ class ErrorRecovery {
 
   async recoverFromError(error: AppError): Promise<RecoveryResult> {
     const startTime = Date.now();
-    
+
     try {
       // 获取恢复策略
       const strategy = this.getRecoveryStrategy(error);
-      
+
       // 执行恢复
       const result = await strategy.execute(error);
-      
+
       // 记录恢复时间
       const recoveryTime = Date.now() - startTime;
-      
+
       return {
         ...result,
         recoveryTime,
       };
-      
+
     } catch (recoveryError) {
       console.error('Recovery failed:', recoveryError);
-      
+
       return {
         success: false,
         errorId: error.id,
@@ -996,11 +996,11 @@ class ErrorRecovery {
   private getRecoveryStrategy(error: AppError): RecoveryStrategy {
     // 根据错误类型获取恢复策略
     const strategyKey = `${error.type}_${error.category}`;
-    
+
     if (this.recoveryStrategies.has(strategyKey)) {
       return this.recoveryStrategies.get(strategyKey)!;
     }
-    
+
     // 使用默认恢复策略
     return this.recoveryStrategies.get('default')!;
   }
@@ -1068,7 +1068,7 @@ class ErrorRecovery {
       method: 'GET',
       timeout: 5000,
     });
-    
+
     if (!response.ok) {
       throw new Error('Network connection failed');
     }
@@ -1110,16 +1110,16 @@ class ErrorPredictor {
     try {
       // 获取历史错误数据
       const historicalErrors = await this.getHistoricalErrors();
-      
+
       // 分析错误模式
       const patterns = await this.patternAnalyzer.analyzePatterns(historicalErrors);
-      
+
       // 评估风险
       const riskAssessments = await this.riskAssessor.assessRisks(patterns);
-      
+
       // 使用机器学习模型预测
       const predictions = await this.machineLearningModel.predict(riskAssessments);
-      
+
       return predictions;
     } catch (error) {
       console.error('Error prediction failed:', error);
@@ -1137,19 +1137,19 @@ class ErrorPredictor {
 class PatternAnalyzer {
   async analyzePatterns(errors: AppError[]): Promise<ErrorPattern[]> {
     const patterns: ErrorPattern[] = [];
-    
+
     // 分析错误频率模式
     const frequencyPattern = this.analyzeFrequencyPattern(errors);
     patterns.push(frequencyPattern);
-    
+
     // 分析错误时间模式
     const timePattern = this.analyzeTimePattern(errors);
     patterns.push(timePattern);
-    
+
     // 分析错误类型模式
     const typePattern = this.analyzeTypePattern(errors);
     patterns.push(typePattern);
-    
+
     return patterns;
   }
 
@@ -1158,9 +1158,9 @@ class PatternAnalyzer {
       acc[error.type] = (acc[error.type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
-    
+
     const totalErrors = errors.length;
-    
+
     return {
       id: 'frequency_pattern',
       type: 'frequency',
@@ -1181,14 +1181,14 @@ class PatternAnalyzer {
 
   private analyzeTimePattern(errors: AppError[]): ErrorPattern {
     const hourlyCounts = new Array(24).fill(0);
-    
+
     errors.forEach(error => {
       const hour = error.timestamp.getHours();
       hourlyCounts[hour]++;
     });
-    
+
     const peakHour = hourlyCounts.indexOf(Math.max(...hourlyCounts));
-    
+
     return {
       id: 'time_pattern',
       type: 'time',
@@ -1212,10 +1212,10 @@ class PatternAnalyzer {
       acc[error.type] = (acc[error.type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
-    
+
     const dominantType = Object.entries(typeCounts)
       .sort(([,a], [,b]) => b - a)[0]?.[0];
-    
+
     return {
       id: 'type_pattern',
       type: 'category',
@@ -1323,8 +1323,8 @@ class PatternAnalyzer {
 
 ---
 
-**文档版本**: 1.0  
-**创建日期**: 2025-08-10  
-**最后更新**: 2025-08-10  
-**负责人**: 蜂群思维系统  
+**文档版本**: 1.0
+**创建日期**: 2025-08-10
+**最后更新**: 2025-08-10
+**负责人**: 蜂群思维系统
 **状态**: 草案

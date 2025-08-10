@@ -2,62 +2,67 @@
  * 状态管理工具函数
  */
 
-import { type StateSelector, EqualityChecker } from 'zustand';
+import type { EqualityChecker, StateSelector } from "zustand";
 
 // 深度比较函数
 export const deepEqual = (a: any, b: any): boolean => {
   if (a === b) return true;
-  
+
   if (typeof a !== typeof b) return false;
-  
-  if (typeof a === 'object' && a !== null && b !== null) {
+
+  if (typeof a === "object" && a !== null && b !== null) {
     const keysA = Object.keys(a);
     const keysB = Object.keys(b);
-    
+
     if (keysA.length !== keysB.length) return false;
-    
+
     for (const key of keysA) {
       if (!keysB.includes(key)) return false;
       if (!deepEqual(a[key], b[key])) return false;
     }
-    
+
     return true;
   }
-  
+
   return false;
 };
 
 // 浅度比较函数
 export const shallowEqual = (a: any, b: any): boolean => {
   if (a === b) return true;
-  
-  if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {
+
+  if (
+    typeof a !== "object" ||
+    a === null ||
+    typeof b !== "object" ||
+    b === null
+  ) {
     return false;
   }
-  
+
   const keysA = Object.keys(a);
   const keysB = Object.keys(b);
-  
+
   if (keysA.length !== keysB.length) return false;
-  
+
   for (let i = 0; i < keysA.length; i++) {
     const key = keysA[i];
     if (!Object.prototype.hasOwnProperty.call(b, key) || a[key] !== b[key]) {
       return false;
     }
   }
-  
+
   return true;
 };
 
 // 创建记忆化选择器
 export const createSelector = <T, U>(
   selector: StateSelector<T, U>,
-  equalityFn: EqualityChecker<U> = shallowEqual
+  equalityFn: EqualityChecker<U> = shallowEqual,
 ): StateSelector<T, U> => {
   let lastState: T | undefined;
   let lastResult: U | undefined;
-  
+
   return (state: T): U => {
     if (lastState === undefined || !equalityFn(lastState, state)) {
       lastState = state;
@@ -69,7 +74,7 @@ export const createSelector = <T, U>(
 
 // 创建深度记忆化选择器
 export const createDeepSelector = <T, U>(
-  selector: StateSelector<T, U>
+  selector: StateSelector<T, U>,
 ): StateSelector<T, U> => {
   return createSelector(selector, deepEqual);
 };
@@ -77,10 +82,10 @@ export const createDeepSelector = <T, U>(
 // 防抖函数
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): T => {
   let timeout: NodeJS.Timeout;
-  
+
   return ((...args: any[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
@@ -90,10 +95,10 @@ export const debounce = <T extends (...args: any[]) => any>(
 // 节流函数
 export const throttle = <T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): T => {
   let inThrottle: boolean;
-  
+
   return ((...args: any[]) => {
     if (!inThrottle) {
       func(...args);
@@ -105,85 +110,97 @@ export const throttle = <T extends (...args: any[]) => any>(
 
 // 状态路径获取器
 export const getStateValue = (state: any, path: string): any => {
-  return path.split('.').reduce((obj, key) => obj?.[key], state);
+  return path.split(".").reduce((obj, key) => obj?.[key], state);
 };
 
 // 状态路径设置器
 export const setStateValue = (state: any, path: string, value: any): any => {
-  const keys = path.split('.');
+  const keys = path.split(".");
   const lastKey = keys.pop()!;
-  
+
   const target = keys.reduce((obj, key) => {
     if (obj[key] === undefined) {
       obj[key] = {};
     }
     return obj[key];
   }, state);
-  
+
   target[lastKey] = value;
   return state;
 };
 
 // 状态路径删除器
 export const deleteStateValue = (state: any, path: string): any => {
-  const keys = path.split('.');
+  const keys = path.split(".");
   const lastKey = keys.pop()!;
-  
+
   const target = keys.reduce((obj, key) => obj[key], state);
-  
-  if (target && typeof target === 'object') {
+
+  if (target && typeof target === "object") {
     delete target[lastKey];
   }
-  
+
   return state;
 };
 
 // 对象冻结（深度不可变）
 export const deepFreeze = <T>(object: T): T => {
   const propNames = Object.getOwnPropertyNames(object);
-  
+
   for (const name of propNames) {
-    const value = (object as any)[name];
-    if (value && typeof value === 'object') {
+    const value = (object )[name];
+    if (value && typeof value === "object") {
       deepFreeze(value);
     }
   }
-  
+
   return Object.freeze(object);
 };
 
 // 对象合并（深度合并）
-export const deepMerge = <T extends Record<string, any>>(target: T, source: Partial<T>): T => {
+export const deepMerge = <T extends Record<string, any>>(
+  target: T,
+  source: Partial<T>,
+): T => {
   const result = { ...target };
-  
+
   for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key] as any);
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key])
+    ) {
+      result[key] = deepMerge(result[key] || {}, source[key] );
     } else {
-      result[key] = source[key] as any;
+      result[key] = source[key] ;
     }
   }
-  
+
   return result;
 };
 
 // 状态差异计算
 export const computeStateDiff = (prevState: any, currentState: any): any => {
   const diff: any = {};
-  
-  const compare = (prev: any, curr: any, path: string = '') => {
+
+  const compare = (prev: any, curr: any, path = "") => {
     if (prev === curr) return;
-    
-    if (typeof prev !== 'object' || prev === null || typeof curr !== 'object' || curr === null) {
+
+    if (
+      typeof prev !== "object" ||
+      prev === null ||
+      typeof curr !== "object" ||
+      curr === null
+    ) {
       setStateValue(diff, path, curr);
       return;
     }
-    
+
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-    
+
     for (const key of allKeys) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (!(key in prev)) {
         setStateValue(diff, currentPath, curr[key]);
       } else if (!(key in curr)) {
@@ -193,45 +210,61 @@ export const computeStateDiff = (prevState: any, currentState: any): any => {
       }
     }
   };
-  
+
   compare(prevState, currentState);
   return diff;
 };
 
 // 状态验证器
-export const validateState = (state: any, schema: any): { isValid: boolean; errors: string[] } => {
+export const validateState = (
+  state: any,
+  schema: any,
+): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  
-  const validate = (obj: any, schemaObj: any, path: string = '') => {
-    if (typeof schemaObj !== 'object' || schemaObj === null) return;
-    
+
+  const validate = (obj: any, schemaObj: any, path = "") => {
+    if (typeof schemaObj !== "object" || schemaObj === null) return;
+
     for (const key in schemaObj) {
       const currentPath = path ? `${path}.${key}` : key;
-      
+
       if (!(key in obj)) {
         errors.push(`Missing required field: ${currentPath}`);
         continue;
       }
-      
+
       const expectedType = schemaObj[key];
       const actualValue = obj[key];
-      
-      if (expectedType === 'string' && typeof actualValue !== 'string') {
-        errors.push(`Expected string at ${currentPath}, got ${typeof actualValue}`);
-      } else if (expectedType === 'number' && typeof actualValue !== 'number') {
-        errors.push(`Expected number at ${currentPath}, got ${typeof actualValue}`);
-      } else if (expectedType === 'boolean' && typeof actualValue !== 'boolean') {
-        errors.push(`Expected boolean at ${currentPath}, got ${typeof actualValue}`);
-      } else if (expectedType === 'array' && !Array.isArray(actualValue)) {
-        errors.push(`Expected array at ${currentPath}, got ${typeof actualValue}`);
-      } else if (expectedType === 'object' && typeof actualValue !== 'object') {
-        errors.push(`Expected object at ${currentPath}, got ${typeof actualValue}`);
-      } else if (typeof expectedType === 'object' && actualValue !== null) {
+
+      if (expectedType === "string" && typeof actualValue !== "string") {
+        errors.push(
+          `Expected string at ${currentPath}, got ${typeof actualValue}`,
+        );
+      } else if (expectedType === "number" && typeof actualValue !== "number") {
+        errors.push(
+          `Expected number at ${currentPath}, got ${typeof actualValue}`,
+        );
+      } else if (
+        expectedType === "boolean" &&
+        typeof actualValue !== "boolean"
+      ) {
+        errors.push(
+          `Expected boolean at ${currentPath}, got ${typeof actualValue}`,
+        );
+      } else if (expectedType === "array" && !Array.isArray(actualValue)) {
+        errors.push(
+          `Expected array at ${currentPath}, got ${typeof actualValue}`,
+        );
+      } else if (expectedType === "object" && typeof actualValue !== "object") {
+        errors.push(
+          `Expected object at ${currentPath}, got ${typeof actualValue}`,
+        );
+      } else if (typeof expectedType === "object" && actualValue !== null) {
         validate(actualValue, expectedType, currentPath);
       }
     }
   };
-  
+
   validate(state, schema);
   return { isValid: errors.length === 0, errors };
 };
@@ -241,15 +274,15 @@ export const serializeState = (state: any): string => {
   try {
     return JSON.stringify(state, (key, value) => {
       if (value instanceof Set) {
-        return { __type: 'Set', value: Array.from(value) };
+        return { __type: "Set", value: Array.from(value) };
       }
       if (value instanceof Map) {
-        return { __type: 'Map', value: Array.from(value.entries()) };
+        return { __type: "Map", value: Array.from(value.entries()) };
       }
       if (value instanceof Date) {
-        return { __type: 'Date', value: value.toISOString() };
+        return { __type: "Date", value: value.toISOString() };
       }
-      if (typeof value === 'function') {
+      if (typeof value === "function") {
         return undefined;
       }
       return value;
@@ -263,13 +296,13 @@ export const serializeState = (state: any): string => {
 export const deserializeState = <T>(serialized: string): T => {
   try {
     return JSON.parse(serialized, (key, value) => {
-      if (value && typeof value === 'object' && value.__type) {
+      if (value && typeof value === "object" && value.__type) {
         switch (value.__type) {
-          case 'Set':
+          case "Set":
             return new Set(value.value);
-          case 'Map':
+          case "Map":
             return new Map(value.value);
-          case 'Date':
+          case "Date":
             return new Date(value.value);
           default:
             return value;
@@ -290,19 +323,21 @@ export const getStateSize = (state: any): number => {
 // 状态清理器
 export const cleanupState = <T>(state: T, maxAge?: number): T => {
   const now = Date.now();
-  
+
   const clean = (obj: any): any => {
     if (Array.isArray(obj)) {
-      return obj.map(item => clean(item)).filter(item => {
-        if (maxAge && item.timestamp && item.timestamp < now - maxAge) {
-          return false;
-        }
-        return true;
-      });
-    } else if (obj && typeof obj === 'object') {
+      return obj
+        .map((item) => clean(item))
+        .filter((item) => {
+          if (maxAge && item.timestamp && item.timestamp < now - maxAge) {
+            return false;
+          }
+          return true;
+        });
+    } else if (obj && typeof obj === "object") {
       const result: any = {};
       for (const key in obj) {
-        if (maxAge && key === 'timestamp' && obj[key] < now - maxAge) {
+        if (maxAge && key === "timestamp" && obj[key] < now - maxAge) {
           continue;
         }
         result[key] = clean(obj[key]);
@@ -311,49 +346,49 @@ export const cleanupState = <T>(state: T, maxAge?: number): T => {
     }
     return obj;
   };
-  
+
   return clean(state);
 };
 
 // 性能监控工具
 export const createPerformanceMonitor = () => {
   const metrics = new Map<string, number[]>();
-  
+
   const recordMetric = (name: string, duration: number) => {
     if (!metrics.has(name)) {
       metrics.set(name, []);
     }
     metrics.get(name)!.push(duration);
-    
+
     // 保持最近100个样本
     const samples = metrics.get(name)!;
     if (samples.length > 100) {
       samples.shift();
     }
   };
-  
+
   const getAverage = (name: string): number => {
     const samples = metrics.get(name);
     if (!samples || samples.length === 0) return 0;
     return samples.reduce((sum, val) => sum + val, 0) / samples.length;
   };
-  
+
   const getMax = (name: string): number => {
     const samples = metrics.get(name);
     if (!samples || samples.length === 0) return 0;
     return Math.max(...samples);
   };
-  
+
   const getMin = (name: string): number => {
     const samples = metrics.get(name);
     if (!samples || samples.length === 0) return 0;
     return Math.min(...samples);
   };
-  
+
   const getStats = (name: string) => {
     const samples = metrics.get(name);
     if (!samples || samples.length === 0) return null;
-    
+
     return {
       count: samples.length,
       average: getAverage(name),
@@ -362,7 +397,7 @@ export const createPerformanceMonitor = () => {
       latest: samples[samples.length - 1],
     };
   };
-  
+
   return {
     recordMetric,
     getAverage,

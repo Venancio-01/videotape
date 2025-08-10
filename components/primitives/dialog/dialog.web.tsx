@@ -1,11 +1,3 @@
-import * as Dialog from "@radix-ui/react-dialog";
-import * as React from "react";
-import {
-  type GestureResponderEvent,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -15,6 +7,14 @@ import type {
   TextRef,
   ViewRef,
 } from "@/components/primitives/types";
+import * as Dialog from "@radix-ui/react-dialog";
+import * as React from "react";
+import {
+  type GestureResponderEvent,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { useAugmentedRef, useControllableState } from "../hooks";
 import type {
   DialogContentProps,

@@ -2,39 +2,59 @@
  * 播放 Store Hook - 提供播放状态管理的便捷接口
  */
 
-import { usePlaybackStore as baseUsePlaybackStore, playbackSelectors } from '@/stores/playbackStore';
-import { usePlaybackSelector } from '@/stores/playbackStore';
-import { useMemo } from 'react';
+import {
+  usePlaybackStore as baseUsePlaybackStore,
+  playbackSelectors,
+} from "@/stores/playbackStore";
+import { usePlaybackSelector } from "@/stores/playbackStore";
+import { useMemo } from "react";
 
 // 基础 Hook
 export const usePlaybackStore = baseUsePlaybackStore;
 
 // 选择器 Hooks
-export const useIsPlaying = () => usePlaybackSelector(playbackSelectors.getIsPlaying);
-export const useIsPaused = () => usePlaybackSelector(playbackSelectors.getIsPaused);
-export const useIsLoading = () => usePlaybackSelector(playbackSelectors.getIsLoading);
-export const useIsBuffering = () => usePlaybackSelector(playbackSelectors.getIsBuffering);
-export const usePosition = () => usePlaybackSelector(playbackSelectors.getPosition);
-export const useDuration = () => usePlaybackSelector(playbackSelectors.getDuration);
-export const useBufferedPosition = () => usePlaybackSelector(playbackSelectors.getBufferedPosition);
-export const useProgress = () => usePlaybackSelector(playbackSelectors.getProgress);
-export const useFormattedTime = () => usePlaybackSelector((state) => ({
-  position: playbackSelectors.getFormattedPosition(state),
-  duration: playbackSelectors.getFormattedDuration(state),
-  remaining: playbackSelectors.getFormattedTimeRemaining(state),
-}));
+export const useIsPlaying = () =>
+  usePlaybackSelector(playbackSelectors.getIsPlaying);
+export const useIsPaused = () =>
+  usePlaybackSelector(playbackSelectors.getIsPaused);
+export const useIsLoading = () =>
+  usePlaybackSelector(playbackSelectors.getIsLoading);
+export const useIsBuffering = () =>
+  usePlaybackSelector(playbackSelectors.getIsBuffering);
+export const usePosition = () =>
+  usePlaybackSelector(playbackSelectors.getPosition);
+export const useDuration = () =>
+  usePlaybackSelector(playbackSelectors.getDuration);
+export const useBufferedPosition = () =>
+  usePlaybackSelector(playbackSelectors.getBufferedPosition);
+export const useProgress = () =>
+  usePlaybackSelector(playbackSelectors.getProgress);
+export const useFormattedTime = () =>
+  usePlaybackSelector((state) => ({
+    position: playbackSelectors.getFormattedPosition(state),
+    duration: playbackSelectors.getFormattedDuration(state),
+    remaining: playbackSelectors.getFormattedTimeRemaining(state),
+  }));
 export const useVolume = () => usePlaybackSelector(playbackSelectors.getVolume);
-export const usePlaybackRate = () => usePlaybackSelector(playbackSelectors.getPlaybackRate);
-export const useIsMuted = () => usePlaybackSelector(playbackSelectors.getIsMuted);
-export const useIsLooping = () => usePlaybackSelector(playbackSelectors.getIsLooping);
-export const useRepeatMode = () => usePlaybackSelector(playbackSelectors.getRepeatMode);
-export const useShuffleMode = () => usePlaybackSelector(playbackSelectors.getShuffleMode);
+export const usePlaybackRate = () =>
+  usePlaybackSelector(playbackSelectors.getPlaybackRate);
+export const useIsMuted = () =>
+  usePlaybackSelector(playbackSelectors.getIsMuted);
+export const useIsLooping = () =>
+  usePlaybackSelector(playbackSelectors.getIsLooping);
+export const useRepeatMode = () =>
+  usePlaybackSelector(playbackSelectors.getRepeatMode);
+export const useShuffleMode = () =>
+  usePlaybackSelector(playbackSelectors.getShuffleMode);
 export const useError = () => usePlaybackSelector(playbackSelectors.getError);
-export const usePlaybackStatus = () => usePlaybackSelector(playbackSelectors.getPlaybackStatus);
+export const usePlaybackStatus = () =>
+  usePlaybackSelector(playbackSelectors.getPlaybackStatus);
 
 // 控制状态 Hooks
-export const usePlaybackControls = () => usePlaybackSelector(playbackSelectors.getPlaybackControls);
-export const usePlaybackSettings = () => usePlaybackSelector(playbackSelectors.getPlaybackSettings);
+export const usePlaybackControls = () =>
+  usePlaybackSelector(playbackSelectors.getPlaybackControls);
+export const usePlaybackSettings = () =>
+  usePlaybackSelector(playbackSelectors.getPlaybackSettings);
 
 // 操作 Hooks
 export const usePlaybackActions = () => {
@@ -53,15 +73,23 @@ export const usePlaybackActions = () => {
   const toggleLooping = usePlaybackStore((state) => state.toggleLooping);
   const setLooping = usePlaybackStore((state) => state.setLooping);
   const setBuffering = usePlaybackStore((state) => state.setBuffering);
-  const setBufferedPosition = usePlaybackStore((state) => state.setBufferedPosition);
+  const setBufferedPosition = usePlaybackStore(
+    (state) => state.setBufferedPosition,
+  );
   const setDuration = usePlaybackStore((state) => state.setDuration);
   const setError = usePlaybackStore((state) => state.setError);
   const clearError = usePlaybackStore((state) => state.clearError);
-  const updatePlaybackState = usePlaybackStore((state) => state.updatePlaybackState);
+  const updatePlaybackState = usePlaybackStore(
+    (state) => state.updatePlaybackState,
+  );
   const updateProgress = usePlaybackStore((state) => state.updateProgress);
   const updateBuffering = usePlaybackStore((state) => state.updateBuffering);
-  const resetPlaybackState = usePlaybackStore((state) => state.resetPlaybackState);
-  const resetPlaybackControls = usePlaybackStore((state) => state.resetPlaybackControls);
+  const resetPlaybackState = usePlaybackStore(
+    (state) => state.resetPlaybackState,
+  );
+  const resetPlaybackControls = usePlaybackStore(
+    (state) => state.resetPlaybackControls,
+  );
 
   return {
     play,
@@ -131,11 +159,11 @@ export const usePlaybackProgress = () => {
     }
   };
 
-  const seekForwardSeconds = (seconds: number = 10) => {
+  const seekForwardSeconds = (seconds = 10) => {
     actions.seekForward(seconds);
   };
 
-  const seekBackwardSeconds = (seconds: number = 10) => {
+  const seekBackwardSeconds = (seconds = 10) => {
     actions.seekBackward(seconds);
   };
 
@@ -158,7 +186,9 @@ export const usePlaybackProgress = () => {
 export const usePlaybackVolume = () => {
   const volume = useVolume();
   const isMuted = useIsMuted();
-  const volumePercentage = usePlaybackSelector(playbackSelectors.getVolumePercentage);
+  const volumePercentage = usePlaybackSelector(
+    playbackSelectors.getVolumePercentage,
+  );
   const isVolumeMuted = usePlaybackSelector(playbackSelectors.getIsVolumeMuted);
   const actions = usePlaybackActions();
 
@@ -166,12 +196,12 @@ export const usePlaybackVolume = () => {
     actions.setVolume(percentage / 100);
   };
 
-  const increaseVolume = (amount: number = 10) => {
+  const increaseVolume = (amount = 10) => {
     const newVolume = Math.min(100, volumePercentage + amount);
     setVolumePercentage(newVolume);
   };
 
-  const decreaseVolume = (amount: number = 10) => {
+  const decreaseVolume = (amount = 10) => {
     const newVolume = Math.max(0, volumePercentage - amount);
     setVolumePercentage(newVolume);
   };
@@ -197,8 +227,12 @@ export const usePlaybackVolume = () => {
 // 播放速率 Hook
 export const usePlaybackSpeed = () => {
   const playbackRate = usePlaybackRate();
-  const formattedPlaybackRate = usePlaybackSelector(playbackSelectors.getFormattedPlaybackRate);
-  const playbackRateOptions = usePlaybackSelector(playbackSelectors.getPlaybackRateOptions);
+  const formattedPlaybackRate = usePlaybackSelector(
+    playbackSelectors.getFormattedPlaybackRate,
+  );
+  const playbackRateOptions = usePlaybackSelector(
+    playbackSelectors.getPlaybackRateOptions,
+  );
   const actions = usePlaybackActions();
 
   const setPlaybackSpeed = (speed: number) => {
@@ -226,7 +260,8 @@ export const usePlaybackSpeed = () => {
     setPlaybackSpeed,
     increaseSpeed,
     decreaseSpeed,
-    canIncreaseSpeed: playbackRate < playbackRateOptions[playbackRateOptions.length - 1],
+    canIncreaseSpeed:
+      playbackRate < playbackRateOptions[playbackRateOptions.length - 1],
     canDecreaseSpeed: playbackRate > playbackRateOptions[0],
   };
 };
@@ -239,7 +274,7 @@ export const usePlaybackModes = () => {
   const actions = usePlaybackActions();
 
   const cycleRepeatMode = () => {
-    const modes: ('none' | 'single' | 'all')[] = ['none', 'single', 'all'];
+    const modes: ("none" | "single" | "all")[] = ["none", "single", "all"];
     const currentIndex = modes.indexOf(repeatMode);
     const nextIndex = (currentIndex + 1) % modes.length;
     actions.setRepeatMode(modes[nextIndex]);
@@ -286,7 +321,9 @@ export const usePlaybackError = () => {
 export const usePlaybackBuffering = () => {
   const isBuffering = useIsBuffering();
   const bufferedPosition = useBufferedPosition();
-  const bufferedProgress = usePlaybackSelector(playbackSelectors.getBufferedProgress);
+  const bufferedProgress = usePlaybackSelector(
+    playbackSelectors.getBufferedProgress,
+  );
   const actions = usePlaybackActions();
 
   return {
@@ -320,11 +357,11 @@ export const usePlaybackManager = () => {
     error,
     buffering,
     controls,
-    
+
     // 便捷属性
-    isPlaying: status === 'playing',
-    isPaused: status === 'paused',
-    isLoading: status === 'loading',
+    isPlaying: status === "playing",
+    isPaused: status === "paused",
+    isLoading: status === "loading",
     isBuffering: buffering.isBuffering,
     hasError: error.hasError,
     canPlay: controls.canPlay,

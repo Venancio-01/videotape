@@ -1,7 +1,3 @@
-import { useBottomSheetModal } from "@gorhom/bottom-sheet";
-import { useColorScheme } from "nativewind";
-import { useCallback, useMemo, useState } from "react";
-import { Platform, Pressable, View } from "react-native";
 import {
   BottomSheet,
   BottomSheetContent,
@@ -16,6 +12,10 @@ import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
 import { Check } from "@/lib/icons/Check";
 import { getItem, setItem } from "@/lib/storage";
 import { useSettingsStore } from "@/src/stores/settingsStore";
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+import { useColorScheme } from "nativewind";
+import { useCallback, useMemo, useState } from "react";
+import { Platform, Pressable, View } from "react-native";
 
 type ItemData = {
   title: string;

@@ -1,8 +1,8 @@
-import { Tabs } from "expo-router";
 import { FolderOpen } from "@/lib/icons/FolderOpen";
 import { Search } from "@/lib/icons/Search";
 import { Settings } from "@/lib/icons/Settings";
 import { Video } from "@/lib/icons/Video";
+import { Tabs } from "expo-router";
 
 export const unstable_settings = {
   initialRouteName: "index",

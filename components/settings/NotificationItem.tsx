@@ -1,10 +1,10 @@
+import ListItem from "@/components/ui/list-item";
+import { Text } from "@/components/ui/text";
+import { Bell } from "@/lib/icons";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Notifications from "expo-notifications";
 import { useState } from "react";
 import { Linking, Platform } from "react-native";
-import ListItem from "@/components/ui/list-item";
-import { Text } from "@/components/ui/text";
-import { Bell } from "@/lib/icons";
 
 export const NotificationItem = () => {
   const [permission, setPermission] =

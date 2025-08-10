@@ -196,12 +196,16 @@ const FormInput = React.forwardRef<
     formMessageNativeID,
   } = useFormField();
 
-  React.useImperativeHandle(ref, () => {
-    if (!inputRef.current) {
-      return {} as React.ComponentRef<typeof Input>;
-    }
-    return inputRef.current;
-  }, [inputRef.current]);
+  React.useImperativeHandle(
+    ref,
+    () => {
+      if (!inputRef.current) {
+        return {} as React.ComponentRef<typeof Input>;
+      }
+      return inputRef.current;
+    },
+    [inputRef.current],
+  );
 
   function handleOnLabelPress() {
     if (!inputRef.current) {
@@ -254,12 +258,16 @@ const FormTextarea = React.forwardRef<
     formMessageNativeID,
   } = useFormField();
 
-  React.useImperativeHandle(ref, () => {
-    if (!textareaRef.current) {
-      return {} as React.ComponentRef<typeof Textarea>;
-    }
-    return textareaRef.current;
-  }, [textareaRef.current]);
+  React.useImperativeHandle(
+    ref,
+    () => {
+      if (!textareaRef.current) {
+        return {} as React.ComponentRef<typeof Textarea>;
+      }
+      return textareaRef.current;
+    },
+    [textareaRef.current],
+  );
 
   function handleOnLabelPress() {
     if (!textareaRef.current) {
@@ -499,12 +507,16 @@ const FormSwitch = React.forwardRef<
     formMessageNativeID,
   } = useFormField();
 
-  React.useImperativeHandle(ref, () => {
-    if (!switchRef.current) {
-      return {} as React.ComponentRef<typeof Switch>;
-    }
-    return switchRef.current;
-  }, [switchRef.current]);
+  React.useImperativeHandle(
+    ref,
+    () => {
+      if (!switchRef.current) {
+        return {} as React.ComponentRef<typeof Switch>;
+      }
+      return switchRef.current;
+    },
+    [switchRef.current],
+  );
 
   function handleOnLabelPress() {
     onChange?.(!value);

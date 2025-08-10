@@ -140,9 +140,13 @@ export const settingsTable = sqliteTable("settings", {
   subtitleLanguage: text("subtitle_language").default("auto"),
   audioLanguage: text("audio_language").default("auto"),
   maxCacheSize: integer("max_cache_size").default(1024), // MB
-  autoCleanupCache: integer("auto_cleanup_cache", { mode: "boolean" }).default(true),
+  autoCleanupCache: integer("auto_cleanup_cache", { mode: "boolean" }).default(
+    true,
+  ),
   cacheRetentionDays: integer("cache_retention_days").default(30),
-  dataBackupEnabled: integer("data_backup_enabled", { mode: "boolean" }).default(false),
+  dataBackupEnabled: integer("data_backup_enabled", {
+    mode: "boolean",
+  }).default(false),
   lastBackupAt: text("last_backup_at"),
   createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text("updated_at").default(sql`(CURRENT_TIMESTAMP)`),
@@ -155,9 +159,7 @@ const folderTable = sqliteTable("folders", {
     .notNull()
     .primaryKey(),
   name: text("name").notNull(),
-  parentId: text("parent_id").references(function() {
-    return folderTable.id;
-  }, {
+  parentId: text("parent_id").references(() => folderTable.id, {
     onDelete: "set null",
   }),
   path: text("path").notNull().unique(),
@@ -165,7 +167,9 @@ const folderTable = sqliteTable("folders", {
   description: text("description"),
   sortOrder: text("sort_order").default("name_asc"),
   viewMode: text("view_mode").default("grid"),
-  isSystemFolder: integer("is_system_folder", { mode: "boolean" }).default(false),
+  isSystemFolder: integer("is_system_folder", { mode: "boolean" }).default(
+    false,
+  ),
   createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text("updated_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
@@ -261,8 +265,8 @@ export type VideoWithHistory = Video & {
 };
 
 export type PlaylistWithVideos = Playlist & {
-  videos: (Video & { 
-    order: number; 
+  videos: (Video & {
+    order: number;
     customTitle?: string;
     customThumbnailPath?: string;
     notes?: string;
@@ -290,8 +294,8 @@ export type VideoSearchParams = {
   isFavorite?: boolean;
   minDuration?: number;
   maxDuration?: number;
-  sortBy?: 'created_at' | 'title' | 'duration' | 'rating' | 'play_count';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "created_at" | "title" | "duration" | "rating" | "play_count";
+  sortOrder?: "asc" | "desc";
   page?: number;
   pageSize?: number;
 };

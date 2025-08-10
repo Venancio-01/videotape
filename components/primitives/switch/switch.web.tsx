@@ -1,6 +1,3 @@
-import * as Switch from "@radix-ui/react-switch";
-import * as React from "react";
-import { type GestureResponderEvent, Pressable, View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -8,6 +5,9 @@ import type {
   SlottableViewProps,
   ViewRef,
 } from "@/components/primitives/types";
+import * as Switch from "@radix-ui/react-switch";
+import * as React from "react";
+import { type GestureResponderEvent, Pressable, View } from "react-native";
 import type { SwitchRootProps } from "./types";
 
 const Root = React.forwardRef<
