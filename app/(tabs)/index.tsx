@@ -1,7 +1,6 @@
 import { Plus } from "@/components/Icons";
 import { Text } from "@/components/ui/text";
 import { VideoCard } from "@/components/video";
-import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
@@ -13,23 +12,6 @@ import * as React from "react";
 import { Platform, Pressable, View } from "react-native";
 
 export default function VideoHome() {
-  const { success, error } = useMigrationHelper();
-
-  if (error) {
-    return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-  if (!success) {
-    return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
-        <Text>Migration is in progress...</Text>
-      </View>
-    );
-  }
-
   return <ScreenContent />;
 }
 
@@ -41,16 +23,16 @@ function ScreenContent() {
   const { data: videos, error } = useLiveQuery(() => {
     if (!db) return [];
     return db.select().from(videoTable).orderBy(desc(videoTable.createdAt));
-  });
+  }, []);
 
   const renderItem = React.useCallback(
     ({ item }: { item: Video }) => (
       <VideoCard
         {...item}
-        isFavorite={item.isFavorite ?? false}
+        isFavorite={Boolean(item.isFavorite)}
         resolution={
           item.resolutionWidth && item.resolutionHeight
-            ? { width: item.resolutionWidth, height: item.resolutionHeight }
+            ? { width: Number(item.resolutionWidth), height: Number(item.resolutionHeight) }
             : undefined
         }
         onToggleFavorite={(videoId) => {
