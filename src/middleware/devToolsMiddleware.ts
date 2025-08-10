@@ -96,10 +96,8 @@ export const createDevToolsMiddleware = <T>(
         };
 
         // 添加性能监控方法
-        (result ).getPerformanceStats = () =>
-          performanceMonitor.getStats();
-        (result ).resetPerformanceStats = () =>
-          performanceMonitor.reset();
+        result.getPerformanceStats = () => performanceMonitor.getStats();
+        result.resetPerformanceStats = () => performanceMonitor.reset();
       }
 
       return result;

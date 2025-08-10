@@ -1,26 +1,22 @@
 import {
   and,
   asc,
-  count,
   desc,
   eq,
   gte,
   ilike,
   inArray,
-  isNull,
   lte,
   not,
   or,
   sql,
 } from "drizzle-orm";
-import { databaseManager } from "./database-manager";
 import {
   bookmarkTable,
   folderTable,
   folderVideoTable,
   playlistTable,
   playlistVideoTable,
-  searchIndexTable,
   settingsTable,
   tagTable,
   videoTable,
@@ -32,7 +28,6 @@ import type {
   Folder,
   FolderWithVideos,
   Playlist,
-  PlaylistVideo,
   PlaylistWithVideos,
   SearchResult,
   Settings,
@@ -41,14 +36,13 @@ import type {
   Video,
   VideoSearchParams,
   VideoStats,
-  VideoWithHistory,
-  VideoWithRelations,
   WatchHistory,
 } from "./schema";
+import { getDatabase } from "./drizzle";
 
 export class DatabaseService {
   private getDb() {
-    return databaseManager.getDatabase();
+    return getDatabase();
   }
 
   // ===== 视频操作 =====

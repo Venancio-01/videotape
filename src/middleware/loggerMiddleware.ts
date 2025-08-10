@@ -66,12 +66,13 @@ const formatTimestamp = (
       return date.toISOString();
     case "ms":
       return timestamp.toString();
-    case "relative":
+    case "relative": {
       const now = Date.now();
       const diff = now - timestamp;
       if (diff < 1000) return `${diff}ms ago`;
       if (diff < 60000) return `${Math.round(diff / 1000)}s ago`;
       return `${Math.round(diff / 60000)}m ago`;
+    }
     default:
       return date.toISOString();
   }
@@ -126,7 +127,9 @@ class LoggerManager {
     }
 
     // 通知订阅者
-    this.subscribers.forEach((callback) => callback(log));
+    for (const subscriber of this.subscribers) {
+      subscriber(log);
+    }
 
     // 输出到控制台
     this.outputToConsole(log);
@@ -173,7 +176,7 @@ class LoggerManager {
     }
 
     // 输出到控制台
-    (console )[method](...message, ...data);
+    console[method](...message, ...data);
   }
 
   // 获取日志级别颜色
@@ -251,7 +254,7 @@ class LoggerManager {
     let durationCount = 0;
     const actionCounts = new Map<string, number>();
 
-    this.logs.forEach((log) => {
+    for (const log of this.logs) {
       logsByLevel[log.level]++;
 
       if (log.duration) {
@@ -260,7 +263,7 @@ class LoggerManager {
       }
 
       actionCounts.set(log.action, (actionCounts.get(log.action) || 0) + 1);
-    });
+    }
 
     const recentActions = Array.from(actionCounts.entries())
       .sort((a, b) => b[1] - a[1])
@@ -344,7 +347,7 @@ export const createLoggerMiddleware = <T>(
           logger.updateConfig(newConfig),
       };
 
-      return storeWithLogger ;
+      return storeWithLogger;
     };
   };
 };

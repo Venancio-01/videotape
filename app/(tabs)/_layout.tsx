@@ -1,4 +1,4 @@
-import { FolderOpen } from "@/lib/icons/FolderOpen";
+import { ListVideo } from "@/lib/icons/ListVideo";
 import { Search } from "@/lib/icons/Search";
 import { Settings } from "@/lib/icons/Settings";
 import { Video } from "@/lib/icons/Video";
@@ -29,7 +29,7 @@ export default function TabLayout() {
         name="playlists"
         options={{
           title: "播放列表",
-          tabBarIcon: ({ color }) => <FolderOpen className="text-foreground" />,
+          tabBarIcon: ({ color }) => <ListVideo className="text-foreground" />,
         }}
       />
       <Tabs.Screen

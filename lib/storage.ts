@@ -4,14 +4,6 @@ import type { StateStorage } from "zustand/middleware";
 // 创建主要的 MMKV 实例
 export const storage = new MMKV();
 
-// 创建用于特定用途的 MMKV 实例
-export const createStorage = (config?: {
-  id?: string;
-  encryptionKey?: string;
-}) => {
-  return new MMKV(config);
-};
-
 // 基础存储操作
 export function getItem<T>(key: string): T | null {
   const value = storage.getString(key);
@@ -52,7 +44,7 @@ export function getBoolean(key: string): boolean | undefined {
   return storage.getBoolean(key);
 }
 
-export function getBuffer(key: string): Uint8Array | undefined {
+export function getBuffer(key: string): ArrayBuffer | undefined {
   return storage.getBuffer(key);
 }
 
@@ -68,7 +60,7 @@ export function setBoolean(key: string, value: boolean): void {
   storage.set(key, value);
 }
 
-export function setBuffer(key: string, value: Uint8Array): void {
+export function setBuffer(key: string, value: ArrayBuffer): void {
   storage.set(key, value);
 }
 
@@ -87,23 +79,27 @@ export function clearAll(): void {
 
 export function clearAllWithPrefix(prefix: string): void {
   const keys = storage.getAllKeys();
-  const keysToRemove = keys.filter(key => key.startsWith(prefix));
-  keysToRemove.forEach(key => storage.delete(key));
+  const keysToRemove = keys.filter((key) => key.startsWith(prefix));
+  for (const key of keysToRemove) {
+    storage.delete(key);
+  }
 }
 
 // 批量操作
-export function multiSet(items: Array<[string, any]>): void {
-  items.forEach(([key, value]) => {
+export function multiSet(items: Array<[string, unknown]>): void {
+  for (const [key, value] of items) {
     setItem(key, value);
-  });
+  }
 }
 
-export function multiGet(keys: string[]): Array<[string, any | null]> {
-  return keys.map(key => [key, getItem(key)]);
+export function multiGet(keys: string[]): Array<[string, unknown | null]> {
+  return keys.map((key) => [key, getItem(key)]);
 }
 
 export function multiRemove(keys: string[]): void {
-  keys.forEach(key => removeItem(key));
+  for (const key of keys) {
+    storage.delete(key);
+  }
 }
 
 // 存储大小管理
@@ -120,22 +116,10 @@ export function encrypt(key?: string): void {
   storage.recrypt(key);
 }
 
-// Zustand 存储适配器
-export const zustandStorage: StateStorage = {
-  getItem: (name: string): string | null => {
-    return storage.getString(name) ?? null;
-  },
-  setItem: (name: string, value: string): void => {
-    storage.set(name, value);
-  },
-  removeItem: (name: string): void => {
-    storage.delete(name);
-  },
-};
-
-
 // 事件监听
-export function addOnValueChangedListener(callback: (key: string) => void): { remove: () => void } {
+export function addOnValueChangedListener(callback: (key: string) => void): {
+  remove: () => void;
+} {
   return storage.addOnValueChangedListener(callback);
 }
 
@@ -146,19 +130,26 @@ export function getStorageStats(): {
   keys: Array<{ key: string; size: number }>;
 } {
   const keys = getAllKeys();
-  const keyDetails = keys.map(key => ({
+  const keyDetails = keys.map((key) => ({
     key,
     size: JSON.stringify(getItem(key)).length,
   }));
-  
+
   const totalSize = keyDetails.reduce((sum, item) => sum + item.size, 0);
-  
+
   return {
     keyCount: keys.length,
     totalSize,
     keys: keyDetails,
   };
 }
+
+// Zustand 存储适配器
+export const zustandStorage: StateStorage = {
+  getItem,
+  setItem,
+  removeItem,
+};
 
 // 默认导出
 export default {
@@ -184,8 +175,7 @@ export default {
   getSize,
   trim,
   encrypt,
-  zustandStorage,
   addOnValueChangedListener,
   getStorageStats,
-  createStorage,
+  zustandStorage,
 };

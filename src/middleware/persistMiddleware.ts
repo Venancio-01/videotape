@@ -3,86 +3,11 @@
  */
 
 import { persist } from "zustand/middleware";
-import type { StateStorage } from "zustand/middleware";
 import { zustandStorage } from "@/lib/storage";
-
-// MMKV 适配器
-export const createMMKVStorageAdapter = (): StateStorage => {
-  return zustandStorage;
-};
-
-
-// 自定义 JSON 存储处理器
-export const createCustomJSONStorage = (storage?: StateStorage) => {
-  const baseStorage = storage || createMMKVStorageAdapter();
-
-  // 创建自定义存储，包含序列化/反序列化逻辑
-  const customStorage: StateStorage = {
-    getItem: async (name: string): Promise<string | null> => {
-      const value = await baseStorage.getItem(name);
-      if (!value) return null;
-
-      try {
-        const parsed = JSON.parse(value);
-        // 自定义反序列化器
-        const revived = JSON.parse(JSON.stringify(parsed), (key, value) => {
-          if (value && typeof value === "object" && value.__type) {
-            switch (value.__type) {
-              case "Set":
-                return new Set(value.value);
-              case "Map":
-                return new Map(value.value);
-              case "Date":
-                return new Date(value.value);
-              default:
-                return value;
-            }
-          }
-          return value;
-        });
-        return JSON.stringify(revived);
-      } catch (error) {
-        console.error("Error parsing stored value:", error);
-        return value;
-      }
-    },
-    setItem: async (name: string, value: string): Promise<void> => {
-      try {
-        const parsed = JSON.parse(value);
-        // 自定义序列化器
-        const serialized = JSON.stringify(parsed, (key, value) => {
-          if (value instanceof Set) {
-            return { __type: "Set", value: Array.from(value) };
-          }
-          if (value instanceof Map) {
-            return { __type: "Map", value: Array.from(value.entries()) };
-          }
-          if (value instanceof Date) {
-            return { __type: "Date", value: value.toISOString() };
-          }
-          if (typeof value === "function") {
-            return undefined; // 不序列化函数
-          }
-          return value;
-        });
-        await baseStorage.setItem(name, serialized);
-      } catch (error) {
-        console.error("Error serializing value:", error);
-        await baseStorage.setItem(name, value);
-      }
-    },
-    removeItem: async (name: string): Promise<void> => {
-      await baseStorage.removeItem(name);
-    },
-  };
-
-  return customStorage;
-};
 
 // 持久化配置接口
 export interface PersistConfig<T> {
   name: string;
-  storage?: StateStorage;
   partialize?: (state: T) => Partial<T>;
   onRehydrateStorage?: (
     state?: T,
@@ -99,7 +24,6 @@ export interface PersistConfig<T> {
 export const createPersistMiddleware = <T>(config: PersistConfig<T>) => {
   const {
     name,
-    storage = createMMKVStorageAdapter(),
     partialize,
     onRehydrateStorage,
     version,
@@ -112,7 +36,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig<T>) => {
 
   const persistOptions: any = {
     name,
-    storage: createCustomJSONStorage(storage),
+    storage: zustandStorage,
     version: version || 0,
     skipHydration,
   };
@@ -260,7 +184,7 @@ export const PersistConfigs = {
 export const PersistUtils = {
   // 清理所有持久化数据
   clearAllPersistedData: async () => {
-    const storage = createMMKVStorageAdapter();
+    const storage = zustandStorage;
     const keys = Object.values(PersistConfigs).map((config) => config.name);
 
     for (const key of keys) {
@@ -274,7 +198,7 @@ export const PersistUtils = {
 
   // 获取存储使用情况
   getStorageUsage: async () => {
-    const storage = createMMKVStorageAdapter();
+    const storage = zustandStorage;
     const usage: Record<string, number> = {};
 
     for (const config of Object.values(PersistConfigs)) {
@@ -293,7 +217,7 @@ export const PersistUtils = {
 
   // 备份持久化数据
   backupPersistedData: async () => {
-    const storage = createMMKVStorageAdapter();
+    const storage = zustandStorage;
     const backup: Record<string, string> = {};
 
     for (const config of Object.values(PersistConfigs)) {
@@ -312,7 +236,7 @@ export const PersistUtils = {
 
   // 恢复持久化数据
   restorePersistedData: async (backup: Record<string, string>) => {
-    const storage = createMMKVStorageAdapter();
+    const storage = zustandStorage;
 
     for (const [key, value] of Object.entries(backup)) {
       try {
@@ -333,13 +257,4 @@ export const PersistUtils = {
       {} as Record<string, PersistConfig<any>>,
     );
   },
-};
-
-// 导出所有持久化相关功能
-export const PersistMiddleware = {
-  createPersistMiddleware,
-  createMMKVStorageAdapter,
-  createCustomJSONStorage,
-  PersistConfigs,
-  PersistUtils,
 };
