@@ -1,5 +1,5 @@
 import * as React from "react";
-import {type GestureResponderEvent, Pressable, View} from "react-native";
+import { type GestureResponderEvent, Pressable, View } from "react-native";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -7,7 +7,7 @@ import type {
   SlottableViewProps,
   ViewRef,
 } from "@/components/primitives/types";
-import type {SwitchRootProps} from "./types";
+import type { SwitchRootProps } from "./types";
 
 const Root = React.forwardRef<
   PressableRef,
@@ -38,7 +38,7 @@ const Root = React.forwardRef<
         aria-disabled={disabled}
         role="switch"
         aria-checked={checked}
-        aria-valuetext={ariaValueText ?? checked ? "on" : "off"}
+        aria-valuetext={(ariaValueText ?? checked) ? "on" : "off"}
         onPress={onPress}
         accessibilityState={{
           checked,
@@ -54,7 +54,7 @@ const Root = React.forwardRef<
 Root.displayName = "RootNativeSwitch";
 
 const Thumb = React.forwardRef<ViewRef, SlottableViewProps>(
-  ({asChild, ...props}, ref) => {
+  ({ asChild, ...props }, ref) => {
     const Component = asChild ? Slot.View : View;
     return <Component ref={ref} role="presentation" {...props} />;
   },
@@ -62,4 +62,4 @@ const Thumb = React.forwardRef<ViewRef, SlottableViewProps>(
 
 Thumb.displayName = "ThumbNativeSwitch";
 
-export {Root, Thumb};
+export { Root, Thumb };

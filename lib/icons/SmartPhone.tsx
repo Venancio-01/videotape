@@ -1,5 +1,6 @@
-import {Smartphone} from 'lucide-react-native';
+import { Smartphone } from "lucide-react-native";
 
-import {iconWithClassName} from './iconWithClassName';
+import { iconWithClassName } from "./iconWithClassName";
+
 iconWithClassName(Smartphone);
-export {Smartphone};
+export { Smartphone };

@@ -174,12 +174,8 @@
           "name": "playlist_videos_playlist_id_playlists_id_fk",
           "tableFrom": "playlist_videos",
           "tableTo": "playlists",
-          "columnsFrom": [
-            "playlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["playlist_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -187,12 +183,8 @@
           "name": "playlist_videos_video_id_videos_id_fk",
           "tableFrom": "playlist_videos",
           "tableTo": "videos",
-          "columnsFrom": [
-            "video_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["video_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -327,9 +319,7 @@
       "indexes": {
         "videos_file_path_unique": {
           "name": "videos_file_path_unique",
-          "columns": [
-            "file_path"
-          ],
+          "columns": ["file_path"],
           "isUnique": true
         }
       },
@@ -393,12 +383,8 @@
           "name": "watch_history_video_id_videos_id_fk",
           "tableFrom": "watch_history",
           "tableTo": "videos",
-          "columnsFrom": [
-            "video_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["video_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

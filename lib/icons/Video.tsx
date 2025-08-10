@@ -1,4 +1,4 @@
-import { Svg, Path } from "react-native-svg";
+import { Path, Svg } from "react-native-svg";
 
 export function Video({ className }: { className?: string }) {
   return (

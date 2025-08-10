@@ -1,17 +1,20 @@
-import {Platform, Pressable, View} from "react-native";
-
-import {H4} from '@/components/ui/typography';
-import {BottomSheet, BottomSheetContent, BottomSheetHeader, BottomSheetOpenTrigger, BottomSheetView} from "@/components/primitives/bottomSheet/bottom-sheet.native";
-import {Text} from "@/components/ui//text";
-import {Moon, Palette, Smartphone, Sun} from '@/lib/icons';
-
+import { useBottomSheetModal } from "@gorhom/bottom-sheet";
+import { useColorScheme } from "nativewind";
+import { useCallback, useMemo, useState } from "react";
+import { Platform, Pressable, View } from "react-native";
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetHeader,
+  BottomSheetOpenTrigger,
+  BottomSheetView,
+} from "@/components/primitives/bottomSheet/bottom-sheet.native";
+import { Text } from "@/components/ui//text";
 import ListItem from "@/components/ui/list-item";
-import {Check} from "@/lib/icons/Check";
-import {useCallback, useMemo, useState} from "react";
-import {useBottomSheetModal} from "@gorhom/bottom-sheet";
-import {getItem, setItem} from "@/lib/storage";
-
-import {useColorScheme} from "nativewind";
+import { H4 } from "@/components/ui/typography";
+import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
+import { Check } from "@/lib/icons/Check";
+import { getItem, setItem } from "@/lib/storage";
 
 type ItemData = {
   title: string;
@@ -26,7 +29,7 @@ type ItemProps = {
   selected: boolean;
 };
 
-function ThemeItem({item, onPress, selected}: ItemProps) {
+function ThemeItem({ item, onPress, selected }: ItemProps) {
   return (
     <Pressable className="py-4" onPress={onPress}>
       <View className="flex bg-pink flex-row justify-between">
@@ -42,11 +45,12 @@ function ThemeItem({item, onPress, selected}: ItemProps) {
 }
 
 export const ThemeSettingItem = () => {
-  const [selectedTheme, setSelectedTheme] = useState(getItem<"light" | "dark" | "system">("theme"),
+  const [selectedTheme, setSelectedTheme] = useState(
+    getItem<"light" | "dark" | "system">("theme"),
   );
-  const {colorScheme, setColorScheme} = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
-  const {dismiss} = useBottomSheetModal();
+  const { dismiss } = useBottomSheetModal();
 
   const themes: ItemData[] = useMemo(
     () => [
@@ -75,18 +79,18 @@ export const ThemeSettingItem = () => {
   const onSelect = useCallback(
     (value: "light" | "dark" | "system") => {
       setColorScheme(value);
-      setItem("theme", value)
+      setItem("theme", value);
       setSelectedTheme(value);
-      dismiss()
-    }, [selectedTheme, colorScheme, setColorScheme]
-  )
+      dismiss();
+    },
+    [selectedTheme, colorScheme, setColorScheme],
+  );
   return (
-    <BottomSheet >
+    <BottomSheet>
       <BottomSheetOpenTrigger asChild>
         <ListItem
           itemLeft={(props) => <Palette {...props} />} // props adds size and color attributes
           label="Theme"
-
         />
       </BottomSheetOpenTrigger>
       <BottomSheetContent>
@@ -95,7 +99,7 @@ export const ThemeSettingItem = () => {
             Select Theme
           </Text>
         </BottomSheetHeader>
-        <BottomSheetView className='gap-5 pt-6 bg-background'>
+        <BottomSheetView className="gap-5 pt-6 bg-background">
           {themes.map((theme) => (
             <ThemeItem
               key={theme.title}

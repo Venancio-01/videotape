@@ -1,17 +1,12 @@
-import { View, Alert } from "react-native";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import * as React from "react";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-
-import { Text } from "@/components/ui/text";
-import { habitTable } from "@/db/schema";
-import { useDatabase } from "@/db/provider";
+import { Alert, View } from "react-native";
 import { HabitCard } from "@/components/habit";
-import type { Habit } from "@/db/schema";
-import { Archive } from "@/lib/icons";
+import { Button } from "@/components/ui";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +17,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from "@/components/ui";
+} from "@/components/ui/alert-dialog";
+import { Text } from "@/components/ui/text";
+import { useDatabase } from "@/db/provider";
+import type { Habit } from "@/db/schema";
+import { habitTable } from "@/db/schema";
+import { Archive } from "@/lib/icons";
 export default function Home() {
   const { db } = useDatabase();
   const { data: habits, error } = useLiveQuery(
@@ -48,27 +47,36 @@ export default function Home() {
   }
 
   async function handleDeleteHabit(habitId: string) {
-    Alert.alert('Are you absolutely sure?', 'Are you sure you want to delete this Habit ?', [
-      {
-        text: 'Cancel',
-      },
-      {
-        text: 'Continue',
-        onPress: () => {
-          // try {
-          //   await db?.delete(habitTable).where(eq(habitTable.id, habitId)).execute();
-          // } catch (error) {
-          //   console.error("error", error);
-          // }
+    Alert.alert(
+      "Are you absolutely sure?",
+      "Are you sure you want to delete this Habit ?",
+      [
+        {
+          text: "Cancel",
         },
-        style: 'destructive',
-      },
-    ]);
+        {
+          text: "Continue",
+          onPress: () => {
+            // try {
+            //   await db?.delete(habitTable).where(eq(habitTable.id, habitId)).execute();
+            // } catch (error) {
+            //   console.error("error", error);
+            // }
+          },
+          style: "destructive",
+        },
+      ],
+    );
     // Are you sure you want to delete this Habit ?
-
   }
   const renderItem = React.useCallback(
-    ({ item }: { item: Habit }) => <HabitCard onDelete={handleDeleteHabit} onRestore={handleRestoreHabit} {...item} />,
+    ({ item }: { item: Habit }) => (
+      <HabitCard
+        onDelete={handleDeleteHabit}
+        onRestore={handleRestoreHabit}
+        {...item}
+      />
+    ),
     [],
   );
 
@@ -118,7 +126,10 @@ export default function Home() {
             <AlertDialogCancel>
               <Text>Cancel</Text>
             </AlertDialogCancel>
-            <AlertDialogAction className="bg-foreground" onPress={() => console.log("pressed")}>
+            <AlertDialogAction
+              className="bg-foreground"
+              onPress={() => console.log("pressed")}
+            >
               <Text>Archive</Text>
             </AlertDialogAction>
           </AlertDialogFooter>

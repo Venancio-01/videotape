@@ -1,16 +1,14 @@
-import { Linking, Platform } from "react-native";
-
-import { Text } from "@/components/ui/text";
-import { Bell } from '@/lib/icons';
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Notifications from "expo-notifications";
-import ListItem from "@/components/ui/list-item";
 import { useState } from "react";
-
+import { Linking, Platform } from "react-native";
+import ListItem from "@/components/ui/list-item";
+import { Text } from "@/components/ui/text";
+import { Bell } from "@/lib/icons";
 
 export const NotificationItem = () => {
-
-  const [permission, setPermission] = useState<Notifications.PermissionStatus | null>(null);
+  const [permission, setPermission] =
+    useState<Notifications.PermissionStatus | null>(null);
 
   const openSettingApp = async () => {
     if (Platform.OS === "ios") {
@@ -22,8 +20,8 @@ export const NotificationItem = () => {
     }
   };
   const handleRequestPermissions = async () => {
-    const { status } = await Notifications.getPermissionsAsync()
-    setPermission(status)
+    const { status } = await Notifications.getPermissionsAsync();
+    setPermission(status);
   };
   return (
     <ListItem
@@ -36,13 +34,13 @@ export const NotificationItem = () => {
           handleRequestPermissions();
         }
       }}
-      itemRight={() => <Text className="text-muted-foreground">
-        {
-          permission === Notifications.PermissionStatus.GRANTED
+      itemRight={() => (
+        <Text className="text-muted-foreground">
+          {permission === Notifications.PermissionStatus.GRANTED
             ? "Enabled"
-            : "Disabled"
-        }
-      </Text>}
+            : "Disabled"}
+        </Text>
+      )}
     />
   );
 };

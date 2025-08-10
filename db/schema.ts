@@ -1,6 +1,6 @@
-import { sql } from "drizzle-orm";
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
+import { sql } from "drizzle-orm";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 
@@ -33,9 +33,11 @@ export const watchHistoryTable = sqliteTable("watch_history", {
     .$defaultFn(() => createId())
     .notNull()
     .primaryKey(),
-  videoId: text("video_id").notNull().references(() => videoTable.id, {
-    onDelete: "cascade",
-  }),
+  videoId: text("video_id")
+    .notNull()
+    .references(() => videoTable.id, {
+      onDelete: "cascade",
+    }),
   position: real("position").notNull(), // 秒
   duration: real("duration").notNull(), // 秒
   watchedAt: text("watched_at").default(sql`(CURRENT_TIMESTAMP)`),
@@ -63,12 +65,16 @@ export const playlistVideoTable = sqliteTable("playlist_videos", {
     .$defaultFn(() => createId())
     .notNull()
     .primaryKey(),
-  playlistId: text("playlist_id").notNull().references(() => playlistTable.id, {
-    onDelete: "cascade",
-  }),
-  videoId: text("video_id").notNull().references(() => videoTable.id, {
-    onDelete: "cascade",
-  }),
+  playlistId: text("playlist_id")
+    .notNull()
+    .references(() => playlistTable.id, {
+      onDelete: "cascade",
+    }),
+  videoId: text("video_id")
+    .notNull()
+    .references(() => videoTable.id, {
+      onDelete: "cascade",
+    }),
   order: integer("order").notNull(),
   addedAt: text("added_at").default(sql`(CURRENT_TIMESTAMP)`),
 });

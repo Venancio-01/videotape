@@ -1,5 +1,6 @@
-import {Shield} from 'lucide-react-native';
+import { Shield } from "lucide-react-native";
 
-import {iconWithClassName} from './iconWithClassName';
+import { iconWithClassName } from "./iconWithClassName";
+
 iconWithClassName(Shield);
-export {Shield};
+export { Shield };

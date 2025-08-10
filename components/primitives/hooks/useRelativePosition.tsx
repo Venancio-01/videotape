@@ -2,10 +2,10 @@ import * as React from "react";
 import {
   type LayoutRectangle,
   type ScaledSize,
-  type ViewStyle,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
-import type {Insets} from "@/components/primitives/types";
+import type { Insets } from "@/components/primitives/types";
 
 const POSITION_ABSOLUTE: ViewStyle = {
   position: "absolute",
@@ -167,7 +167,7 @@ function getAlignPosition({
     }
   }
 
-  return {left, maxWidth: maxContentWidth};
+  return { left, maxWidth: maxContentWidth };
 }
 
 function getLeftPosition(

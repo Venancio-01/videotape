@@ -10,20 +10,12 @@
   },
   "Button": {
     "prefix": "bt",
-    "body": [
-      "<Button onPress={() => }>",
-      "  <Text>${1}</Text>",
-      "</Button>"
-    ],
+    "body": ["<Button onPress={() => }>", "  <Text>${1}</Text>", "</Button>"],
     "description": "Button"
   },
   "Text": {
     "prefix": "T",
-    "body": [
-      "<Text>",
-      "  $1",
-      "</Text>"
-    ],
+    "body": ["<Text>", "  $1", "</Text>"],
     "description": "A Simple Text"
   },
   "export *": {
@@ -33,17 +25,12 @@
   },
   "import": {
     "prefix": "im",
-    "body": [
-      "import * from ${1}"
-    ],
+    "body": ["import * from ${1}"],
     "description": "import"
   },
   "state": {
     "prefix": "useS",
-    "body": [
-      "const [${1}, set${1:example}] = useState();",
-      ""
-    ],
+    "body": ["const [${1}, set${1:example}] = useState();", ""],
     "description": "state"
   },
   "Component": {

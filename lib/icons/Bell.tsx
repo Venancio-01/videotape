@@ -1,5 +1,6 @@
-import {Bell} from 'lucide-react-native';
+import { Bell } from "lucide-react-native";
 
-import {iconWithClassName} from './iconWithClassName';
+import { iconWithClassName } from "./iconWithClassName";
+
 iconWithClassName(Bell);
-export {Bell};
+export { Bell };

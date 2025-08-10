@@ -16,14 +16,13 @@ import {
   Calendar,
   CalendarDays,
   Check,
-  Settings,
   CheckSquare,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
   ChevronsDownUp,
   ChevronsUpDown,
+  ChevronUp,
   CircleUserRound,
   Cloud,
   Code,
@@ -47,6 +46,7 @@ import {
   Plus,
   PlusCircle,
   Search,
+  Settings,
   Sparkles,
   Sun,
   Table,
@@ -56,7 +56,8 @@ import {
   Users,
   X,
 } from "lucide-react-native";
-import {cssInterop} from "nativewind";
+import { cssInterop } from "nativewind";
+
 function interopIcon(icon: LucideIcon) {
   cssInterop(icon, {
     className: {
