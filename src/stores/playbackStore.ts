@@ -2,11 +2,12 @@
  * 播放状态管理 Store
  */
 
-import type { PlaybackState } from "@/types/stateTypes";
-import type { PlaybackStore } from "@/types/storeTypes";
-import { StateUtils } from "@/utils/stateUtils";
+import type { PlaybackState } from "@/src/types/stateTypes";
+import type { PlaybackStore } from "@/src/types/storeTypes";
+import { StateUtils } from "@/src/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { MiddlewareCombinations } from "../middleware";
 
 // 初始状态
 const initialState: PlaybackState = {

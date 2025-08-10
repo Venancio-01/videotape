@@ -13,7 +13,6 @@ export * from "./uiStore";
 // 导出所有中间件
 export * from "../middleware/persistMiddleware";
 export * from "../middleware/loggerMiddleware";
-export * from "../middleware/syncMiddleware";
 export * from "../middleware/devToolsMiddleware";
 
 // 导出所有 Hooks

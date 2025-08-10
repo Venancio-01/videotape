@@ -2,7 +2,7 @@
  * 持久化中间件 - 基于 Zustand persist 的增强版本
  */
 
-import { StateUtils } from "@/utils/stateUtils";
+import { StateUtils } from "@/src/utils/stateUtils";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { StateStorage } from "zustand/middleware";
 
