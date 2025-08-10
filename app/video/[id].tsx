@@ -1,12 +1,14 @@
 import { eq } from "drizzle-orm";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { AVPlaybackStatus, Video } from "expo-av";
 import * as React from "react";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, Pressable, View, Dimensions } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useDatabase } from "@/db/provider";
 import { videoTable } from "@/db/schema";
+import { videoService } from "@/services/videoService";
 import {
   ArrowLeft,
   Heart,

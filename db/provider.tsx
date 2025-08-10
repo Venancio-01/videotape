@@ -6,26 +6,67 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { initialize } from "./drizzle";
+import { initialize, databaseManager } from "./drizzle";
+import { databaseService } from "./database-service";
+import { databasePerformanceService } from "./database-performance";
 
-type ContextType = { db: SQLJsDatabase | ExpoSQLiteDatabase | null };
+interface DatabaseContextType {
+  db: SQLJsDatabase | ExpoSQLiteDatabase | null;
+  isInitialized: boolean;
+  error: Error | null;
+  databaseService: typeof databaseService;
+  databasePerformanceService: typeof databasePerformanceService;
+}
 
-export const DatabaseContext = React.createContext<ContextType>({ db: null });
+export const DatabaseContext = React.createContext<DatabaseContextType>({
+  db: null,
+  isInitialized: false,
+  error: null,
+  databaseService,
+  databasePerformanceService,
+});
 
 export const useDatabase = () => useContext(DatabaseContext);
 
 export function DatabaseProvider({ children }: PropsWithChildren) {
   const [db, setDb] = useState<SQLJsDatabase | ExpoSQLiteDatabase | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (db) return;
-    initialize().then((newDb) => {
-      setDb(newDb);
-    });
-  }, []);
+    if (isInitialized) return;
+
+    const initializeDatabase = async () => {
+      try {
+        // 初始化数据库
+        const database = await initialize();
+        setDb(database);
+
+        // 运行迁移
+        await databaseManager.runMigrations();
+
+        setIsInitialized(true);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to initialize database:', err);
+        setError(err instanceof Error ? err : new Error('Database initialization failed'));
+        setIsInitialized(false);
+      }
+    };
+
+    initializeDatabase();
+  }, [isInitialized]);
+
+  const value: DatabaseContextType = {
+    db,
+    isInitialized,
+    error,
+    databaseService,
+    databasePerformanceService,
+  };
 
   return (
-    <DatabaseContext.Provider value={{ db }}>
+    <DatabaseContext.Provider value={value}>
       {children}
     </DatabaseContext.Provider>
   );

@@ -70,19 +70,19 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen
                 name="(tabs)"
-                options={{ title: "Habits", headerShown: false }}
+                options={{ title: "Videotape", headerShown: false }}
               />
               <Stack.Screen
                 options={{
                   headerShadowVisible: false,
                 }}
-                name="habits/archive"
+                name="upload"
               />
               <Stack.Screen
                 options={{
                   headerShadowVisible: false,
                 }}
-                name="habits/[id]"
+                name="video/[id]"
               />
             </Stack>
           </BottomSheetModalProvider>
