@@ -57,7 +57,8 @@ const initialState: VideoState = {
 
 // 创建视频 Store
 export const useVideoStore = create<VideoStore>()(
-  subscribeWithSelector((set, get) => ({
+  MiddlewareCombinations.videoStore(
+    subscribeWithSelector((set, get) => ({
     // 基础状态
     ...initialState,
     
@@ -319,6 +320,7 @@ export const useVideoStore = create<VideoStore>()(
     // 选择器
     select: (selector) => selector(get()),
   }))
+  )
 );
 
 // 导出预定义的选择器

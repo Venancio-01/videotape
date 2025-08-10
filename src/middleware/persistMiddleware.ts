@@ -1,0 +1,383 @@
+/**
+ * 持久化中间件 - 基于 Zustand persist 的增强版本
+ */
+
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { type StateStorage } from 'zustand/middleware';
+import { StateUtils } from '@/utils/stateUtils';
+
+// AsyncStorage 适配器
+export const createAsyncStorageAdapter = (): StateStorage => {
+  // 在 React Native 环境中使用 AsyncStorage
+  try {
+    const { AsyncStorage } = require('@react-native-async-storage/async-storage');
+    return {
+      getItem: async (name: string): Promise<string | null> => {
+        try {
+          const value = await AsyncStorage.getItem(name);
+          return value;
+        } catch (error) {
+          console.error('AsyncStorage getItem error:', error);
+          return null;
+        }
+      },
+      setItem: async (name: string, value: string): Promise<void> => {
+        try {
+          await AsyncStorage.setItem(name, value);
+        } catch (error) {
+          console.error('AsyncStorage setItem error:', error);
+        }
+      },
+      removeItem: async (name: string): Promise<void> => {
+        try {
+          await AsyncStorage.removeItem(name);
+        } catch (error) {
+          console.error('AsyncStorage removeItem error:', error);
+        }
+      },
+    };
+  } catch {
+    // 在 Web 环境中使用 localStorage
+    return {
+      getItem: (name: string): string | null => {
+        try {
+          return localStorage.getItem(name);
+        } catch (error) {
+          console.error('localStorage getItem error:', error);
+          return null;
+        }
+      },
+      setItem: (name: string, value: string): void => {
+        try {
+          localStorage.setItem(name, value);
+        } catch (error) {
+          console.error('localStorage setItem error:', error);
+        }
+      },
+      removeItem: (name: string): void => {
+        try {
+          localStorage.removeItem(name);
+        } catch (error) {
+          console.error('localStorage removeItem error:', error);
+        }
+      },
+    };
+  }
+};
+
+// 自定义 JSON 存储处理器
+export const createCustomJSONStorage = (storage?: StateStorage) => {
+  return createJSONStorage(() => storage || createAsyncStorageAdapter(), {
+    // 自定义序列化器，处理特殊类型
+    replacer: (key, value) => {
+      if (value instanceof Set) {
+        return { __type: 'Set', value: Array.from(value) };
+      }
+      if (value instanceof Map) {
+        return { __type: 'Map', value: Array.from(value.entries()) };
+      }
+      if (value instanceof Date) {
+        return { __type: 'Date', value: value.toISOString() };
+      }
+      if (typeof value === 'function') {
+        return undefined; // 不序列化函数
+      }
+      return value;
+    },
+    // 自定义反序列化器
+    reviver: (key, value) => {
+      if (value && typeof value === 'object' && value.__type) {
+        switch (value.__type) {
+          case 'Set':
+            return new Set(value.value);
+          case 'Map':
+            return new Map(value.value);
+          case 'Date':
+            return new Date(value.value);
+          default:
+            return value;
+        }
+      }
+      return value;
+    },
+  });
+};
+
+// 持久化配置接口
+export interface PersistConfig<T> {
+  name: string;
+  storage?: StateStorage;
+  partialize?: (state: T) => Partial<T>;
+  onRehydrateStorage?: (state?: T) => ((state?: T, error?: Error) => void) | void;
+  version?: number;
+  migrate?: (persistedState: any, version: number) => T;
+  merge?: (persistedState: Partial<T>, currentState: T) => T;
+  skipHydration?: boolean;
+  serialize?: (state: Partial<T>) => string;
+  deserialize?: (str: string) => Partial<T>;
+}
+
+// 创建持久化中间件
+export const createPersistMiddleware = <T>(
+  config: PersistConfig<T>
+) => {
+  const {
+    name,
+    storage = createAsyncStorageAdapter(),
+    partialize,
+    onRehydrateStorage,
+    version,
+    migrate,
+    merge,
+    skipHydration,
+    serialize,
+    deserialize,
+  } = config;
+
+  const persistOptions: any = {
+    name,
+    storage: createCustomJSONStorage(storage),
+    version: version || 0,
+    skipHydration,
+  };
+
+  // 添加部分持久化
+  if (partialize) {
+    persistOptions.partialize = partialize;
+  }
+
+  // 添加重水合回调
+  if (onRehydrateStorage) {
+    persistOptions.onRehydrateStorage = onRehydrateStorage;
+  }
+
+  // 添加迁移功能
+  if (migrate) {
+    persistOptions.migrate = migrate;
+  }
+
+  // 添加自定义合并
+  if (merge) {
+    persistOptions.merge = merge;
+  }
+
+  // 添加自定义序列化
+  if (serialize) {
+    persistOptions.serialize = serialize;
+  }
+
+  // 添加自定义反序列化
+  if (deserialize) {
+    persistOptions.deserialize = deserialize;
+  }
+
+  return persist(persistOptions);
+};
+
+// 预定义的持久化配置
+export const PersistConfigs = {
+  // 视频存储配置
+  videoStore: {
+    name: 'videotape-video-storage',
+    version: 1,
+    partialize: (state: any) => ({
+      favorites: Array.from(state.favorites || []),
+      searchQuery: state.searchQuery || '',
+      watchHistory: state.watchHistory || [],
+      pagination: state.pagination || { page: 1, pageSize: 20, total: 0, hasMore: true },
+    }),
+    migrate: (persistedState: any, version: number) => {
+      if (version === 0) {
+        // 从版本 0 迁移到版本 1
+        return {
+          ...persistedState,
+          favorites: new Set(persistedState.favorites || []),
+          pagination: persistedState.pagination || { page: 1, pageSize: 20, total: 0, hasMore: true },
+        };
+      }
+      return persistedState;
+    },
+  },
+
+  // 播放存储配置
+  playbackStore: {
+    name: 'videotape-playback-storage',
+    version: 1,
+    partialize: (state: any) => ({
+      volume: state.volume || 1.0,
+      playbackRate: state.playbackRate || 1.0,
+      isLooping: state.isLooping || false,
+      isMuted: state.isMuted || false,
+      repeatMode: state.repeatMode || 'none',
+      shuffleMode: state.shuffleMode || false,
+    }),
+  },
+
+  // 队列存储配置
+  queueStore: {
+    name: 'videotape-queue-storage',
+    version: 1,
+    partialize: (state: any) => ({
+      queue: state.queue || [],
+      currentQueueIndex: state.currentQueueIndex || -1,
+      history: state.history || [],
+      playlists: state.playlists || [],
+      isShuffleOn: state.isShuffleOn || false,
+      repeatMode: state.repeatMode || 'none',
+    }),
+  },
+
+  // 设置存储配置
+  settingsStore: {
+    name: 'videotape-settings-storage',
+    version: 1,
+    partialize: (state: any) => ({
+      theme: state.theme || 'system',
+      language: state.language || 'zh-CN',
+      fontSize: state.fontSize || 'medium',
+      defaultPlaybackSpeed: state.defaultPlaybackSpeed || 1.0,
+      defaultVolume: state.defaultVolume || 1.0,
+      defaultQuality: state.defaultQuality || 'auto',
+      autoPlay: state.autoPlay !== undefined ? state.autoPlay : true,
+      autoNext: state.autoNext !== undefined ? state.autoNext : true,
+      maxCacheSize: state.maxCacheSize || 1024,
+      cacheRetentionDays: state.cacheRetentionDays || 30,
+      autoClearCache: state.autoClearCache !== undefined ? state.autoClearCache : true,
+      analyticsEnabled: state.analyticsEnabled !== undefined ? state.analyticsEnabled : false,
+      crashReportingEnabled: state.crashReportingEnabled !== undefined ? state.crashReportingEnabled : true,
+      debugMode: state.debugMode !== undefined ? state.debugMode : false,
+      logLevel: state.logLevel || 'info',
+    }),
+  },
+
+  // UI 存储配置
+  uiStore: {
+    name: 'videotape-ui-storage',
+    version: 1,
+    partialize: (state: any) => ({
+      theme: state.theme || 'system',
+      colorScheme: state.colorScheme || 'light',
+      isSidebarOpen: state.isSidebarOpen || false,
+      notifications: state.notifications || [],
+    }),
+  },
+};
+
+// 持久化工具函数
+export const PersistUtils = {
+  // 清理所有持久化数据
+  clearAllPersistedData: async () => {
+    const storage = createAsyncStorageAdapter();
+    const keys = Object.values(PersistConfigs).map(config => config.name);
+    
+    for (const key of keys) {
+      try {
+        await storage.removeItem(key);
+      } catch (error) {
+        console.error(`Failed to clear persisted data for ${key}:`, error);
+      }
+    }
+  },
+
+  // 获取存储使用情况
+  getStorageUsage: async () => {
+    const storage = createAsyncStorageAdapter();
+    const usage: Record<string, number> = {};
+    
+    for (const config of Object.values(PersistConfigs)) {
+      try {
+        const value = await storage.getItem(config.name);
+        if (value) {
+          usage[config.name] = new Blob([value]).size;
+        }
+      } catch (error) {
+        console.error(`Failed to get storage usage for ${config.name}:`, error);
+      }
+    }
+    
+    return usage;
+  },
+
+  // 备份持久化数据
+  backupPersistedData: async () => {
+    const storage = createAsyncStorageAdapter();
+    const backup: Record<string, string> = {};
+    
+    for (const config of Object.values(PersistConfigs)) {
+      try {
+        const value = await storage.getItem(config.name);
+        if (value) {
+          backup[config.name] = value;
+        }
+      } catch (error) {
+        console.error(`Failed to backup data for ${config.name}:`, error);
+      }
+    }
+    
+    return backup;
+  },
+
+  // 恢复持久化数据
+  restorePersistedData: async (backup: Record<string, string>) => {
+    const storage = createAsyncStorageAdapter();
+    
+    for (const [key, value] of Object.entries(backup)) {
+      try {
+        await storage.setItem(key, value);
+      } catch (error) {
+        console.error(`Failed to restore data for ${key}:`, error);
+      }
+    }
+  },
+
+  // 导出持久化配置
+  exportConfigs: () => {
+    return Object.keys(PersistConfigs).reduce((acc, key) => {
+      acc[key] = PersistConfigs[key as keyof typeof PersistConfigs];
+      return acc;
+    }, {} as Record<string, PersistConfig<any>>);
+  },
+};
+
+// 性能监控的持久化中间件包装器
+export const withPerformanceMonitoring = <T>(
+  persistMiddleware: ReturnType<typeof createPersistMiddleware<T>>
+) => {
+  const performanceMonitor = StateUtils.createPerformanceMonitor();
+  
+  return (stateCreator: any) => {
+    const store = persistMiddleware(stateCreator);
+    
+    // 包装 getState 方法以监控性能
+    const originalGetState = store.getState;
+    store.getState = () => {
+      const start = performance.now();
+      const result = originalGetState();
+      const duration = performance.now() - start;
+      performanceMonitor.recordMetric('getState', duration);
+      return result;
+    };
+    
+    // 包装 setState 方法以监控性能
+    const originalSetState = store.setState;
+    store.setState = (...args: any[]) => {
+      const start = performance.now();
+      const result = originalSetState(...args);
+      const duration = performance.now() - start;
+      performanceMonitor.recordMetric('setState', duration);
+      return result;
+    };
+    
+    return store;
+  };
+};
+
+// 导出所有持久化相关功能
+export const PersistMiddleware = {
+  createPersistMiddleware,
+  createAsyncStorageAdapter,
+  createCustomJSONStorage,
+  PersistConfigs,
+  PersistUtils,
+  withPerformanceMonitoring,
+};

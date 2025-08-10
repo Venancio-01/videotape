@@ -42,7 +42,8 @@ const initialState: SettingsState = {
 
 // 创建设置 Store
 export const useSettingsStore = create<SettingsStore>()(
-  subscribeWithSelector((set, get) => ({
+  MiddlewareCombinations.settingsStore(
+    subscribeWithSelector((set, get) => ({
     // 基础状态
     ...initialState,
 
@@ -306,6 +307,7 @@ export const useSettingsStore = create<SettingsStore>()(
     // 选择器
     select: (selector) => selector(get()),
   }))
+  )
 );
 
 // 导出预定义的选择器

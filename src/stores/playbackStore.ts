@@ -40,7 +40,8 @@ const initialState: PlaybackState = {
 
 // 创建播放 Store
 export const usePlaybackStore = create<PlaybackStore>()(
-  subscribeWithSelector((set, get) => ({
+  MiddlewareCombinations.playbackStore(
+    subscribeWithSelector((set, get) => ({
     // 基础状态
     ...initialState,
     
@@ -304,6 +305,7 @@ export const usePlaybackStore = create<PlaybackStore>()(
     // 选择器
     select: (selector) => selector(get()),
   }))
+  )
 );
 
 // 导出预定义的选择器
