@@ -128,11 +128,11 @@ src/features/playlist/
 
 ### 基本使用
 ```tsx
-import { CreatePlaylistDialog } from "@/features/playlist/components/CreatePlaylistDialog";
+import { CreatePlaylistDialog } from "@/src/features/playlist/components/CreatePlaylistDialog";
 
 function MyComponent() {
   const [open, setOpen] = useState(false);
-  
+
   return (
     <CreatePlaylistDialog
       open={open}
@@ -147,7 +147,7 @@ function MyComponent() {
 
 ### 完整管理界面
 ```tsx
-import { PlaylistManager } from "@/features/playlist/components/PlaylistManager";
+import { PlaylistManager } from "@/src/features/playlist/components/PlaylistManager";
 
 function PlaylistScreen() {
   return <PlaylistManager />;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { PlaylistManager } from "@/features/playlist/components/PlaylistManager";
+import { PlaylistManager } from "@/src/features/playlist/components/PlaylistManager";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 
@@ -14,7 +14,7 @@ export default function PlaylistDemo() {
         <Text className="text-muted-foreground mb-6">
           这个演示展示了完整的播放列表管理功能，包括创建、查看、搜索和排序播放列表。
         </Text>
-        
+
         <Button
           onPress={() => setShowManager(!showManager)}
           className="mb-4"
