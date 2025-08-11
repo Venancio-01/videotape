@@ -33,23 +33,23 @@ export default function PlaylistsScreen() {
         <CardHeader className="flex-row items-center justify-between pb-2">
           <CardTitle className="text-lg">{item.name}</CardTitle>
           <TouchableOpacity>
-            <MoreVertical className="w-5 h-5 text-gray-400" />
+            <MoreVertical className="w-5 h-5 text-muted-foreground" />
           </TouchableOpacity>
         </CardHeader>
         <CardContent>
           {item.description && (
-            <Text className="text-gray-600 mb-3">{item.description}</Text>
+            <Text className="text-muted-foreground mb-3">{item.description}</Text>
           )}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-gray-400" />
-              <Text className="text-sm text-gray-600">
+              <FolderOpen className="w-4 h-4 text-muted-foreground" />
+              <Text className="text-sm text-muted-foreground">
                 {item.videoCount} 个视频
               </Text>
             </View>
-            <TouchableOpacity className="bg-blue-500 px-3 py-1 rounded-full flex-row items-center gap-1">
-              <Play className="w-3 h-3 text-white" />
-              <Text className="text-white text-sm">播放</Text>
+            <TouchableOpacity className="bg-primary px-3 py-1 rounded-full flex-row items-center gap-1">
+              <Play className="w-3 h-3 text-primary-foreground" />
+              <Text className="text-primary-foreground text-sm">播放</Text>
             </TouchableOpacity>
           </View>
         </CardContent>
@@ -78,14 +78,14 @@ export default function PlaylistsScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View className="flex-1 items-center justify-center py-12">
-            <FolderOpen className="w-16 h-16 text-gray-400 mb-4" />
+            <FolderOpen className="w-16 h-16 text-muted-foreground mb-4" />
             <Text className="text-lg font-semibold mb-2">暂无播放列表</Text>
-            <Text className="text-gray-500 text-center mb-6">
+            <Text className="text-muted-foreground text-center mb-6">
               创建播放列表来组织您的视频
             </Text>
-            <TouchableOpacity className="bg-blue-500 px-6 py-3 rounded-full flex-row items-center gap-2">
-              <Plus className="w-5 h-5 text-white" />
-              <Text className="text-white font-medium">创建播放列表</Text>
+            <TouchableOpacity className="bg-primary px-6 py-3 rounded-full flex-row items-center gap-2">
+              <Plus className="w-5 h-5 text-primary-foreground" />
+              <Text className="text-primary-foreground font-medium">创建播放列表</Text>
             </TouchableOpacity>
           </View>
         )}

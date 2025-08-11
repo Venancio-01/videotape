@@ -21,33 +21,33 @@ export default function Settings() {
     <ScrollView className="flex-1 w-full px-6 bg-background pt-4 gap-y-6">
       <List>
         <ListHeader>
-          <Muted>App</Muted>
+          <Muted>应用</Muted>
         </ListHeader>
         <ThemeSettingItem />
         {Platform.OS !== "web" && <NotificationItem />}
         <ListHeader className="pt-8">
-          <Muted>GENERAL</Muted>
+          <Muted>通用</Muted>
         </ListHeader>
         <ListItem
           itemLeft={(props) => <Star {...props} />} // props adds size and color attributes
-          label="Give us a start"
+          label="给我们评分"
           onPress={() =>
             openExternalURL("https://github.com/expo-starter/expo-template")
           }
         />
         <ListItem
           itemLeft={(props) => <Send {...props} />} // props adds size and color attributes
-          label="Send Feedback"
+          label="发送反馈"
           onPress={() => openExternalURL("https://expostarter.com")}
         />
         <ListItem
           itemLeft={(props) => <Shield {...props} />} // props adds size and color attributes
-          label="Privacy Policy"
+          label="隐私政策"
           onPress={() => openExternalURL("https://expostarter.com")}
         />
         <ListItem
           itemLeft={(props) => <BookOpen {...props} />} // props adds size and color attributes
-          label="Terms of service"
+          label="服务条款"
           onPress={() => openExternalURL("https://expostarter.com")}
         />
       </List>

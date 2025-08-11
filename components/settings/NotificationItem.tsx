@@ -26,7 +26,7 @@ export const NotificationItem = () => {
   return (
     <ListItem
       itemLeft={(props) => <Bell {...props} />} // props adds size and color attributes
-      label="Notifications"
+      label="通知"
       onPress={() => {
         if (permission === Notifications.PermissionStatus.DENIED) {
           openSettingApp();
@@ -37,8 +37,8 @@ export const NotificationItem = () => {
       itemRight={() => (
         <Text className="text-muted-foreground">
           {permission === Notifications.PermissionStatus.GRANTED
-            ? "Enabled"
-            : "Disabled"}
+            ? "已启用"
+            : "已禁用"}
         </Text>
       )}
     />

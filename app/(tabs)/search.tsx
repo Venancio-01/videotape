@@ -55,19 +55,19 @@ export default function SearchScreen() {
       />
 
       {/* 搜索栏 */}
-      <View className="p-4 border-b border-gray-200">
-        <View className="flex-row items-center bg-gray-100 rounded-lg px-4 py-3">
-          <SearchIcon className="w-5 h-5 text-gray-400 mr-3" />
+      <View className="p-4 border-b border-border">
+        <View className="flex-row items-center bg-secondary rounded-lg px-4 py-3">
+          <SearchIcon className="w-5 h-5 text-muted-foreground mr-3" />
           <TextInput
-            className="flex-1 text-base"
+            className="flex-1 text-base text-foreground"
             placeholder="搜索视频标题、分类或标签..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="hsl(var(--muted-foreground))"
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-muted-foreground" />
             </TouchableOpacity>
           )}
         </View>
@@ -83,11 +83,11 @@ export default function SearchScreen() {
         ItemSeparatorComponent={() => <View className="p-2" />}
         ListEmptyComponent={() => (
           <View className="flex-1 items-center justify-center py-12">
-            <SearchIcon className="w-16 h-16 text-gray-400 mb-4" />
+            <SearchIcon className="w-16 h-16 text-muted-foreground mb-4" />
             <Text className="text-lg font-semibold mb-2">
               {searchQuery ? "未找到相关视频" : "搜索视频"}
             </Text>
-            <Text className="text-gray-500 text-center">
+            <Text className="text-muted-foreground text-center">
               {searchQuery
                 ? `没有找到包含 "${searchQuery}" 的视频`
                 : "输入关键词开始搜索您的视频库"}

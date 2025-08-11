@@ -57,20 +57,20 @@ export const ThemeSettingItem = () => {
   const themes: ItemData[] = useMemo(
     () => [
       {
-        title: "Device settings",
-        subtitle: "Default to your device's appearance",
+        title: "设备设置",
+        subtitle: "跟随设备外观",
         value: "system",
         icon: <Smartphone className="text-foreground" />,
       },
       {
-        title: "Dark mode",
-        subtitle: "Always use Dark mode",
+        title: "深色模式",
+        subtitle: "始终使用深色模式",
         value: "dark",
         icon: <Moon className="text-foreground" />,
       },
       {
-        title: "Light mode",
-        subtitle: "Always use Light mode",
+        title: "浅色模式",
+        subtitle: "始终使用浅色模式",
         value: "light",
         icon: <Sun className="text-foreground" />,
       },
@@ -93,13 +93,13 @@ export const ThemeSettingItem = () => {
       <BottomSheetOpenTrigger asChild>
         <ListItem
           itemLeft={(props) => <Palette {...props} />} // props adds size and color attributes
-          label="Theme"
+          label="主题"
         />
       </BottomSheetOpenTrigger>
       <BottomSheetContent>
         <BottomSheetHeader className="bg-background">
           <Text className="text-foreground text-xl font-bold  pb-1">
-            Select Theme
+            选择主题
           </Text>
         </BottomSheetHeader>
         <BottomSheetView className="gap-5 pt-6 bg-background">
