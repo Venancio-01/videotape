@@ -1,4 +1,4 @@
-import * as SeparatorPrimitive from "@/src/components/primitives/separator";
+import * as SeparatorPrimitive from "@/components/primitives/separator";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 

@@ -4,14 +4,14 @@ import {
   BottomSheetHeader,
   BottomSheetOpenTrigger,
   BottomSheetView,
-} from "@/src/components/primitives/bottomSheet/bottom-sheet.native";
-import { Text } from "@/src/components/ui/text";
+} from "@/components/primitives/bottomSheet/bottom-sheet.native";
+import { Text } from "@/components/ui/text";
 import ListItem from "@/components/ui/list-item";
-import { H4 } from "@/src/components/ui/typography";
+import { H4 } from "@/components/ui/typography";
 import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
 import { Check } from "@/lib/icons/Check";
 import { getItem, setItem } from "@/lib/storage";
-import { useSettingsStore } from "@/src/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
 import { useCallback, useMemo, useState } from "react";

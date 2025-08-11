@@ -1,5 +1,5 @@
-import { useAugmentedRef } from "@/src/components/primitives/hooks";
-import * as Slot from "@/src/components/primitives/slot";
+import { useAugmentedRef } from "@/components/primitives/hooks";
+import * as Slot from "@/components/primitives/slot";
 import type {
   ForceMountable,
   PositionedContentProps,
@@ -9,8 +9,8 @@ import type {
   SlottableViewProps,
   TextRef,
   ViewRef,
-} from "@/src/components/primitives/types";
-import { EmptyGestureResponderEvent } from "@/src/components/primitives/utils";
+} from "@/components/primitives/types";
+import { EmptyGestureResponderEvent } from "@/components/primitives/utils";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as React from "react";
 import {

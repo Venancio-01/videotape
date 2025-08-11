@@ -1,6 +1,6 @@
-import { useControllableState } from "@/src/components/primitives/hooks";
-import { Portal as RNPPortal } from "@/src/components/primitives/portal";
-import * as Slot from "@/src/components/primitives/slot";
+import { useControllableState } from "@/components/primitives/hooks";
+import { Portal as RNPPortal } from "@/components/primitives/portal";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
@@ -8,7 +8,7 @@ import type {
   SlottableViewProps,
   TextRef,
   ViewRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as React from "react";
 import {
   BackHandler,

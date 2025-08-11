@@ -1,4 +1,4 @@
-import * as LabelPrimitive from "@/src/components/primitives/label";
+import * as LabelPrimitive from "@/components/primitives/label";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 

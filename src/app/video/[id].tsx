@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Text } from "@/src/components/ui/text";
-import { useDatabase } from "@/src/db/provider";
-import { videoTable } from "@/src/db/schema";
+import { Text } from "@/components/ui/text";
+import { useDatabase } from "@/db/provider";
+import { videoTable } from "@/db/schema";
 import {
   ArrowLeft,
   Heart,

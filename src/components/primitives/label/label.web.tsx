@@ -1,10 +1,10 @@
-import * as Slot from "@/src/components/primitives/slot";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
   SlottableTextProps,
   TextRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as Label from "@radix-ui/react-label";
 import * as React from "react";
 import { Text as RNText } from "react-native";

@@ -1,11 +1,11 @@
-import * as Slot from "@/src/components/primitives/slot";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
   SlottableViewProps,
   ViewRef,
-} from "@/src/components/primitives/types";
-import { ToggleGroupUtils } from "@/src/components/primitives/utils";
+} from "@/components/primitives/types";
+import { ToggleGroupUtils } from "@/components/primitives/utils";
 import * as React from "react";
 import { type GestureResponderEvent, Pressable, View } from "react-native";
 import type { ToggleGroupItemProps, ToggleGroupRootProps } from "./types";

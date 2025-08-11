@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { PlaylistService } from "@/src/services/playlistService";
-import type { CreatePlaylistOptions } from "@/src/features/playlist/types/playlist";
-import type { Video } from "@/src/db/schema";
+import { PlaylistService } from "@/services/playlistService";
+import type { CreatePlaylistOptions } from "@/features/playlist/types/playlist";
+import type { Video } from "@/db/schema";
 
 // Mock the database and file system
 vi.mock("@/db", () => ({

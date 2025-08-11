@@ -2,10 +2,10 @@
  * 队列状态管理 Store
  */
 
-import type { Playlist, Video } from "@/src/db/schema";
-import type { QueueState } from "@/src/types/stateTypes";
-import type { QueueStore } from "@/src/types/storeTypes";
-import { StateUtils } from "@/src/utils/stateUtils";
+import type { Playlist, Video } from "@/db/schema";
+import type { QueueState } from "@/types/stateTypes";
+import type { QueueStore } from "@/types/storeTypes";
+import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { MiddlewareCombinations } from "../middleware";

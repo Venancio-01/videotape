@@ -1,4 +1,4 @@
-import * as RadioGroupPrimitive from "@/src/components/primitives/radio-group";
+import * as RadioGroupPrimitive from "@/components/primitives/radio-group";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { View } from "react-native";

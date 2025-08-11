@@ -2,9 +2,9 @@
  * UI 状态管理 Store
  */
 
-import type { Notification, UIState } from "@/src/types/stateTypes";
-import type { UIStore } from "@/src/types/storeTypes";
-import { StateUtils } from "@/src/utils/stateUtils";
+import type { Notification, UIState } from "@/types/stateTypes";
+import type { UIStore } from "@/types/storeTypes";
+import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { MiddlewareCombinations } from "../middleware";

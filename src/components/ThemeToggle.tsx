@@ -1,9 +1,9 @@
-import { MoonStar, Sun } from "@/src/components/Icons";
+import { MoonStar, Sun } from "@/components/Icons";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
 import { setString } from "@/lib/storage";
-import { useSettingsStore } from "@/src/stores/settingsStore";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { useTheme } from "next-themes";
 import { Platform, Pressable, View } from "react-native";
 

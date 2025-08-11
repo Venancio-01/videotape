@@ -1,8 +1,8 @@
-import { FolderOpen, MoreVertical, Play, Plus } from "@/src/components/Icons";
+import { FolderOpen, MoreVertical, Play, Plus } from "@/components/Icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Text } from "@/src/components/ui/text";
-import { useDatabase } from "@/src/db/provider";
-import { type Playlist, playlistTable } from "@/src/db/schema";
+import { Text } from "@/components/ui/text";
+import { useDatabase } from "@/db/provider";
+import { type Playlist, playlistTable } from "@/db/schema";
 import { FlashList } from "@shopify/flash-list";
 import { desc } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";

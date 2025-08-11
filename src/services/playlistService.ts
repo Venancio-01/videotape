@@ -1,9 +1,9 @@
-import { db } from "@/src/db";
-import type { Playlist, Video } from "@/src/db/schema";
+import { db } from "@/db";
+import type { Playlist, Video } from "@/db/schema";
 import type {
   CreatePlaylistOptions,
   CreatePlaylistResult,
-} from "@/src/features/playlist/types/playlist";
+} from "@/features/playlist/types/playlist";
 import type { FileItem, DirectoryItem } from "@/types/file";
 
 /**

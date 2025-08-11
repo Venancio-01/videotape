@@ -1,4 +1,4 @@
-import * as SwitchPrimitives from "@/src/components/primitives/switch";
+import * as SwitchPrimitives from "@/components/primitives/switch";
 import { useColorScheme } from "@/lib/useColorScheme";
 import * as React from "react";
 import { Platform } from "react-native";

@@ -1,4 +1,4 @@
-import { ChevronRight } from "@/src/components/Icons";
+import { ChevronRight } from "@/components/Icons";
 import { cn } from "@/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 import { Link } from "expo-router";

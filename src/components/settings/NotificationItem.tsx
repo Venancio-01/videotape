@@ -1,5 +1,5 @@
 import ListItem from "@/components/ui/list-item";
-import { Text } from "@/src/components/ui/text";
+import { Text } from "@/components/ui/text";
 import { Bell } from "@/lib/icons";
 import * as IntentLauncher from "expo-intent-launcher";
 import * as Notifications from "expo-notifications";

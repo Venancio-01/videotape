@@ -1,8 +1,8 @@
 import {
   useAugmentedRef,
   useControllableState,
-} from "@/src/components/primitives/hooks";
-import * as Slot from "@/src/components/primitives/slot";
+} from "@/components/primitives/hooks";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
@@ -10,7 +10,7 @@ import type {
   SlottableViewProps,
   TextRef,
   ViewRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as React from "react";
 import {

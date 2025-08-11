@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Text } from "@/src/components/ui/text";
-import type { Video } from "@/src/db/schema";
-import { useVideoStore } from "@/src/stores/videoStore";
+import { Text } from "@/components/ui/text";
+import type { Video } from "@/db/schema";
+import { useVideoStore } from "@/stores/videoStore";
 import { Link } from "expo-router";
 import type React from "react";
 import { Image, Pressable, View } from "react-native";

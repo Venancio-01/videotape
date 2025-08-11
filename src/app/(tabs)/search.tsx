@@ -1,8 +1,8 @@
-import { Search as SearchIcon, X } from "@/src/components/Icons";
-import { Text } from "@/src/components/ui/text";
-import { VideoCard } from "@/src/components/video";
-import { useDatabase } from "@/src/db/provider";
-import { type Video, videoTable } from "@/src/db/schema";
+import { Search as SearchIcon, X } from "@/components/Icons";
+import { Text } from "@/components/ui/text";
+import { VideoCard } from "@/components/video";
+import { useDatabase } from "@/db/provider";
+import { type Video, videoTable } from "@/db/schema";
 import { FlashList } from "@shopify/flash-list";
 import { desc, ilike, or } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
-import { Search, Plus, Filter, SortAsc, SortDesc } from "@/src/components/Icons";
+import { Search, Plus, Filter, SortAsc, SortDesc } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Text } from "@/src/components/ui/text";
+import { Text } from "@/components/ui/text";
 import { PlaylistQuickActions } from "./PlaylistQuickActions";
 import { PlaylistGrid } from "./PlaylistCard";
-import { DatabaseService } from "@/src/db/database-service";
-import type { Playlist } from "@/src/db/schema";
+import { DatabaseService } from "@/db/database-service";
+import type { Playlist } from "@/db/schema";
 
 interface PlaylistManagerProps {
   className?: string;

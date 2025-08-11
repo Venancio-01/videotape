@@ -1,7 +1,7 @@
-import { Clock, Heart, Play } from "@/src/components/Icons";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/src/components/ui/card";
-import { Text } from "@/src/components/ui/text";
+import { Clock, Heart, Play } from "@/components/Icons";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 import { formatDuration } from "@/lib/utils";
 import { Link } from "expo-router";
 import type React from "react";

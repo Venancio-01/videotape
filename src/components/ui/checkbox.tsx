@@ -1,5 +1,5 @@
-import { Check } from "@/src/components/Icons";
-import * as CheckboxPrimitive from "@/src/components/primitives/checkbox";
+import { Check } from "@/components/Icons";
+import * as CheckboxPrimitive from "@/components/primitives/checkbox";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { Platform } from "react-native";

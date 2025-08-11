@@ -1,4 +1,4 @@
-import * as Slot from "@/src/components/primitives/slot";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
@@ -6,7 +6,7 @@ import type {
   SlottableViewProps,
   TextRef,
   ViewRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as React from "react";
 import {

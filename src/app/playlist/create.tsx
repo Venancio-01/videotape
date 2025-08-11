@@ -2,12 +2,12 @@ import { useState, useCallback } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PlaylistBasicInfoForm } from "@/src/features/playlist/components/PlaylistBasicInfoForm";
-import { VideoDirectorySelector } from "@/src/features/playlist/components/VideoDirectorySelector";
+import { PlaylistBasicInfoForm } from "@/features/playlist/components/PlaylistBasicInfoForm";
+import { VideoDirectorySelector } from "@/features/playlist/components/VideoDirectorySelector";
 import { Button } from "@/components/ui/button";
-import { PlaylistService } from "@/src/services/playlistService";
-import type { Playlist } from "@/src/db/schema";
-import type { CreatePlaylistForm } from "@/src/features/playlist/types/playlist";
+import { PlaylistService } from "@/services/playlistService";
+import type { Playlist } from "@/db/schema";
+import type { CreatePlaylistForm } from "@/features/playlist/types/playlist";
 
 // 创建步骤枚举
 enum CreateStep {

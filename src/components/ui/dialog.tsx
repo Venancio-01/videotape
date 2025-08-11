@@ -1,5 +1,5 @@
-import { X } from "@/src/components/Icons";
-import * as DialogPrimitive from "@/src/components/primitives/dialog";
+import { X } from "@/components/Icons";
+import * as DialogPrimitive from "@/components/primitives/dialog";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { Platform, StyleSheet, View } from "react-native";

@@ -1,7 +1,7 @@
 import type {
   ForceMountable,
   PressableRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 
 type Option =
   | {

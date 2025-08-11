@@ -1,8 +1,8 @@
 import {
   useAugmentedRef,
   useControllableState,
-} from "@/src/components/primitives/hooks";
-import * as Slot from "@/src/components/primitives/slot";
+} from "@/components/primitives/hooks";
+import * as Slot from "@/components/primitives/slot";
 import type {
   ForceMountable,
   PositionedContentProps,
@@ -12,7 +12,7 @@ import type {
   SlottableViewProps,
   TextRef,
   ViewRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as Select from "@radix-ui/react-select";
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";

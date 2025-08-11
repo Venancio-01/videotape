@@ -2,9 +2,9 @@
  * 播放列表状态管理 Store
  */
 
-import type { Playlist } from "@/src/db/schema";
-import type { PlaylistState, PlaylistStore } from "@/src/types/stateTypes";
-import { StateUtils } from "@/src/utils/stateUtils";
+import type { Playlist } from "@/db/schema";
+import type { PlaylistState, PlaylistStore } from "@/types/stateTypes";
+import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { MiddlewareCombinations } from "../middleware";
@@ -71,13 +71,17 @@ export const usePlaylistStore = create<PlaylistStore>()(
 
       removePlaylist: (playlistId: string) =>
         set((state) => {
-          const newPlaylists = state.playlists.filter((p) => p.id !== playlistId);
+          const newPlaylists = state.playlists.filter(
+            (p) => p.id !== playlistId,
+          );
 
           return {
             ...state,
             playlists: newPlaylists,
             currentPlaylist:
-              state.currentPlaylist?.id === playlistId ? null : state.currentPlaylist,
+              state.currentPlaylist?.id === playlistId
+                ? null
+                : state.currentPlaylist,
             pagination: {
               ...state.pagination,
               total: newPlaylists.length,
@@ -204,7 +208,9 @@ export const playlistSelectors = {
       const matchesSearch =
         !searchQuery ||
         playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        playlist.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        playlist.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         playlist.tags.some((tag) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase()),
         );
@@ -299,7 +305,10 @@ export const playlistSelectors = {
   getPlaylistStats: (state: PlaylistState) => {
     const playlists = state.playlists;
     const totalVideos = playlists.reduce((sum, p) => sum + p.videoCount, 0);
-    const totalDuration = playlists.reduce((sum, p) => sum + p.totalDuration, 0);
+    const totalDuration = playlists.reduce(
+      (sum, p) => sum + p.totalDuration,
+      0,
+    );
     const totalPlayCount = playlists.reduce((sum, p) => sum + p.playCount, 0);
 
     return {
@@ -338,13 +347,20 @@ export const playlistSelectors = {
 };
 
 // 创建记忆化 Hook
-export const usePlaylistSelector = <T>(selector: (state: PlaylistState) => T): T => {
+export const usePlaylistSelector = <T>(
+  selector: (state: PlaylistState) => T,
+): T => {
   return usePlaylistStore(StateUtils.createSelector(selector));
 };
 
 // 预定义的 Hook
-export const useAllPlaylists = () => usePlaylistSelector(playlistSelectors.getAllPlaylists);
-export const useCurrentPlaylist = () => usePlaylistSelector(playlistSelectors.getCurrentPlaylist);
-export const useFilteredPlaylists = () => usePlaylistSelector(playlistSelectors.getFilteredPlaylists);
-export const useSortedPlaylists = () => usePlaylistSelector(playlistSelectors.getSortedPlaylists);
-export const usePlaylistStats = () => usePlaylistSelector(playlistSelectors.getPlaylistStats);
+export const useAllPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getAllPlaylists);
+export const useCurrentPlaylist = () =>
+  usePlaylistSelector(playlistSelectors.getCurrentPlaylist);
+export const useFilteredPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getFilteredPlaylists);
+export const useSortedPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getSortedPlaylists);
+export const usePlaylistStats = () =>
+  usePlaylistSelector(playlistSelectors.getPlaylistStats);

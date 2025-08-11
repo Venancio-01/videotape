@@ -1,8 +1,8 @@
-import { Plus } from "@/src/components/Icons";
-import { Text } from "@/src/components/ui/text";
-import { VideoCard } from "@/src/components/video";
-import { useDatabase } from "@/src/db/provider";
-import { videoTable, type Video } from "@/src/db/schema";
+import { Plus } from "@/components/Icons";
+import { Text } from "@/components/ui/text";
+import { VideoCard } from "@/components/video";
+import { useDatabase } from "@/db/provider";
+import { videoTable, type Video } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { Link, Stack } from "expo-router";

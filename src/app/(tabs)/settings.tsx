@@ -1,8 +1,8 @@
-import { NotificationItem } from "@/src/components/settings/NotificationItem";
-import { ThemeSettingItem } from "@/src/components/settings/ThemeItem";
+import { NotificationItem } from "@/components/settings/NotificationItem";
+import { ThemeSettingItem } from "@/components/settings/ThemeItem";
 import List, { ListHeader } from "@/components/ui/list";
 import ListItem from "@/components/ui/list-item";
-import { Muted } from "@/src/components/ui/typography";
+import { Muted } from "@/components/ui/typography";
 import { Archive, Bell, BookOpen, Send, Shield, Star } from "@/lib/icons";
 import * as WebBrowser from "expo-web-browser";
 import * as React from "react";

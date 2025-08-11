@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, X, Plus, Eye, EyeOff, Loader2 } from "@/src/components/Icons";
+import { Check, X, Plus, Eye, EyeOff, Loader2 } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Text } from "@/src/components/ui/text";
+import { Text } from "@/components/ui/text";
 import {
   Dialog,
   DialogContent,
@@ -18,8 +18,8 @@ import {
   createPlaylistSchema,
   type CreatePlaylistForm,
 } from "../types/playlist";
-import { DatabaseService } from "@/src/db/database-service";
-import type { Playlist } from "@/src/db/schema";
+import { DatabaseService } from "@/db/database-service";
+import type { Playlist } from "@/db/schema";
 import { Form, FormElement } from "@/components/ui/form";
 
 interface CreatePlaylistDialogProps {

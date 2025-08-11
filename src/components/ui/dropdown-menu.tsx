@@ -3,9 +3,9 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
-} from "@/src/components/Icons";
-import * as DropdownMenuPrimitive from "@/src/components/primitives/dropdown-menu";
-import { TextClassContext } from "@/src/components/ui/text";
+} from "@/components/Icons";
+import * as DropdownMenuPrimitive from "@/components/primitives/dropdown-menu";
+import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import {

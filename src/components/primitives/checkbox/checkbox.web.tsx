@@ -1,10 +1,10 @@
-import { useAugmentedRef } from "@/src/components/primitives/hooks";
-import * as Slot from "@/src/components/primitives/slot";
+import { useAugmentedRef } from "@/components/primitives/hooks";
+import * as Slot from "@/components/primitives/slot";
 import type {
   ComponentPropsWithAsChild,
   PressableRef,
   SlottablePressableProps,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import * as React from "react";
 import { type GestureResponderEvent, Pressable, View } from "react-native";

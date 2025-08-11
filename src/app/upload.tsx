@@ -1,6 +1,6 @@
-import { ArrowLeft, FileVideo, FolderOpen, Upload } from "@/src/components/Icons";
+import { ArrowLeft, FileVideo, FolderOpen, Upload } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/src/components/ui/text";
+import { Text } from "@/components/ui/text";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";

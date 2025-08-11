@@ -7,10 +7,10 @@ import {
   MoreVertical,
   Edit,
   Trash2,
-} from "@/src/components/Icons";
+} from "@/components/Icons";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/src/components/ui/text";
-import type { Playlist } from "@/src/db/schema";
+import { Text } from "@/components/ui/text";
+import type { Playlist } from "@/db/schema";
 
 interface PlaylistCardProps {
   playlist: Playlist;

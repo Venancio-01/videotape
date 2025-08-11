@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
-import { Text } from "@/src/components/ui/text";
+import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
 import type { ViewStyle } from "react-native";
 

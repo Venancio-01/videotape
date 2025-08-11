@@ -1,4 +1,4 @@
-import type { Insets } from "@/src/components/primitives/types";
+import type { Insets } from "@/components/primitives/types";
 import * as React from "react";
 import {
   type LayoutRectangle,

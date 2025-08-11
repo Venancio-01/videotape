@@ -1,10 +1,10 @@
-import * as Slot from "@/src/components/primitives/slot";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
   SlottableViewProps,
   ViewRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as Switch from "@radix-ui/react-switch";
 import * as React from "react";
 import { type GestureResponderEvent, Pressable, View } from "react-native";

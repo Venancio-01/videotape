@@ -1,10 +1,10 @@
-import * as Slot from "@/src/components/primitives/slot";
+import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
   SlottablePressableProps,
   SlottableTextProps,
   TextRef,
-} from "@/src/components/primitives/types";
+} from "@/components/primitives/types";
 import * as React from "react";
 import { Pressable, Text as RNText } from "react-native";
 import type { LabelRootProps, LabelTextProps } from "./types";

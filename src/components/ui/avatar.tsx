@@ -1,4 +1,4 @@
-import * as AvatarPrimitive from "@/src/components/primitives/avatar";
+import * as AvatarPrimitive from "@/components/primitives/avatar";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 

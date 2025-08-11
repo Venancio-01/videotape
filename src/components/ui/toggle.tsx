@@ -1,5 +1,5 @@
-import * as TogglePrimitive from "@/src/components/primitives/toggle";
-import { TextClassContext } from "@/src/components/ui/text";
+import * as TogglePrimitive from "@/components/primitives/toggle";
+import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 import type { LucideIcon } from "lucide-react-native";

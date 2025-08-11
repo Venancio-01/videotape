@@ -1,4 +1,4 @@
-import type { ForceMountable } from "@/src/components/primitives/types";
+import type { ForceMountable } from "@/components/primitives/types";
 
 type AlertDialogRootProps = {
   open?: boolean;
