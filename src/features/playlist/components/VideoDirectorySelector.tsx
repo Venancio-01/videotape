@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
-import { Button } from "../../../components/ui/button";
-import { Text } from "../../../components/ui/text";
-import { Card } from "../../../components/ui/card";
-import { RadioGroup, RadioGroupItem } from "../../../components/ui/radio-group";
-import { Label } from "../../../components/ui/label";
-import { Checkbox } from "../../../components/ui/checkbox";
-import { Badge } from "../../../components/ui/badge";
-import { Separator } from "../../../components/ui/separator";
-import { Input } from "../../../components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Card } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import { VideoSelectionItem } from "../types/playlist";
 import type { CreatePlaylistForm } from "../types/playlist";
-import type { FileItem, DirectoryItem } from "../../../types/file";
-import type { Video } from "../../../db/schema";
+import type { FileItem, DirectoryItem } from "@/types/file";
+import type { Video } from "@/db/schema";
+import { PlaylistService } from "@/services/playlistService";
 
 interface VideoDirectorySelectorProps {
   data: CreatePlaylistForm;
@@ -29,19 +30,13 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // 模拟从文件系统服务获取文件列表
+  // 从服务获取文件列表
   useEffect(() => {
     const fetchFiles = async () => {
       setIsLoading(true);
       try {
-        // 这里应该调用实际的文件系统服务
-        // 现在使用模拟数据
-        const mockFiles: FileItem[] = [
-          { id: "1", name: "视频1.mp4", path: "/path/to/video1.mp4", size: 1024000, duration: 120, thumbnailUri: "" },
-          { id: "2", name: "视频2.mp4", path: "/path/to/video2.mp4", size: 2048000, duration: 180, thumbnailUri: "" },
-          { id: "3", name: "视频3.mp4", path: "/path/to/video3.mp4", size: 3072000, duration: 240, thumbnailUri: "" },
-        ];
-        setFileItems(mockFiles);
+        const files = await PlaylistService.getVideoFiles();
+        setFileItems(files);
       } catch (error) {
         console.error("获取文件列表失败:", error);
         Alert.alert("错误", "获取文件列表失败");
@@ -53,19 +48,13 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     fetchFiles();
   }, []);
 
-  // 模拟从文件系统服务获取目录列表
+  // 从服务获取目录列表
   useEffect(() => {
     const fetchDirectories = async () => {
       setIsLoading(true);
       try {
-        // 这里应该调用实际的文件系统服务
-        // 现在使用模拟数据
-        const mockDirectories: DirectoryItem[] = [
-          { id: "dir1", name: "电影", path: "/path/to/movies", itemCount: 5 },
-          { id: "dir2", name: "音乐视频", path: "/path/to/music", itemCount: 8 },
-          { id: "dir3", name: "纪录片", path: "/path/to/documentaries", itemCount: 3 },
-        ];
-        setDirectoryItems(mockDirectories);
+        const directories = await PlaylistService.getVideoDirectories();
+        setDirectoryItems(directories);
       } catch (error) {
         console.error("获取目录列表失败:", error);
         Alert.alert("错误", "获取目录列表失败");
@@ -89,15 +78,9 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
       
       setIsLoading(true);
       try {
-        // 这里应该调用实际的文件系统服务
-        // 现在使用模拟数据
-        const mockVideos: Video[] = [
-          { id: "vid1", title: "电影1", filePath: "/path/to/movies/movie1.mp4", duration: 5400, thumbnailUri: "" },
-          { id: "vid2", title: "电影2", filePath: "/path/to/movies/movie2.mp4", duration: 7200, thumbnailUri: "" },
-          { id: "vid3", title: "电影3", filePath: "/path/to/movies/movie3.mp4", duration: 6300, thumbnailUri: "" },
-        ];
-        setDirectoryVideos(mockVideos);
-        onChange({ selectedDirectory, directoryVideos: mockVideos });
+        const videos = await PlaylistService.getDirectoryVideos(selectedDirectory.path);
+        setDirectoryVideos(videos);
+        onChange({ selectedDirectory, directoryVideos: videos });
       } catch (error) {
         console.error("获取目录视频失败:", error);
         Alert.alert("错误", "获取目录视频失败");
@@ -157,20 +140,20 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     
     return (
       <TouchableOpacity
-        style={[styles.item, isSelected && styles.selectedItem]}
+        className={`flex-row items-center p-3 border-b border-border ${
+          isSelected ? "bg-primary/10" : ""
+        }`}
         onPress={() => handleFileSelect(item)}
       >
-        <View style={styles.itemContent}>
-          <Checkbox
-            checked={isSelected}
-            onCheckedChange={() => handleFileSelect(item)}
-          />
-          <View style={styles.itemInfo}>
-            <Text variant="body">{item.name}</Text>
-            <Text variant="caption" style={styles.itemMeta}>
-              {formatFileSize(item.size)} · {formatDuration(item.duration)}
-            </Text>
-          </View>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => handleFileSelect(item)}
+        />
+        <View className="ml-3 flex-1">
+          <Text className="text-base">{item.name}</Text>
+          <Text className="text-sm text-muted-foreground mt-1">
+            {formatFileSize(item.size)} · {formatDuration(item.metadata?.duration || 0)}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -182,17 +165,17 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     
     return (
       <TouchableOpacity
-        style={[styles.item, isSelected && styles.selectedItem]}
+        className={`flex-row items-center p-3 border-b border-border ${
+          isSelected ? "bg-primary/10" : ""
+        }`}
         onPress={() => handleDirectorySelect(item)}
       >
-        <View style={styles.itemContent}>
-          <RadioGroupItem value={item.id} />
-          <View style={styles.itemInfo}>
-            <Text variant="body">{item.name}</Text>
-            <Text variant="caption" style={styles.itemMeta}>
-              {item.itemCount} 个项目
-            </Text>
-          </View>
+        <RadioGroupItem value={item.id} />
+        <View className="ml-3 flex-1">
+          <Text className="text-base">{item.name}</Text>
+          <Text className="text-sm text-muted-foreground mt-1">
+            {item.itemCount} 个项目
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -204,140 +187,141 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     
     return (
       <TouchableOpacity
-        style={[styles.item, isSelected && styles.selectedItem]}
+        className={`flex-row items-center p-3 border-b border-border ${
+          isSelected ? "bg-primary/10" : ""
+        }`}
         onPress={() => handleDirectoryVideoSelect(item.id)}
       >
-        <View style={styles.itemContent}>
-          <Checkbox
-            checked={isSelected}
-            onCheckedChange={() => handleDirectoryVideoSelect(item.id)}
-          />
-          <View style={styles.itemInfo}>
-            <Text variant="body">{item.title}</Text>
-            <Text variant="caption" style={styles.itemMeta}>
-              {formatDuration(item.duration)}
-            </Text>
-          </View>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => handleDirectoryVideoSelect(item.id)}
+        />
+        <View className="ml-3 flex-1">
+          <Text className="text-base">{item.title}</Text>
+          <Text className="text-sm text-muted-foreground mt-1">
+            {formatDuration(item.duration)}
+          </Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Card style={styles.card}>
-        <View style={styles.header}>
-          <Text variant="title">选择视频</Text>
-          <Text variant="body" style={styles.subtitle}>
-            选择要添加到播放列表的视频
-          </Text>
-        </View>
+    <View className="flex-1 bg-background">
+      <View className="p-4 border-b border-border">
+        <Text className="text-lg font-semibold">选择视频</Text>
+        <Text className="text-sm text-muted-foreground mt-1">
+          选择要添加到播放列表的视频
+        </Text>
+      </View>
 
-        <View style={styles.selectionModeContainer}>
-          <Text variant="subheading" style={styles.selectionModeLabel}>
-            选择模式
-          </Text>
-          <RadioGroup
-            value={selectionMode}
-            onValueChange={(value) => setSelectionMode(value as "files" | "directory")}
-            style={styles.radioGroup}
-          >
-            <View style={styles.radioItem}>
-              <RadioGroupItem value="files" id="files" />
-              <Label htmlFor="files">选择文件</Label>
+      <View className="p-4 border-b border-border">
+        <Text className="text-base font-medium mb-3">选择模式</Text>
+        <RadioGroup
+          value={selectionMode}
+          onValueChange={(value) => setSelectionMode(value as "files" | "directory")}
+          className="flex-row gap-6"
+        >
+          <View className="flex-row items-center gap-2">
+            <RadioGroupItem value="files" id="files" />
+            <Label htmlFor="files">选择文件</Label>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <RadioGroupItem value="directory" id="directory" />
+            <Label htmlFor="directory">选择目录</Label>
+          </View>
+        </RadioGroup>
+      </View>
+
+      <View className="p-4 border-b border-border">
+        <Input
+          placeholder="搜索..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          className="w-full"
+        />
+      </View>
+
+      {selectionMode === "files" ? (
+        <View className="flex-1 p-4">
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-base">已选择 {data.selectedFiles.length} 个文件</Text>
+            {data.selectedFiles.length > 0 && (
+              <Badge variant="secondary" className="px-2 py-1">
+                {data.selectedFiles.length}
+              </Badge>
+            )}
+          </View>
+          
+          {isLoading ? (
+            <View className="flex-1 items-center justify-center">
+              <Text className="text-muted-foreground">加载中...</Text>
             </View>
-            <View style={styles.radioItem}>
-              <RadioGroupItem value="directory" id="directory" />
-              <Label htmlFor="directory">选择目录</Label>
-            </View>
-          </RadioGroup>
+          ) : (
+            <FlatList
+              data={filteredFiles}
+              renderItem={renderFileItem}
+              keyExtractor={(item) => item.id}
+              className="flex-1"
+            />
+          )}
         </View>
-
-        <Separator style={styles.separator} />
-
-        <View style={styles.searchContainer}>
-          <Input
-            placeholder="搜索..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={styles.searchInput}
-          />
-        </View>
-
-        {selectionMode === "files" ? (
-          <View style={styles.filesContainer}>
-            <View style={styles.selectedInfo}>
-              <Text variant="body">已选择 {data.selectedFiles.length} 个文件</Text>
-              {data.selectedFiles.length > 0 && (
-                <Badge variant="secondary">
-                  {data.selectedFiles.length}
-                </Badge>
-              )}
-            </View>
-            
+      ) : (
+        <View className="flex-1">
+          <View className="p-4 border-b border-border">
+            <Text className="text-base font-medium mb-3">选择目录</Text>
             {isLoading ? (
-              <Text variant="body">加载中...</Text>
+              <View className="items-center justify-center">
+                <Text className="text-muted-foreground">加载中...</Text>
+              </View>
             ) : (
               <FlatList
-                data={filteredFiles}
-                renderItem={renderFileItem}
+                data={filteredDirectories}
+                renderItem={renderDirectoryItem}
                 keyExtractor={(item) => item.id}
-                style={styles.list}
+                className="max-h-48"
               />
             )}
           </View>
-        ) : (
-          <View style={styles.directoryContainer}>
-            <View style={styles.directorySelection}>
-              <Text variant="subheading">选择目录</Text>
-              {isLoading ? (
-                <Text variant="body">加载中...</Text>
-              ) : (
-                <FlatList
-                  data={filteredDirectories}
-                  renderItem={renderDirectoryItem}
-                  keyExtractor={(item) => item.id}
-                  style={styles.list}
-                />
-              )}
-            </View>
 
-            {selectedDirectory && (
-              <>
-                <Separator style={styles.separator} />
-                <View style={styles.directoryVideos}>
-                  <View style={styles.directoryHeader}>
-                    <Text variant="subheading">{selectedDirectory.name}</Text>
-                    <Text variant="caption">{selectedDirectory.path}</Text>
-                  </View>
-                  
-                  <View style={styles.selectedInfo}>
-                    <Text variant="body">
-                      已选择 {selectedVideoIds.length} / {directoryVideos.length} 个视频
-                    </Text>
-                    {selectedVideoIds.length > 0 && (
-                      <Badge variant="secondary">
-                        {selectedVideoIds.length}
-                      </Badge>
-                    )}
-                  </View>
-                  
-                  {isLoading ? (
-                    <Text variant="body">加载中...</Text>
-                  ) : (
-                    <FlatList
-                      data={directoryVideos}
-                      renderItem={renderDirectoryVideoItem}
-                      keyExtractor={(item) => item.id}
-                      style={styles.list}
-                    />
+          {selectedDirectory && (
+            <>
+              <View className="border-b border-border">
+                <View className="p-4">
+                  <Text className="text-base font-medium">{selectedDirectory.name}</Text>
+                  <Text className="text-sm text-muted-foreground">{selectedDirectory.path}</Text>
+                </View>
+                
+                <View className="flex-row items-center justify-between px-4 pb-3">
+                  <Text className="text-base">
+                    已选择 {selectedVideoIds.length} / {directoryVideos.length} 个视频
+                  </Text>
+                  {selectedVideoIds.length > 0 && (
+                    <Badge variant="secondary" className="px-2 py-1">
+                      {selectedVideoIds.length}
+                    </Badge>
                   )}
                 </View>
-              </>
-            )}
-          </View>
-        )}
-      </Card>
+              </View>
+              
+              <View className="flex-1 p-4">
+                {isLoading ? (
+                  <View className="flex-1 items-center justify-center">
+                    <Text className="text-muted-foreground">加载中...</Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    data={directoryVideos}
+                    renderItem={renderDirectoryVideoItem}
+                    keyExtractor={(item) => item.id}
+                    className="flex-1"
+                  />
+                )}
+              </View>
+            </>
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -361,95 +345,4 @@ function formatDuration(seconds: number): string {
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  card: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  header: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-  },
-  subtitle: {
-    color: "#666",
-    marginTop: 4,
-  },
-  selectionModeContainer: {
-    padding: 16,
-  },
-  selectionModeLabel: {
-    marginBottom: 12,
-  },
-  radioGroup: {
-    flexDirection: "row",
-    gap: 24,
-  },
-  radioItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  separator: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-  },
-  searchContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  searchInput: {},
-  filesContainer: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  selectedInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  list: {
-    flex: 1,
-  },
-  item: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-  },
-  selectedItem: {
-    backgroundColor: "#f0f7ff",
-  },
-  itemContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemMeta: {
-    color: "#666",
-    marginTop: 2,
-  },
-  directoryContainer: {
-    flex: 1,
-  },
-  directorySelection: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  directoryVideos: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  directoryHeader: {
-    marginBottom: 12,
-  },
-});
+// 样式已转换为Tailwind CSS类
