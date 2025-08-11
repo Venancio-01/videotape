@@ -6,14 +6,13 @@ import { type Playlist, playlistTable } from "@/db/schema";
 import { FlashList } from "@shopify/flash-list";
 import { desc } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 import { useState } from "react";
-import { CreatePlaylistDialog } from "@/src/features/playlist/components/CreatePlaylistDialog";
 
 export default function PlaylistsScreen() {
   const { db } = useDatabase();
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const router = useRouter();
 
   const { data: playlists } = useLiveQuery(
     db
@@ -53,7 +52,7 @@ export default function PlaylistsScreen() {
             <View className="flex-row items-center gap-2">
               <FolderOpen className="w-4 h-4 text-muted-foreground" />
               <Text className="text-sm text-muted-foreground">
-                {item.videoCount} 个视频
+                {String(item.videoCount || 0)} 个视频
               </Text>
             </View>
             <TouchableOpacity className="bg-primary px-3 py-1 rounded-full flex-row items-center gap-1">
@@ -72,9 +71,9 @@ export default function PlaylistsScreen() {
         options={{
           title: "播放列表",
           headerRight: () => (
-            <TouchableOpacity 
+            <TouchableOpacity
               className="mr-4"
-              onPress={() => setShowCreateDialog(true)}
+              onPress={() => router.push("/playlist/create")}
             >
               <Plus className="w-6 h-6 text-foreground" />
             </TouchableOpacity>
@@ -95,9 +94,9 @@ export default function PlaylistsScreen() {
             <Text className="text-muted-foreground text-center mb-6">
               创建播放列表来组织您的视频
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               className="bg-primary px-6 py-3 rounded-full flex-row items-center gap-2"
-              onPress={() => setShowCreateDialog(true)}
+              onPress={() => router.push("/playlist/create")}
             >
               <Plus className="w-5 h-5 text-primary-foreground" />
               <Text className="text-primary-foreground font-medium">创建播放列表</Text>
@@ -107,11 +106,6 @@ export default function PlaylistsScreen() {
         ListFooterComponent={<View className="py-20" />}
       />
 
-      <CreatePlaylistDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onSuccess={handleCreatePlaylist}
-      />
     </View>
   );
 }

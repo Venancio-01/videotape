@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Plus, List, Heart, Star, Clock, Users } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { CreatePlaylistDialog } from "./CreatePlaylistDialog";
-import { type Playlist } from "@/db/schema";
+import { useRouter } from "expo-router";
+import type { Playlist } from "@/db/schema";
 
 interface PlaylistQuickActionsProps {
   onPlaylistCreated?: (playlist: Playlist) => void;
@@ -23,11 +22,10 @@ export function PlaylistQuickActions({
   onViewRecent,
   className = "",
 }: PlaylistQuickActionsProps) {
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const router = useRouter();
 
-  const handleCreateSuccess = (playlist: Playlist) => {
-    setShowCreateDialog(false);
-    onPlaylistCreated?.(playlist);
+  const handleCreateNew = () => {
+    router.push("/playlist/create");
   };
 
   const quickActions = [
@@ -35,7 +33,7 @@ export function PlaylistQuickActions({
       icon: <Plus className="w-5 h-5" />,
       label: "新建播放列表",
       color: "bg-blue-500",
-      onPress: () => setShowCreateDialog(true),
+      onPress: handleCreateNew,
     },
     {
       icon: <Heart className="w-5 h-5" />,
@@ -59,18 +57,11 @@ export function PlaylistQuickActions({
 
   return (
     <View className={`space-y-4 ${className}`}>
-      {/* 创建播放列表对话框 */}
-      <CreatePlaylistDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onSuccess={handleCreateSuccess}
-      />
-
       {/* 快速操作按钮 */}
       <View className="flex-row flex-wrap gap-3">
-        {quickActions.map((action, index) => (
+        {quickActions.map((action) => (
           <Button
-            key={index}
+            key={action.label}
             variant="outline"
             onPress={action.onPress}
             className="flex-1 min-w-[140px] h-20"

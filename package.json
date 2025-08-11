@@ -5,6 +5,7 @@
   "homepage": "https://expostarter.com",
   "repository": "git@github.com:expo-starter/expo-template.git",
   "license": "Apache-2.0",
+  "packageManager": "npm@10.9.2",
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start --tunnel",
     "dev:android": "expo start -c --android --tunnel",

@@ -25,31 +25,6 @@ export default function Settings() {
         </ListHeader>
         <ThemeSettingItem />
         {Platform.OS !== "web" && <NotificationItem />}
-        <ListHeader className="pt-8">
-          <Muted>通用</Muted>
-        </ListHeader>
-        <ListItem
-          itemLeft={(props) => <Star {...props} />} // props adds size and color attributes
-          label="给我们评分"
-          onPress={() =>
-            openExternalURL("https://github.com/expo-starter/expo-template")
-          }
-        />
-        <ListItem
-          itemLeft={(props) => <Send {...props} />} // props adds size and color attributes
-          label="发送反馈"
-          onPress={() => openExternalURL("https://expostarter.com")}
-        />
-        <ListItem
-          itemLeft={(props) => <Shield {...props} />} // props adds size and color attributes
-          label="隐私政策"
-          onPress={() => openExternalURL("https://expostarter.com")}
-        />
-        <ListItem
-          itemLeft={(props) => <BookOpen {...props} />} // props adds size and color attributes
-          label="服务条款"
-          onPress={() => openExternalURL("https://expostarter.com")}
-        />
       </List>
     </ScrollView>
   );
