@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { TagInput } from "../../../../components/ui/tag-input";
-import type { Playlist } from "@/db/schema";
+import { Text } from "@/src/components/ui/text";
+import { Switch } from "@/src/components/ui/switch";
+import { Textarea } from "@/src/components/ui/textarea";
+import { TagInput } from "../../../components/ui/tag-input";
+import type { Playlist } from "@/src/db/schema";
 
 interface PlaylistBasicInfoFormProps {
   initialData?: Partial<Playlist>;

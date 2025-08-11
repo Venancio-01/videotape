@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import { Plus, List, Heart, Star, Clock, Users } from "@/components/Icons";
+import { Plus, List, Heart, Star, Clock, Users } from "@/src/components/Icons";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { Text } from "@/src/components/ui/text";
 import { useRouter } from "expo-router";
-import type { Playlist } from "@/db/schema";
+import type { Playlist } from "@/src/db/schema";
 
 interface PlaylistQuickActionsProps {
   onPlaylistCreated?: (playlist: Playlist) => void;

@@ -2,7 +2,7 @@
  * 状态类型定义
  */
 
-import type { Playlist, Settings, Video, WatchHistory } from "@/db/schema";
+import type { Playlist, Settings, Video, WatchHistory } from "@/src/db/schema";
 
 // 视频状态类型
 export interface VideoState {

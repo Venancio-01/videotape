@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { FileSystemService } from '../services/fileSystemService';
 import { VideoService } from '../services/fileSystemService';
-import { DatabaseService } from '../db/database';
+import { DatabaseService } from '../db';
 import { useFileStore } from '../stores/fileStore';
 import { FileItem, DirectoryItem } from '../types/file';
 

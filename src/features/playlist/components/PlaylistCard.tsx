@@ -1,8 +1,16 @@
 import { View, StyleSheet } from "react-native";
-import { Heart, Play, Clock, Users, MoreVertical, Edit, Trash2 } from "@/components/Icons";
+import {
+  Heart,
+  Play,
+  Clock,
+  Users,
+  MoreVertical,
+  Edit,
+  Trash2,
+} from "@/src/components/Icons";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { type Playlist } from "@/db/schema";
+import { Text } from "@/src/components/ui/text";
+import type { Playlist } from "@/src/db/schema";
 
 interface PlaylistCardProps {
   playlist: Playlist;
@@ -28,11 +36,13 @@ export function PlaylistCard({
   const formatDuration = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    
+
     if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}`;
+      return `${hours}:${minutes.toString().padStart(2, "0")}`;
     }
-    return `${minutes}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
+    return `${minutes}:${Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const formatDate = (dateString: string) => {
@@ -40,7 +50,7 @@ export function PlaylistCard({
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return "今天";
     if (diffDays === 2) return "昨天";
     if (diffDays <= 7) return `${diffDays} 天前`;
@@ -49,7 +59,9 @@ export function PlaylistCard({
   };
 
   return (
-    <View className={`bg-card rounded-lg border border-border p-4 ${className}`}>
+    <View
+      className={`bg-card rounded-lg border border-border p-4 ${className}`}
+    >
       {/* 主要内容 */}
       <View className="flex-1">
         {/* 头部信息 */}
@@ -73,7 +85,7 @@ export function PlaylistCard({
               </View>
             </View>
           </View>
-          
+
           {/* 公开/私密标识 */}
           {playlist.isPublic && (
             <View className="flex items-center gap-1 bg-green-100 px-2 py-1 rounded-full">
@@ -85,7 +97,10 @@ export function PlaylistCard({
 
         {/* 描述信息 */}
         {playlist.description && (
-          <Text className="text-sm text-muted-foreground mb-3" numberOfLines={2}>
+          <Text
+            className="text-sm text-muted-foreground mb-3"
+            numberOfLines={2}
+          >
             {playlist.description}
           </Text>
         )}
@@ -107,13 +122,8 @@ export function PlaylistCard({
         {playlist.tags && playlist.tags.length > 0 && (
           <View className="flex flex-wrap gap-1 mb-3">
             {playlist.tags.slice(0, 3).map((tag, index) => (
-              <View
-                key={index}
-                className="bg-muted px-2 py-1 rounded-full"
-              >
-                <Text className="text-xs text-muted-foreground">
-                  #{tag}
-                </Text>
+              <View key={index} className="bg-muted px-2 py-1 rounded-full">
+                <Text className="text-xs text-muted-foreground">#{tag}</Text>
               </View>
             ))}
             {playlist.tags.length > 3 && (
@@ -138,14 +148,16 @@ export function PlaylistCard({
               <Play className="w-3 h-3" />
               <Text className="text-xs">播放</Text>
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
               onPress={onToggleFavorite}
               className="flex items-center gap-1"
             >
-              <Heart className={`w-3 h-3 ${playlist.isDefault ? "text-red-500" : "text-muted-foreground"}`} />
+              <Heart
+                className={`w-3 h-3 ${playlist.isDefault ? "text-red-500" : "text-muted-foreground"}`}
+              />
             </Button>
           </View>
 

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
-import { Search, Plus, Filter, SortAsc, SortDesc } from "@/components/Icons";
+import { Search, Plus, Filter, SortAsc, SortDesc } from "@/src/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
+import { Text } from "@/src/components/ui/text";
 import { PlaylistQuickActions } from "./PlaylistQuickActions";
 import { PlaylistGrid } from "./PlaylistCard";
-import { DatabaseService } from "@/db/database-service";
-import { type Playlist } from "@/db/schema";
+import { DatabaseService } from "@/src/db/database-service";
+import type { Playlist } from "@/src/db/schema";
 
 interface PlaylistManagerProps {
   className?: string;
@@ -19,7 +19,9 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "createdAt" | "videoCount" | "playCount">("createdAt");
+  const [sortBy, setSortBy] = useState<
+    "name" | "createdAt" | "videoCount" | "playCount"
+  >("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showOnlyPublic, setShowOnlyPublic] = useState(false);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
@@ -61,7 +63,7 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
         (playlist) =>
           playlist.name.toLowerCase().includes(query) ||
           playlist.description?.toLowerCase().includes(query) ||
-          playlist.tags?.some((tag) => tag.toLowerCase().includes(query))
+          playlist.tags?.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
@@ -78,7 +80,7 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
     // 排序
     filtered.sort((a, b) => {
       let aValue: any, bValue: any;
-      
+
       switch (sortBy) {
         case "name":
           aValue = a.name.toLowerCase();
@@ -109,7 +111,14 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
     });
 
     setFilteredPlaylists(filtered);
-  }, [playlists, searchQuery, sortBy, sortOrder, showOnlyPublic, showOnlyFavorites]);
+  }, [
+    playlists,
+    searchQuery,
+    sortBy,
+    sortOrder,
+    showOnlyPublic,
+    showOnlyFavorites,
+  ]);
 
   const handlePlaylistCreated = (playlist: Playlist) => {
     setPlaylists((prev) => [playlist, ...prev]);
@@ -128,11 +137,11 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
   const handlePlaylistToggleFavorite = async (playlist: Playlist) => {
     try {
       const dbService = DatabaseService.getInstance();
-      const updated = await dbService.updatePlaylist(playlist.id, { 
-        isDefault: !playlist.isDefault 
+      const updated = await dbService.updatePlaylist(playlist.id, {
+        isDefault: !playlist.isDefault,
       });
-      setPlaylists((prev) => 
-        prev.map((p) => (p.id === playlist.id ? updated : p))
+      setPlaylists((prev) =>
+        prev.map((p) => (p.id === playlist.id ? updated : p)),
       );
     } catch (error) {
       console.error("切换收藏状态失败:", error);
@@ -226,11 +235,7 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
                   <Text className="text-xs">视频数量</Text>
                 </Button>
               </View>
-              <Button
-                variant="ghost"
-                size="sm"
-                onPress={toggleSort}
-              >
+              <Button variant="ghost" size="sm" onPress={toggleSort}>
                 {sortOrder === "asc" ? (
                   <SortAsc className="w-4 h-4" />
                 ) : (
@@ -254,17 +259,25 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
               <Text className="text-sm font-medium mb-2">统计信息</Text>
               <View className="grid grid-cols-2 gap-4">
                 <View>
-                  <Text className="text-xs text-muted-foreground">总播放列表</Text>
-                  <Text className="text-lg font-semibold">{playlists.length}</Text>
+                  <Text className="text-xs text-muted-foreground">
+                    总播放列表
+                  </Text>
+                  <Text className="text-lg font-semibold">
+                    {playlists.length}
+                  </Text>
                 </View>
                 <View>
-                  <Text className="text-xs text-muted-foreground">公开播放列表</Text>
+                  <Text className="text-xs text-muted-foreground">
+                    公开播放列表
+                  </Text>
                   <Text className="text-lg font-semibold">
                     {playlists.filter((p) => p.isPublic).length}
                   </Text>
                 </View>
                 <View>
-                  <Text className="text-xs text-muted-foreground">总视频数</Text>
+                  <Text className="text-xs text-muted-foreground">
+                    总视频数
+                  </Text>
                   <Text className="text-lg font-semibold">
                     {playlists.reduce((sum, p) => sum + p.videoCount, 0)}
                   </Text>
@@ -272,7 +285,11 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
                 <View>
                   <Text className="text-xs text-muted-foreground">总时长</Text>
                   <Text className="text-lg font-semibold">
-                    {Math.floor(playlists.reduce((sum, p) => sum + p.totalDuration, 0) / 3600)}h
+                    {Math.floor(
+                      playlists.reduce((sum, p) => sum + p.totalDuration, 0) /
+                      3600,
+                    )}
+                    h
                   </Text>
                 </View>
               </View>

@@ -2,7 +2,7 @@
  * 播放列表状态管理 Store
  */
 
-import type { Playlist } from "@/db/schema";
+import type { Playlist } from "@/src/db/schema";
 import type { PlaylistState, PlaylistStore } from "@/src/types/stateTypes";
 import { StateUtils } from "@/src/utils/stateUtils";
 import { create } from "zustand";

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PlaylistService } from "@/src/services/playlistService";
 import type { CreatePlaylistOptions } from "@/src/features/playlist/types/playlist";
-import type { Video } from "@/db/schema";
+import type { Video } from "@/src/db/schema";
 
 // Mock the database and file system
 vi.mock("@/db", () => ({
@@ -20,7 +20,7 @@ describe("PlaylistService", () => {
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
-    
+
     // Setup test data
     mockVideoItems = [
       {
@@ -50,7 +50,7 @@ describe("PlaylistService", () => {
   describe("createPlaylist", () => {
     it("应该成功创建播放列表", async () => {
       const result = await PlaylistService.createPlaylist(mockPlaylistOptions, mockVideoItems);
-      
+
       expect(result.success).toBe(true);
       expect(result.playlistId).toBeDefined();
       expect(result.playlistId).toMatch(/^playlist_\d+_[a-z0-9]{9}$/);
@@ -61,14 +61,14 @@ describe("PlaylistService", () => {
         { ...mockPlaylistOptions, name: "" },
         mockVideoItems
       );
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe("播放列表名称不能为空");
     });
 
     it("应该验证必填字段 - 视频列表", async () => {
       const result = await PlaylistService.createPlaylist(mockPlaylistOptions, []);
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe("请选择至少一个视频");
     });
@@ -78,7 +78,7 @@ describe("PlaylistService", () => {
         { ...mockPlaylistOptions, name: "   " },
         mockVideoItems
       );
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe("播放列表名称不能为空");
     });
@@ -88,7 +88,7 @@ describe("PlaylistService", () => {
         { ...mockPlaylistOptions, name: "  测试播放列表  " },
         mockVideoItems
       );
-      
+
       expect(result.success).toBe(true);
       // 注意：这里我们检查的是成功创建，而不是具体的名称处理
       // 因为服务层在内部会处理名称修剪
@@ -98,10 +98,10 @@ describe("PlaylistService", () => {
   describe("getAllPlaylists", () => {
     it("应该返回播放列表数组", async () => {
       const playlists = await PlaylistService.getAllPlaylists();
-      
+
       expect(Array.isArray(playlists)).toBe(true);
       expect(playlists.length).toBeGreaterThan(0);
-      
+
       // 验证返回的播放列表结构
       const playlist = playlists[0];
       expect(playlist).toHaveProperty("id");
@@ -119,7 +119,7 @@ describe("PlaylistService", () => {
   describe("getPlaylistById", () => {
     it("应该返回指定ID的播放列表", async () => {
       const playlist = await PlaylistService.getPlaylistById("1");
-      
+
       expect(playlist).not.toBeNull();
       expect(playlist?.id).toBe("1");
       expect(playlist?.name).toBe("我的收藏");
@@ -127,7 +127,7 @@ describe("PlaylistService", () => {
 
     it("应该返回null对于不存在的ID", async () => {
       const playlist = await PlaylistService.getPlaylistById("nonexistent");
-      
+
       expect(playlist).toBeNull();
     });
   });
@@ -135,10 +135,10 @@ describe("PlaylistService", () => {
   describe("getVideoFiles", () => {
     it("应该返回视频文件数组", async () => {
       const files = await PlaylistService.getVideoFiles();
-      
+
       expect(Array.isArray(files)).toBe(true);
       expect(files.length).toBeGreaterThan(0);
-      
+
       // 验证返回的文件结构
       const file = files[0];
       expect(file).toHaveProperty("id");
@@ -154,10 +154,10 @@ describe("PlaylistService", () => {
   describe("getVideoDirectories", () => {
     it("应该返回目录数组", async () => {
       const directories = await PlaylistService.getVideoDirectories();
-      
+
       expect(Array.isArray(directories)).toBe(true);
       expect(directories.length).toBeGreaterThan(0);
-      
+
       // 验证返回的目录结构
       const directory = directories[0];
       expect(directory).toHaveProperty("id");
@@ -170,10 +170,10 @@ describe("PlaylistService", () => {
   describe("getDirectoryVideos", () => {
     it("应该返回目录中的视频数组", async () => {
       const videos = await PlaylistService.getDirectoryVideos("/path/to/movies");
-      
+
       expect(Array.isArray(videos)).toBe(true);
       expect(videos.length).toBeGreaterThan(0);
-      
+
       // 验证返回的视频结构
       const video = videos[0];
       expect(video).toHaveProperty("id");
@@ -189,7 +189,7 @@ describe("PlaylistService", () => {
         name: "更新的播放列表名称",
         description: "更新的描述",
       });
-      
+
       expect(result.success).toBe(true);
       expect(result.playlistId).toBe("1");
     });
@@ -198,7 +198,7 @@ describe("PlaylistService", () => {
       const result = await PlaylistService.updatePlaylist("1", {
         name: "   ",
       });
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toBe("播放列表名称不能为空");
     });
@@ -207,7 +207,7 @@ describe("PlaylistService", () => {
   describe("deletePlaylist", () => {
     it("应该成功删除播放列表", async () => {
       const result = await PlaylistService.deletePlaylist("1");
-      
+
       expect(result.success).toBe(true);
       expect(result.playlistId).toBe("1");
     });
@@ -216,10 +216,10 @@ describe("PlaylistService", () => {
   describe("getPlaylistVideos", () => {
     it("应该返回播放列表中的视频", async () => {
       const videos = await PlaylistService.getPlaylistVideos("1");
-      
+
       expect(Array.isArray(videos)).toBe(true);
       expect(videos.length).toBeGreaterThan(0);
-      
+
       // 验证返回的视频结构
       const video = videos[0];
       expect(video).toHaveProperty("id");

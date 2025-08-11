@@ -2,7 +2,7 @@
  * 视频状态管理测试用例
  */
 
-import type { Video } from "@/db/schema";
+import type { Video } from "@/src/db/schema";
 import {
   useVideoSelector,
   useVideoStore,

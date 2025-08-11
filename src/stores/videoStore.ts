@@ -2,7 +2,7 @@
  * 视频状态管理 Store
  */
 
-import type { Video } from "@/db/schema";
+import type { Video } from "@/src/db/schema";
 import type { VideoFilter, VideoState } from "@/src/types/stateTypes";
 import type { VideoStore } from "@/src/types/storeTypes";
 import { StateUtils } from "@/src/utils/stateUtils";
