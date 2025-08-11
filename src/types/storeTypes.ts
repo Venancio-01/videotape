@@ -5,6 +5,7 @@
 import type { StoreMiddleware } from "./middlewareTypes";
 import type {
   PlaybackState,
+  PlaylistState,
   QueueState,
   SettingsState,
   UIState,
@@ -186,6 +187,30 @@ export interface SettingsStore extends BaseStore<SettingsState> {
   setError: (error: string | null) => void;
 }
 
+// 播放列表 Store 接口
+export interface PlaylistStore extends BaseStore<PlaylistState> {
+  // 播放列表管理
+  addPlaylist: (playlist: any) => void;
+  removePlaylist: (playlistId: string) => void;
+  updatePlaylist: (playlistId: string, updates: Partial<any>) => void;
+  setPlaylists: (playlists: any[]) => void;
+  setCurrentPlaylist: (playlist: any | null) => void;
+
+  // 搜索和过滤
+  setSearchQuery: (query: string) => void;
+  setFilter: (filter: Partial<PlaylistState["currentFilter"]>) => void;
+  clearFilters: () => void;
+
+  // 分页
+  setPagination: (pagination: Partial<PlaylistState["pagination"]>) => void;
+  loadMorePlaylists: () => void;
+
+  // 加载状态
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
+}
+
 // UI Store 接口
 export interface UIStore extends BaseStore<UIState> {
   // 界面状态
@@ -265,6 +290,7 @@ export interface StoreRegistry {
   queue?: QueueStore;
   settings?: SettingsStore;
   ui?: UIStore;
+  playlist?: PlaylistStore;
 }
 
 // Store Hook 类型

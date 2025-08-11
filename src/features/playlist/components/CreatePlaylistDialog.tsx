@@ -18,7 +18,7 @@ import {
   createPlaylistSchema,
   type CreatePlaylistForm,
 } from "../types/playlist";
-import { databaseService } from "@/db/database-service";
+import { DatabaseService } from "@/db/database-service";
 import type { Playlist } from "@/db/schema";
 import { Form, FormElement } from "@/components/ui/form";
 
@@ -95,7 +95,8 @@ export function CreatePlaylistDialog({
         return;
       }
 
-      const playlist = await databaseService.createPlaylist({
+      const dbService = DatabaseService.getInstance();
+      const playlist = await dbService.createPlaylist({
         name: data.name.trim(),
         description: data.description?.trim() || null,
         isPublic: data.isPublic,

@@ -9,6 +9,7 @@ export * from "./playbackStore";
 export * from "./queueStore";
 export * from "./settingsStore";
 export * from "./uiStore";
+export * from "./playlistStore";
 
 // 导出所有中间件
 export * from "../middleware/persistMiddleware";
@@ -20,6 +21,7 @@ export * from "../hooks/useVideoStore";
 export * from "../hooks/usePlaybackStore";
 export * from "../hooks/useQueueStore";
 export * from "../hooks/useSettingsStore";
+export * from "../hooks/usePlaylistStore";
 
 // 导出工具函数
 export * from "../utils/stateUtils";

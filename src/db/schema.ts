@@ -179,6 +179,46 @@ export const systemConfig = pgTable('system_config', {
   keyIndex: index('system_config_key_idx').on(table.key),
 }));
 
+// 播放列表表
+export const playlistTable = pgTable('playlists', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description'),
+  thumbnailPath: text('thumbnail_path'),
+  videoCount: integer('video_count').notNull().default(0),
+  totalDuration: integer('total_duration').notNull().default(0),
+  isPublic: boolean('is_public').notNull().default(false),
+  isDefault: boolean('is_default').notNull().default(false),
+  sortOrder: integer('sort_order').notNull().default(0),
+  playCount: integer('play_count').notNull().default(0),
+  lastPlayedAt: timestamp('last_played_at'),
+  tags: jsonb('tags').$type<string[]>().default([]),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (table) => ({
+  nameIndex: index('playlists_name_idx').on(table.name),
+  createdAtIndex: index('playlists_created_at_idx').on(table.createdAt),
+  isPublicIndex: index('playlists_is_public_idx').on(table.isPublic),
+  isDefaultIndex: index('playlists_is_default_idx').on(table.isDefault),
+  videoCountIndex: index('playlists_video_count_idx').on(table.videoCount),
+  playCountIndex: index('playlists_play_count_idx').on(table.playCount),
+}));
+
+// 播放列表视频关联表
+export const playlistVideos = pgTable('playlist_videos', {
+  id: text('id').primaryKey(),
+  playlistId: text('playlist_id').notNull().references(() => playlistTable.id, { onDelete: 'cascade' }),
+  videoId: text('video_id').notNull().references(() => files.id, { onDelete: 'cascade' }),
+  sortOrder: integer('sort_order').notNull().default(0),
+  addedAt: timestamp('added_at').notNull().defaultNow(),
+  position: integer('position').notNull().default(0),
+}, (table) => ({
+  playlistIdIndex: index('playlist_videos_playlist_id_idx').on(table.playlistId),
+  videoIdIndex: index('playlist_videos_video_id_idx').on(table.videoId),
+  sortOrderIndex: index('playlist_videos_sort_order_idx').on(table.sortOrder),
+  uniqueIndex: index('playlist_videos_playlist_video_unique').on(table.playlistId, table.videoId),
+}));
+
 // 关系定义
 export const filesRelations = relations(files, ({ one, many }) => ({
   videoMetadata: one(videoMetadata, {
@@ -267,6 +307,21 @@ export const fileBackupRecordsRelations = relations(fileBackupRecords, ({ one })
   }),
 }));
 
+export const playlistTableRelations = relations(playlistTable, ({ many }) => ({
+  videos: many(playlistVideos),
+}));
+
+export const playlistVideosRelations = relations(playlistVideos, ({ one }) => ({
+  playlist: one(playlistTable, {
+    fields: [playlistVideos.playlistId],
+    references: [playlistTable.id],
+  }),
+  video: one(files, {
+    fields: [playlistVideos.videoId],
+    references: [files.id],
+  }),
+}));
+
 // 类型定义
 export type File = typeof files.$inferSelect;
 export type NewFile = typeof files.$inferInsert;
@@ -288,3 +343,7 @@ export type FileBackupRecord = typeof fileBackupRecords.$inferSelect;
 export type NewFileBackupRecord = typeof fileBackupRecords.$inferInsert;
 export type SystemConfig = typeof systemConfig.$inferSelect;
 export type NewSystemConfig = typeof systemConfig.$inferInsert;
+export type Playlist = typeof playlistTable.$inferSelect;
+export type NewPlaylist = typeof playlistTable.$inferInsert;
+export type PlaylistVideo = typeof playlistVideos.$inferSelect;
+export type NewPlaylistVideo = typeof playlistVideos.$inferInsert;

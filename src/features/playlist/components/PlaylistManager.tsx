@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { PlaylistQuickActions } from "./PlaylistQuickActions";
 import { PlaylistGrid } from "./PlaylistCard";
-import { databaseService } from "@/db/database-service";
+import { DatabaseService } from "@/db/database-service";
 import { type Playlist } from "@/db/schema";
 
 interface PlaylistManagerProps {
@@ -28,10 +28,9 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
   const loadPlaylists = async () => {
     try {
       setLoading(true);
-      // 这里需要实现获取所有播放列表的方法
-      // const data = await databaseService.getAllPlaylists();
-      // setPlaylists(data);
-      setPlaylists([]); // 临时设置空数组
+      const dbService = DatabaseService.getInstance();
+      const data = await dbService.getAllPlaylists();
+      setPlaylists(data);
     } catch (error) {
       console.error("加载播放列表失败:", error);
     } finally {
@@ -117,19 +116,27 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
   };
 
   const handlePlaylistDelete = async (playlist: Playlist) => {
-    // 这里需要实现删除播放列表的方法
-    // await databaseService.deletePlaylist(playlist.id);
-    setPlaylists((prev) => prev.filter((p) => p.id !== playlist.id));
+    try {
+      const dbService = DatabaseService.getInstance();
+      await dbService.deletePlaylist(playlist.id);
+      setPlaylists((prev) => prev.filter((p) => p.id !== playlist.id));
+    } catch (error) {
+      console.error("删除播放列表失败:", error);
+    }
   };
 
   const handlePlaylistToggleFavorite = async (playlist: Playlist) => {
-    // 这里需要实现切换收藏状态的方法
-    // const updated = await databaseService.updatePlaylist(playlist.id, { 
-    //   isDefault: !playlist.isDefault 
-    // });
-    // setPlaylists((prev) => 
-    //   prev.map((p) => (p.id === playlist.id ? updated : p))
-    // );
+    try {
+      const dbService = DatabaseService.getInstance();
+      const updated = await dbService.updatePlaylist(playlist.id, { 
+        isDefault: !playlist.isDefault 
+      });
+      setPlaylists((prev) => 
+        prev.map((p) => (p.id === playlist.id ? updated : p))
+      );
+    } catch (error) {
+      console.error("切换收藏状态失败:", error);
+    }
   };
 
   const toggleSort = () => {

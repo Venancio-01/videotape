@@ -9,7 +9,8 @@ export const createPlaylistSchema = z.object({
   description: z
     .string()
     .max(500, "播放列表描述不能超过500个字符")
-    .optional(),
+    .optional()
+    .nullable(),
   isPublic: z.boolean().default(false),
   tags: z.array(z.string()).default([]),
 });

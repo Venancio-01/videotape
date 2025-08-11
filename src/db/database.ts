@@ -18,6 +18,8 @@ import {
   fileOperationLogs,
   fileBackupRecords,
   systemConfig,
+  playlistTable,
+  playlistVideos,
   type File,
   type NewFile,
   type Directory,
@@ -38,6 +40,10 @@ import {
   type NewFileBackupRecord,
   type SystemConfig,
   type NewSystemConfig,
+  type Playlist,
+  type NewPlaylist,
+  type PlaylistVideo,
+  type NewPlaylistVideo,
 } from './schema';
 
 export class DatabaseService {
@@ -229,6 +235,41 @@ export class DatabaseService {
       )
     `);
 
+    // 创建播放列表表
+    await this.db.run(`
+      CREATE TABLE IF NOT EXISTS playlists (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        thumbnail_path TEXT,
+        video_count INTEGER NOT NULL DEFAULT 0,
+        total_duration INTEGER NOT NULL DEFAULT 0,
+        is_public BOOLEAN NOT NULL DEFAULT FALSE,
+        is_default BOOLEAN NOT NULL DEFAULT FALSE,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        play_count INTEGER NOT NULL DEFAULT 0,
+        last_played_at TIMESTAMP,
+        tags TEXT DEFAULT '[]',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // 创建播放列表视频关联表
+    await this.db.run(`
+      CREATE TABLE IF NOT EXISTS playlist_videos (
+        id TEXT PRIMARY KEY,
+        playlist_id TEXT NOT NULL,
+        video_id TEXT NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        position INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (playlist_id) REFERENCES playlists (id) ON DELETE CASCADE,
+        FOREIGN KEY (video_id) REFERENCES files (id) ON DELETE CASCADE,
+        UNIQUE (playlist_id, video_id)
+      )
+    `);
+
     // 创建索引
     await this.createIndexes();
   }
@@ -281,6 +322,19 @@ export class DatabaseService {
 
     // 系统配置表索引
     await this.db.run(`CREATE INDEX IF NOT EXISTS idx_system_config_key ON system_config(key)`);
+
+    // 播放列表表索引
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_name ON playlists(name)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_created_at ON playlists(created_at)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_is_public ON playlists(is_public)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_is_default ON playlists(is_default)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_video_count ON playlists(video_count)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlists_play_count ON playlists(play_count)`);
+
+    // 播放列表视频关联表索引
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlist_videos_playlist_id ON playlist_videos(playlist_id)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlist_videos_video_id ON playlist_videos(video_id)`);
+    await this.db.run(`CREATE INDEX IF NOT EXISTS idx_playlist_videos_sort_order ON playlist_videos(sort_order)`);
   }
 
   // 文件操作
@@ -737,6 +791,217 @@ export class DatabaseService {
         );
     } catch (error) {
       console.error('清理数据库失败:', error);
+      throw error;
+    }
+  }
+
+  // 播放列表操作
+  async createPlaylist(playlist: Omit<NewPlaylist, 'id'>): Promise<Playlist> {
+    try {
+      const id = this.generateId();
+      const newPlaylist: NewPlaylist = {
+        id,
+        ...playlist,
+        tags: playlist.tags || [],
+      };
+      
+      await this.db.insert(playlistTable).values(newPlaylist);
+      
+      // 记录操作日志
+      await this.logOperation('create_playlist', undefined, { 
+        playlistId: id, 
+        name: playlist.name 
+      });
+      
+      return { id, ...playlist, tags: playlist.tags || [] } as Playlist;
+    } catch (error) {
+      console.error('创建播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async getPlaylist(id: string): Promise<Playlist | null> {
+    try {
+      const result = await this.db
+        .select()
+        .from(playlistTable)
+        .where(eq(playlistTable.id, id))
+        .limit(1);
+      
+      return result[0] || null;
+    } catch (error) {
+      console.error('获取播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async getAllPlaylists(): Promise<Playlist[]> {
+    try {
+      return await this.db
+        .select()
+        .from(playlistTable)
+        .orderBy(desc(playlistTable.createdAt));
+    } catch (error) {
+      console.error('获取所有播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async updatePlaylist(id: string, updates: Partial<NewPlaylist>): Promise<Playlist> {
+    try {
+      await this.db
+        .update(playlistTable)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(playlistTable.id, id));
+      
+      // 记录操作日志
+      await this.logOperation('update_playlist', undefined, { 
+        playlistId: id, 
+        updates 
+      });
+      
+      const updated = await this.getPlaylist(id);
+      if (!updated) {
+        throw new Error('播放列表更新失败');
+      }
+      return updated;
+    } catch (error) {
+      console.error('更新播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async deletePlaylist(id: string): Promise<void> {
+    try {
+      // 删除播放列表视频关联
+      await this.db
+        .delete(playlistVideos)
+        .where(eq(playlistVideos.playlistId, id));
+      
+      // 删除播放列表
+      await this.db
+        .delete(playlistTable)
+        .where(eq(playlistTable.id, id));
+      
+      // 记录操作日志
+      await this.logOperation('delete_playlist', undefined, { 
+        playlistId: id 
+      });
+    } catch (error) {
+      console.error('删除播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async addVideoToPlaylist(playlistId: string, videoId: string): Promise<void> {
+    try {
+      // 获取当前最大位置
+      const maxPositionResult = await this.db
+        .select({ max: { max: playlistVideos.position } })
+        .from(playlistVideos)
+        .where(eq(playlistVideos.playlistId, playlistId));
+      
+      const maxPosition = maxPositionResult[0]?.max || 0;
+      
+      await this.db.insert(playlistVideos).values({
+        id: this.generateId(),
+        playlistId,
+        videoId,
+        position: maxPosition + 1,
+      });
+      
+      // 更新播放列表的视频计数
+      await this.updatePlaylistVideoCount(playlistId);
+      
+      // 记录操作日志
+      await this.logOperation('add_video_to_playlist', videoId, { 
+        playlistId 
+      });
+    } catch (error) {
+      console.error('添加视频到播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  async removeVideoFromPlaylist(playlistId: string, videoId: string): Promise<void> {
+    try {
+      await this.db
+        .delete(playlistVideos)
+        .where(
+          and(
+            eq(playlistVideos.playlistId, playlistId),
+            eq(playlistVideos.videoId, videoId)
+          )
+        );
+      
+      // 更新播放列表的视频计数
+      await this.updatePlaylistVideoCount(playlistId);
+      
+      // 记录操作日志
+      await this.logOperation('remove_video_from_playlist', videoId, { 
+        playlistId 
+      });
+    } catch (error) {
+      console.error('从播放列表移除视频失败:', error);
+      throw error;
+    }
+  }
+
+  async getPlaylistVideos(playlistId: string): Promise<File[]> {
+    try {
+      const result = await this.db
+        .select()
+        .from(files)
+        .innerJoin(playlistVideos, eq(files.id, playlistVideos.videoId))
+        .where(
+          and(
+            eq(playlistVideos.playlistId, playlistId),
+            eq(files.isDeleted, false)
+          )
+        )
+        .orderBy(asc(playlistVideos.position));
+      
+      return result.map(row => row.files);
+    } catch (error) {
+      console.error('获取播放列表视频失败:', error);
+      throw error;
+    }
+  }
+
+  async getVideoPlaylists(videoId: string): Promise<Playlist[]> {
+    try {
+      const result = await this.db
+        .select()
+        .from(playlistTable)
+        .innerJoin(playlistVideos, eq(playlistTable.id, playlistVideos.playlistId))
+        .where(eq(playlistVideos.videoId, videoId))
+        .orderBy(desc(playlistTable.createdAt));
+      
+      return result.map(row => row.playlists);
+    } catch (error) {
+      console.error('获取视频的播放列表失败:', error);
+      throw error;
+    }
+  }
+
+  private async updatePlaylistVideoCount(playlistId: string): Promise<void> {
+    try {
+      const countResult = await this.db
+        .select({ count: { count: playlistVideos.id } })
+        .from(playlistVideos)
+        .where(eq(playlistVideos.playlistId, playlistId));
+      
+      const videoCount = countResult[0]?.count || 0;
+      
+      await this.db
+        .update(playlistTable)
+        .set({ 
+          videoCount,
+          updatedAt: new Date() 
+        })
+        .where(eq(playlistTable.id, playlistId));
+    } catch (error) {
+      console.error('更新播放列表视频计数失败:', error);
       throw error;
     }
   }

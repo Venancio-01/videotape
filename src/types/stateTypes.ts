@@ -191,6 +191,38 @@ export interface Notification {
   timestamp: number;
 }
 
+// 播放列表状态类型
+export interface PlaylistState {
+  // 播放列表数据
+  playlists: Playlist[];
+  currentPlaylist: Playlist | null;
+
+  // 加载状态
+  isLoading: boolean;
+  error: string | null;
+
+  // 搜索和过滤
+  searchQuery: string;
+  currentFilter: PlaylistFilter;
+
+  // 分页
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    hasMore: boolean;
+  };
+}
+
+// 播放列表过滤器类型
+export interface PlaylistFilter {
+  isPublic?: boolean;
+  isDefault?: boolean;
+  tags?: string[];
+  sortBy?: "name" | "createdAt" | "videoCount" | "playCount" | "lastPlayedAt";
+  sortOrder?: "asc" | "desc";
+}
+
 // 应用全局状态
 export interface AppState {
   video: VideoState;
@@ -198,6 +230,7 @@ export interface AppState {
   queue: QueueState;
   settings: SettingsState;
   ui: UIState;
+  playlist: PlaylistState;
 }
 
 // Store 操作类型
