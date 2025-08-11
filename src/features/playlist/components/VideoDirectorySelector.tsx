@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, FlatList, TouchableOpacity, Alert } from "react-native";
 import { Text } from "@/components/ui/text";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -25,6 +25,10 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
   const [selectedVideoIds, setSelectedVideoIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
+  // 使用 ref 存储 onChange 函数以避免依赖项问题
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   // 从服务获取文件列表
   useEffect(() => {
@@ -64,8 +68,8 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
 
   // 当选择模式改变时，更新表单数据
   useEffect(() => {
-    onChange({ selectionMode });
-  }, [selectionMode, onChange]);
+    onChangeRef.current({ selectionMode });
+  }, [selectionMode]);
 
   // 当选择的目录改变时，获取目录中的视频
   useEffect(() => {
@@ -76,7 +80,7 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
       try {
         const videos = await PlaylistService.getDirectoryVideos(selectedDirectory.path);
         setDirectoryVideos(videos);
-        onChange({ selectedDirectory, directoryVideos: videos });
+        onChangeRef.current({ selectedDirectory, directoryVideos: videos });
       } catch (error) {
         console.error("获取目录视频失败:", error);
         Alert.alert("错误", "获取目录视频失败");
@@ -86,7 +90,7 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     };
 
     fetchDirectoryVideos();
-  }, [selectedDirectory, onChange]);
+  }, [selectedDirectory]);
 
   // 处理文件选择
   const handleFileSelect = (file: FileItem) => {

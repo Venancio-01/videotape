@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,9 +34,9 @@ export default function CreatePlaylistScreen() {
   };
 
   // 处理选择项目变更
-  const handleSelectionChange = (data: Partial<CreatePlaylistForm>) => {
-    setFormData({ ...formData, ...data });
-  };
+  const handleSelectionChange = useCallback((data: Partial<CreatePlaylistForm>) => {
+    setFormData(prevFormData => ({ ...prevFormData, ...data }));
+  }, []);
 
   // 返回上一步
   const handleBack = () => {
