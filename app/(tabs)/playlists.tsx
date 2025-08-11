@@ -88,19 +88,12 @@ export default function PlaylistsScreen() {
         estimatedItemSize={120}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
-          <View className="flex-1 items-center justify-center py-12">
+          <View className="flex-1 items-center justify-center pt-24">
             <FolderOpen className="w-16 h-16 text-muted-foreground mb-4" />
             <Text className="text-lg font-semibold mb-2">暂无播放列表</Text>
             <Text className="text-muted-foreground text-center mb-6">
               创建播放列表来组织您的视频
             </Text>
-            <TouchableOpacity
-              className="bg-primary px-6 py-3 rounded-full flex-row items-center gap-2"
-              onPress={() => router.push("/playlist/create")}
-            >
-              <Plus className="w-5 h-5 text-primary-foreground" />
-              <Text className="text-primary-foreground font-medium">创建播放列表</Text>
-            </TouchableOpacity>
           </View>
         )}
         ListFooterComponent={<View className="py-20" />}

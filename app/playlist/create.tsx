@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, StyleSheet, Text, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PlaylistBasicInfoForm } from "@/src/features/playlist/components/PlaylistBasicInfoForm";
 import { VideoDirectorySelector } from "@/src/features/playlist/components/VideoDirectorySelector";
@@ -77,21 +77,21 @@ export default function CreatePlaylistScreen() {
       };
 
       // 准备视频项目数据
-      const videoItems = formData.selectionMode === "files" 
+      const videoItems = formData.selectionMode === "files"
         ? formData.selectedFiles.map(file => ({
-            id: file.id,
-            title: file.name,
-            filePath: file.uri,
-            duration: file.metadata?.duration || 0,
-            thumbnailUri: file.thumbnailUri || null,
-          }))
+          id: file.id,
+          title: file.name,
+          filePath: file.uri,
+          duration: file.metadata?.duration || 0,
+          thumbnailUri: file.thumbnailUri || null,
+        }))
         : formData.directoryVideos.map(video => ({
-            id: video.id,
-            title: video.title,
-            filePath: video.filePath,
-            duration: video.duration,
-            thumbnailUri: video.thumbnailUri || null,
-          }));
+          id: video.id,
+          title: video.title,
+          filePath: video.filePath,
+          duration: video.duration,
+          thumbnailUri: video.thumbnailUri || null,
+        }));
 
       console.log("创建播放列表:", {
         playlist: playlistOptions,
@@ -146,23 +146,26 @@ export default function CreatePlaylistScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <Stack.Screen
+        options={{
+          title: "创建播放列表",
+        }}
+      />
       <View className="flex-1">
         {/* 步骤指示器 */}
         <View className="flex-row justify-between items-center px-6 py-4 border-b border-border">
           <View className="flex-row items-center">
             <View
-              className={`w-8 h-8 rounded-full items-center justify-center ${
-                currentStep >= CreateStep.BASIC_INFO
+              className={`w-8 h-8 rounded-full items-center justify-center ${currentStep >= CreateStep.BASIC_INFO
                   ? "bg-primary"
                   : "bg-muted"
-              }`}
+                }`}
             >
               <Text
-                className={`text-sm font-medium ${
-                  currentStep >= CreateStep.BASIC_INFO
+                className={`text-sm font-medium ${currentStep >= CreateStep.BASIC_INFO
                     ? "text-primary-foreground"
                     : "text-muted-foreground"
-                }`}
+                  }`}
               >
                 1
               </Text>
@@ -170,35 +173,32 @@ export default function CreatePlaylistScreen() {
             <Text className="ml-2 text-sm font-medium">基本信息</Text>
           </View>
 
-            <View
-              className={`flex-1 h-1 mx-2 ${
-                currentStep >= CreateStep.SELECT_ITEMS
-                  ? "bg-primary"
-                  : "bg-muted"
+          <View
+            className={`flex-1 h-1 mx-2 ${currentStep >= CreateStep.SELECT_ITEMS
+              ? "bg-primary"
+              : "bg-muted"
               }`}
-            />
+          />
 
-            <View className="flex-row items-center">
-              <View
-                className={`w-8 h-8 rounded-full items-center justify-center ${
-                  currentStep >= CreateStep.SELECT_ITEMS
-                    ? "bg-primary"
-                    : "bg-muted"
+          <View className="flex-row items-center">
+            <View
+              className={`w-8 h-8 rounded-full items-center justify-center ${currentStep >= CreateStep.SELECT_ITEMS
+                ? "bg-primary"
+                : "bg-muted"
                 }`}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    currentStep >= CreateStep.SELECT_ITEMS
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground"
+            >
+              <Text
+                className={`text-sm font-medium ${currentStep >= CreateStep.SELECT_ITEMS
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground"
                   }`}
-                >
-                  2
-                </Text>
-              </View>
-              <Text className="ml-2 text-sm font-medium">选择内容</Text>
+              >
+                2
+              </Text>
             </View>
+            <Text className="ml-2 text-sm font-medium">选择内容</Text>
           </View>
+        </View>
 
         {/* 表单内容 */}
         <View className="flex-1">
@@ -218,7 +218,7 @@ export default function CreatePlaylistScreen() {
                 data={formData}
                 onChange={handleSelectionChange}
               />
-              
+
               {/* 底部操作按钮 */}
               <View className="p-4 border-t border-border bg-background">
                 <View className="flex-row gap-3">

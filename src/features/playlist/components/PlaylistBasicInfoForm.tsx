@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { TagInput } from "@/components/ui/tag-input";
+import { TagInput } from "../../../../components/ui/tag-input";
 import type { Playlist } from "@/db/schema";
 
 interface PlaylistBasicInfoFormProps {
@@ -23,11 +23,19 @@ export function PlaylistBasicInfoForm({
   isLoading = false,
   className = "",
 }: PlaylistBasicInfoFormProps) {
-  const [name, setName] = useState(initialData?.name || "");
-  const [description, setDescription] = useState(initialData?.description || "");
-  const [tags, setTags] = useState<string[]>(initialData?.tags || []);
-  const [isPublic, setIsPublic] = useState(initialData?.isPublic || false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [isPublic, setIsPublic] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 当initialData变化时更新表单状态
+  useEffect(() => {
+    setName(initialData?.name || "");
+    setDescription(initialData?.description || "");
+    setTags((initialData?.tags as string[]) || []);
+    setIsPublic(!!(initialData?.isPublic));
+  }, [initialData]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -96,8 +104,8 @@ export function PlaylistBasicInfoForm({
           </Text>
         </View>
         <Switch
-          value={isPublic}
-          onValueChange={setIsPublic}
+          checked={isPublic}
+          onCheckedChange={setIsPublic}
         />
       </View>
 
