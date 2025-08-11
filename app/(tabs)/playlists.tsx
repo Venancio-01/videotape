@@ -62,6 +62,11 @@ export default function PlaylistsScreen() {
       <Stack.Screen
         options={{
           title: "播放列表",
+          headerRight: () => (
+            <TouchableOpacity className="mr-4">
+              <Plus className="w-6 h-6 text-foreground" />
+            </TouchableOpacity>
+          ),
         }}
       />
 
@@ -87,12 +92,6 @@ export default function PlaylistsScreen() {
         ListFooterComponent={<View className="py-20" />}
       />
 
-      {/* 悬浮按钮 */}
-      <View className="absolute bottom-20 right-4">
-        <TouchableOpacity className="bg-blue-500 justify-center rounded-full h-[56px] w-[56px]">
-          <Plus className="text-white self-center" />
-        </TouchableOpacity>
       </View>
-    </View>
   );
 }

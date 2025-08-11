@@ -92,15 +92,6 @@ function ScreenContent() {
         keyExtractor={(item) => item.id}
         ListFooterComponent={<View className="py-4" />}
       />
-      <View className="absolute web:bottom-20 bottom-10 right-8">
-        <Link href="/upload" asChild>
-          <Pressable>
-            <View className="bg-primary justify-center rounded-full h-[45px] w-[45px]">
-              <Plus className="text-background self-center" />
-            </View>
-          </Pressable>
-        </Link>
       </View>
-    </View>
   );
 }
