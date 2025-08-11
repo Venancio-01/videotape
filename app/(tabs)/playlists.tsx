@@ -8,9 +8,12 @@ import { desc } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { CreatePlaylistDialog } from "@/src/features/playlist/components/CreatePlaylistDialog";
 
 export default function PlaylistsScreen() {
   const { db } = useDatabase();
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const { data: playlists } = useLiveQuery(
     db
@@ -18,6 +21,12 @@ export default function PlaylistsScreen() {
       .from(playlistTable)
       .orderBy(desc(playlistTable.createdAt))
   );
+
+  const handleCreatePlaylist = (playlist: Playlist) => {
+    // 创建成功后的回调函数
+    console.log("播放列表创建成功:", playlist.name);
+    // 可以在这里添加成功提示或其他操作
+  };
 
   if (!db) {
     return (
@@ -63,7 +72,10 @@ export default function PlaylistsScreen() {
         options={{
           title: "播放列表",
           headerRight: () => (
-            <TouchableOpacity className="mr-4">
+            <TouchableOpacity 
+              className="mr-4"
+              onPress={() => setShowCreateDialog(true)}
+            >
               <Plus className="w-6 h-6 text-foreground" />
             </TouchableOpacity>
           ),
@@ -83,7 +95,10 @@ export default function PlaylistsScreen() {
             <Text className="text-muted-foreground text-center mb-6">
               创建播放列表来组织您的视频
             </Text>
-            <TouchableOpacity className="bg-primary px-6 py-3 rounded-full flex-row items-center gap-2">
+            <TouchableOpacity 
+              className="bg-primary px-6 py-3 rounded-full flex-row items-center gap-2"
+              onPress={() => setShowCreateDialog(true)}
+            >
               <Plus className="w-5 h-5 text-primary-foreground" />
               <Text className="text-primary-foreground font-medium">创建播放列表</Text>
             </TouchableOpacity>
@@ -92,6 +107,11 @@ export default function PlaylistsScreen() {
         ListFooterComponent={<View className="py-20" />}
       />
 
-      </View>
+      <CreatePlaylistDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        onSuccess={handleCreatePlaylist}
+      />
+    </View>
   );
 }

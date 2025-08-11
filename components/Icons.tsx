@@ -29,35 +29,47 @@ import {
   Copy,
   Database,
   Ear,
+  Edit,
+  Eye,
+  EyeOff,
   Fan,
+  Filter,
   GalleryHorizontal,
   Github,
+  Heart,
   Info,
   Italic,
   Lamp,
   LayoutPanelLeft,
   LifeBuoy,
+  List,
+  Loader2,
   LogOut,
   type LucideIcon,
   Mail,
   MenuSquare,
   MessageSquare,
   MoonStar,
+  MoreVertical,
   Plus,
   PlusCircle,
   Search,
   Settings,
+  SortAsc,
+  SortDesc,
   Sparkles,
+  Star,
   Sun,
   Table,
   Terminal,
+  Trash2,
   Underline,
   UserPlus,
   Users,
   X,
+  Clock,
   FolderOpen,
-  Play,
-  MoreVertical
+  Play
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -129,6 +141,18 @@ interopIcon(CheckSquare);
 interopIcon(FolderOpen);
 interopIcon(Play);
 interopIcon(MoreVertical);
+interopIcon(Edit);
+interopIcon(Eye);
+interopIcon(EyeOff);
+interopIcon(Filter);
+interopIcon(Heart);
+interopIcon(List);
+interopIcon(Loader2);
+interopIcon(SortAsc);
+interopIcon(SortDesc);
+interopIcon(Star);
+interopIcon(Trash2);
+interopIcon(Clock);
 
 export {
   Activity,
@@ -161,31 +185,43 @@ export {
   Copy,
   Database,
   Ear,
+  Edit,
+  Eye,
+  EyeOff,
   Fan,
+  Filter,
   GalleryHorizontal,
+  Heart,
   Info,
   Italic,
   Lamp,
   LayoutPanelLeft,
   LifeBuoy,
+  List,
+  Loader2,
   LogOut,
   Settings,
   Mail,
   MenuSquare,
   MessageSquare,
   MoonStar,
+  MoreVertical,
   Plus,
   PlusCircle,
   Search,
+  SortAsc,
+  SortDesc,
   Sparkles,
+  Star,
   Sun,
   Table,
   Terminal,
+  Trash2,
   Underline,
   UserPlus,
   Users,
   X,
+  Clock,
   FolderOpen,
-  Play,
-  MoreVertical
+  Play
 };

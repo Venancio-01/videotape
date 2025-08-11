@@ -26,3 +26,24 @@ vi.mock("nativewind", () => ({
     setColorScheme: vi.fn(),
   }),
 }));
+
+// Mock FlashList
+vi.mock("@shopify/flash-list", () => ({
+  FlashList: ({ data, renderItem }: any) => {
+    return data.map((item: any, index: number) => 
+      renderItem({ item, index })
+    );
+  },
+}));
+
+// Mock Drizzle SQLite
+vi.mock("drizzle-orm/expo-sqlite", () => ({
+  useLiveQuery: () => ({ data: [] }),
+}));
+
+// Mock database service
+vi.mock("@/db/database-service", () => ({
+  databaseService: {
+    createPlaylist: vi.fn(),
+  },
+}));
