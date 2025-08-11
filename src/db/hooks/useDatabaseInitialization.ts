@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { databaseManager } from '../database-manager';
+import { databaseManager } from '@/db/database-manager';
 
 interface DatabaseInitializationState {
   isInitialized: boolean;
@@ -19,16 +19,16 @@ export function useDatabaseInitialization(): DatabaseInitializationState {
 
   const initializeDatabase = async () => {
     if (isInitializing) return;
-    
+
     setIsInitializing(true);
     setError(null);
 
     try {
       console.log(`Initializing database (attempt ${retryCount + 1}/${MAX_RETRIES})...`);
-      
+
       // 初始化数据库
       await databaseManager.initialize();
-      
+
       // 运行迁移
       await databaseManager.runMigrations();
 
@@ -37,7 +37,7 @@ export function useDatabaseInitialization(): DatabaseInitializationState {
       setError(null);
     } catch (err) {
       console.error(`Database initialization failed (attempt ${retryCount + 1}):`, err);
-      
+
       if (retryCount < MAX_RETRIES - 1) {
         // 延迟重试
         setTimeout(() => {
@@ -60,7 +60,7 @@ export function useDatabaseInitialization(): DatabaseInitializationState {
     setIsInitialized(false);
     setError(null);
     setRetryCount(0);
-    
+
     // 等待状态更新后再初始化
     setTimeout(initializeDatabase, 100);
   };

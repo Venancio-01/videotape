@@ -14,7 +14,7 @@ import {
 } from "react-hook-form";
 import { Platform, View } from "react-native";
 import Animated, { FadeInDown, FadeOut } from "react-native-reanimated";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 import { Checkbox } from "./checkbox";
 import { Combobox, type ComboboxOption } from "./combobox";
 import { Input } from "./input";

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { CreatePlaylistDialog } from "../CreatePlaylistDialog";
+import { CreatePlaylistDialog } from "@/features/playlist/components/CreatePlaylistDialog";
 import { vi } from "vitest";
 
 // Mock the database service

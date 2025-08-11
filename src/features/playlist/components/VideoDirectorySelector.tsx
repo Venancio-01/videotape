@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import type { CreatePlaylistForm } from "../types/playlist";
+import type { CreatePlaylistForm } from "@/features/playlist/types/playlist";
 import type { FileItem, DirectoryItem } from "@/types/file";
 import type { Video } from "@/db/schema";
 import { PlaylistService } from "@/services/playlistService";

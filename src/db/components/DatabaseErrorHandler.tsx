@@ -1,6 +1,6 @@
 import type React from "react";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { useDatabaseInitialization } from "../hooks/useDatabaseInitialization";
+import { useDatabaseInitialization } from "@/db/hooks/useDatabaseInitialization";
 
 interface DatabaseErrorHandlerProps {
   children: React.ReactNode;

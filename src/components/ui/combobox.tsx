@@ -1,8 +1,8 @@
 import * as React from "react";
 import { type ListRenderItemInfo, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { cn } from "../../lib/utils";
-import { Check, ChevronsUpDown, Search } from "../../src/components/Icons";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown, Search } from "@/components/Icons";
 import {
   BottomSheet,
   BottomSheetContent,

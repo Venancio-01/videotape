@@ -3,7 +3,7 @@
  * 整合所有仓库的实现，提供统一的数据访问接口
  */
 
-import { getDatabase } from '../config/connection';
+import { getDatabase } from '@/db/config/connection';
 import { sql } from 'drizzle-orm';
 import { VideoRepository } from './VideoRepository';
 import { PlaylistRepository } from './PlaylistRepository';
@@ -221,7 +221,7 @@ class SearchRepository implements ISearchRepository {
 export class DatabaseService implements IDatabaseService {
   private static instance: DatabaseService;
   private isInitialized = false;
-  
+
   // 仓库实例
   private _video: IVideoRepository;
   private _playlist: IPlaylistRepository;
@@ -296,7 +296,7 @@ export class DatabaseService implements IDatabaseService {
       // 测试数据库连接
       const db = getDatabase();
       await db.select({ count: sql`COUNT(*)` }).from(sql`sqlite_master`);
-      
+
       this.isInitialized = true;
       console.log('数据库服务初始化成功');
     } catch (error) {

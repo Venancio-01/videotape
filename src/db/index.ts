@@ -3,33 +3,24 @@
  * 提供所有数据库相关的功能和类型
  */
 
-// ===== 配置 =====
-export * from './config';
-
 // ===== Schema 和类型 =====
-export * from './schema';
+export * from "./schema";
 
 // ===== 仓库模式 =====
-export * from './repositories';
-
-// ===== 服务层 =====
-export * from './services';
+export * from "./repositories";
 
 // ===== React Hooks =====
-export * from './hooks';
-
-// ===== 工具函数 =====
-export * from './utils';
+export * from "./hooks";
 
 // ===== 迁移管理 =====
-export * from './migrations';
+export * from "./migrations";
 
 // ===== 组件 =====
-export * from './components';
+export * from "./components/DatabaseErrorHandler";
 
 // ===== 基础类型 =====
-export * from './types';
+export * from "./types";
 
 // ===== 便捷导出 =====
-export { databaseService } from './repositories/DatabaseService';
-export { useDatabase } from './hooks/useDatabase';
+export { databaseService } from "./repositories/DatabaseService";
+export { useDatabase } from "./hooks/useDatabase";

@@ -15,7 +15,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useAugmentedRef, useControllableState } from "../hooks";
+import { useAugmentedRef, useControllableState } from "@/components/primitives/hooks";
 import type {
   DialogContentProps,
   DialogOverlayProps,

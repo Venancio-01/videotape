@@ -7,7 +7,7 @@ import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import { IFileSystemService, IVideoService, FileItem, DirectoryItem, FileOperationResult, FileSearchOptions, FileWatchEvent, FileSystemStats } from '../types/file';
+import { IFileSystemService, IVideoService, FileItem, DirectoryItem, FileOperationResult, FileSearchOptions, FileWatchEvent, FileSystemStats } from '@/types/file';
 
 export class FileSystemService implements IFileSystemService {
   private static instance: FileSystemService;
@@ -117,7 +117,7 @@ export class FileSystemService implements IFileSystemService {
       for (const item of contents) {
         const itemPath = `${path}/${item}`;
         const info = await FileSystem.getInfoAsync(itemPath);
-        
+
         if (info.exists && !info.isDirectory) {
           const fileItem = await this.getFileInfo(itemPath);
           files.push(fileItem);
@@ -195,30 +195,30 @@ export class FileSystemService implements IFileSystemService {
       // 按名称搜索
       if (options.query) {
         const query = options.query.toLowerCase();
-        filteredFiles = filteredFiles.filter(file => 
+        filteredFiles = filteredFiles.filter(file =>
           file.name.toLowerCase().includes(query)
         );
       }
 
       // 按类型过滤
       if (options.mimeType && options.mimeType.length > 0) {
-        filteredFiles = filteredFiles.filter(file => 
+        filteredFiles = filteredFiles.filter(file =>
           options.mimeType!.includes(file.mimeType)
         );
       }
 
       // 按大小过滤
       if (options.sizeRange) {
-        filteredFiles = filteredFiles.filter(file => 
-          file.size >= options.sizeRange!.min && 
+        filteredFiles = filteredFiles.filter(file =>
+          file.size >= options.sizeRange!.min &&
           file.size <= options.sizeRange!.max
         );
       }
 
       // 按日期过滤
       if (options.dateRange) {
-        filteredFiles = filteredFiles.filter(file => 
-          file.createdAt >= options.dateRange!.start && 
+        filteredFiles = filteredFiles.filter(file =>
+          file.createdAt >= options.dateRange!.start &&
           file.createdAt <= options.dateRange!.end
         );
       }
@@ -228,12 +228,12 @@ export class FileSystemService implements IFileSystemService {
         filteredFiles.sort((a, b) => {
           let valueA = a[options.sortBy!];
           let valueB = b[options.sortBy!];
-          
+
           if (options.sortBy === 'size') {
             valueA = Number(valueA);
             valueB = Number(valueB);
           }
-          
+
           if (options.sortOrder === 'desc') {
             return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
           } else {
@@ -299,7 +299,7 @@ export class FileSystemService implements IFileSystemService {
       const files = await this.listDirectory(FileSystem.documentDirectory || '');
       const totalFiles = files.length;
       const totalSize = files.reduce((sum, file) => sum + file.size, 0);
-      
+
       const freeDiskStorage = await FileSystem.getFreeDiskStorageAsync();
       const totalDiskCapacity = await FileSystem.getTotalDiskCapacityAsync();
       const availableSpace = freeDiskStorage;
@@ -443,7 +443,7 @@ export class VideoService implements IVideoService {
     try {
       const fileSystemService = FileSystemService.getInstance();
       const fileItem = await fileSystemService.getFileInfo(uri);
-      
+
       // 这里可以添加视频特定的处理逻辑
       if (metadata) {
         fileItem.metadata = { ...fileItem.metadata, ...metadata };
@@ -538,7 +538,7 @@ export class VideoService implements IVideoService {
     try {
       const videos = await this.searchVideos('');
       const categories = new Map<string, FileItem[]>();
-      
+
       videos.forEach(video => {
         const category = video.type || 'other';
         if (!categories.has(category)) {

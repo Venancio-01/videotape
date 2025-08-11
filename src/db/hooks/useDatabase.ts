@@ -3,18 +3,16 @@
  * 基于 useLiveQuery 和仓库模式的响应式数据获取
  */
 
-import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
-import { useCallback, useEffect, useState } from 'react';
-import { databaseService } from '../repositories/DatabaseService';
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
+import { databaseService } from "@/db/repositories/DatabaseService";
 import type {
   IQuerier,
   Video,
   Playlist,
   SearchResult,
   VideoStats,
-  VideoWithRelations,
-  PlaylistWithVideos,
-} from '../repositories/interfaces';
+} from "@/db/repositories/interfaces";
 
 // ===== 基础 Live Query Hook =====
 
@@ -30,7 +28,7 @@ export function useLiveQueryData<T>(
     enabled?: boolean;
     onSuccess?: (data: T) => void;
     onError?: (error: Error) => void;
-  }
+  },
 ) {
   const { enabled = true, onSuccess, onError } = options || {};
   const [isLoading, setIsLoading] = useState(true);
@@ -79,21 +77,24 @@ export function useAllVideos(options?: {
 /**
  * 搜索视频的 Hook
  */
-export function useVideoSearch(params: {
-  query?: string;
-  category?: string;
-  tags?: string[];
-  isFavorite?: boolean;
-  minDuration?: number;
-  maxDuration?: number;
-  sortBy?: 'created_at' | 'title' | 'duration' | 'rating' | 'play_count';
-  sortOrder?: 'asc' | 'desc';
-  page?: number;
-  pageSize?: number;
-}, options?: {
-  enabled?: boolean;
-  debounceMs?: number;
-}) {
+export function useVideoSearch(
+  params: {
+    query?: string;
+    category?: string;
+    tags?: string[];
+    isFavorite?: boolean;
+    minDuration?: number;
+    maxDuration?: number;
+    sortBy?: "created_at" | "title" | "duration" | "rating" | "play_count";
+    sortOrder?: "asc" | "desc";
+    page?: number;
+    pageSize?: number;
+  },
+  options?: {
+    enabled?: boolean;
+    debounceMs?: number;
+  },
+) {
   const [debouncedParams, setDebouncedParams] = useState(params);
 
   // 防抖处理
@@ -112,14 +113,17 @@ export function useVideoSearch(params: {
 /**
  * 获取单个视频的 Hook
  */
-export function useVideo(id: string, options?: {
-  enabled?: boolean;
-  includeRelations?: boolean;
-}) {
-  const query = options?.includeRelations 
+export function useVideo(
+  id: string,
+  options?: {
+    enabled?: boolean;
+    includeRelations?: boolean;
+  },
+) {
+  const query = options?.includeRelations
     ? databaseService.video.getVideoWithRelationsQuery(id)
     : databaseService.video.findByIdQuery(id);
-  
+
   return useLiveQueryData(query, options);
 }
 
@@ -169,14 +173,17 @@ export function useAllPlaylists(options?: {
 /**
  * 获取单个播放列表的 Hook
  */
-export function usePlaylist(id: string, options?: {
-  enabled?: boolean;
-  includeVideos?: boolean;
-}) {
-  const query = options?.includeVideos 
+export function usePlaylist(
+  id: string,
+  options?: {
+    enabled?: boolean;
+    includeVideos?: boolean;
+  },
+) {
+  const query = options?.includeVideos
     ? databaseService.playlist.getPlaylistWithVideosQuery(id)
     : databaseService.playlist.findByIdQuery(id);
-  
+
   return useLiveQueryData(query, options);
 }
 
@@ -199,15 +206,15 @@ export function useVideoOperations() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createVideo = useCallback(async (data: Omit<Video, 'id'>) => {
+  const createVideo = useCallback(async (data: Omit<Video, "id">) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await databaseService.video.create(data);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('创建视频失败');
+      const error = err instanceof Error ? err : new Error("创建视频失败");
       setError(error);
       throw error;
     } finally {
@@ -218,12 +225,12 @@ export function useVideoOperations() {
   const updateVideo = useCallback(async (id: string, data: Partial<Video>) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await databaseService.video.update(id, data);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('更新视频失败');
+      const error = err instanceof Error ? err : new Error("更新视频失败");
       setError(error);
       throw error;
     } finally {
@@ -234,12 +241,12 @@ export function useVideoOperations() {
   const deleteVideo = useCallback(async (id: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await databaseService.video.delete(id);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('删除视频失败');
+      const error = err instanceof Error ? err : new Error("删除视频失败");
       setError(error);
       throw error;
     } finally {
@@ -247,35 +254,43 @@ export function useVideoOperations() {
     }
   }, []);
 
-  const updateWatchProgress = useCallback(async (id: string, progress: number) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      await databaseService.video.updateWatchProgress(id, progress);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('更新观看进度失败');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const updateWatchProgress = useCallback(
+    async (id: string, progress: number) => {
+      setIsLoading(true);
+      setError(null);
 
-  const toggleFavorite = useCallback(async (id: string, isFavorite: boolean) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      await databaseService.video.update(id, { isFavorite });
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('更新收藏状态失败');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        await databaseService.video.updateWatchProgress(id, progress);
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("更新观看进度失败");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
+
+  const toggleFavorite = useCallback(
+    async (id: string, isFavorite: boolean) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await databaseService.video.update(id, { isFavorite });
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("更新收藏状态失败");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   return {
     isLoading,
@@ -295,15 +310,15 @@ export function usePlaylistOperations() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const createPlaylist = useCallback(async (data: Omit<Playlist, 'id'>) => {
+  const createPlaylist = useCallback(async (data: Omit<Playlist, "id">) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await databaseService.playlist.create(data);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('创建播放列表失败');
+      const error = err instanceof Error ? err : new Error("创建播放列表失败");
       setError(error);
       throw error;
     } finally {
@@ -311,31 +326,35 @@ export function usePlaylistOperations() {
     }
   }, []);
 
-  const updatePlaylist = useCallback(async (id: string, data: Partial<Playlist>) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const result = await databaseService.playlist.update(id, data);
-      return result;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('更新播放列表失败');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const updatePlaylist = useCallback(
+    async (id: string, data: Partial<Playlist>) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const result = await databaseService.playlist.update(id, data);
+        return result;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("更新播放列表失败");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const deletePlaylist = useCallback(async (id: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await databaseService.playlist.delete(id);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('删除播放列表失败');
+      const error = err instanceof Error ? err : new Error("删除播放列表失败");
       setError(error);
       throw error;
     } finally {
@@ -343,46 +362,58 @@ export function usePlaylistOperations() {
     }
   }, []);
 
-  const addVideoToPlaylist = useCallback(async (
-    playlistId: string,
-    videoId: string,
-    options?: {
-      customTitle?: string;
-      customThumbnailPath?: string;
-      notes?: string;
-    }
-  ) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      await databaseService.playlist.addVideoToPlaylist(playlistId, videoId, options);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('添加视频到播放列表失败');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const addVideoToPlaylist = useCallback(
+    async (
+      playlistId: string,
+      videoId: string,
+      options?: {
+        customTitle?: string;
+        customThumbnailPath?: string;
+        notes?: string;
+      },
+    ) => {
+      setIsLoading(true);
+      setError(null);
 
-  const removeVideoFromPlaylist = useCallback(async (
-    playlistId: string,
-    videoId: string,
-  ) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      await databaseService.playlist.removeVideoFromPlaylist(playlistId, videoId);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('从播放列表移除视频失败');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        await databaseService.playlist.addVideoToPlaylist(
+          playlistId,
+          videoId,
+          options,
+        );
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("添加视频到播放列表失败");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
+
+  const removeVideoFromPlaylist = useCallback(
+    async (playlistId: string, videoId: string) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await databaseService.playlist.removeVideoFromPlaylist(
+          playlistId,
+          videoId,
+        );
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("从播放列表移除视频失败");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   return {
     isLoading,
@@ -411,7 +442,7 @@ export function useDatabase() {
       setIsInitialized(true);
       setIsHealthy(await databaseService.isHealthy());
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('数据库初始化失败');
+      const error = err instanceof Error ? err : new Error("数据库初始化失败");
       setError(error);
       throw error;
     }
@@ -423,7 +454,7 @@ export function useDatabase() {
       setIsHealthy(healthy);
       return healthy;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('健康检查失败');
+      const error = err instanceof Error ? err : new Error("健康检查失败");
       setError(error);
       return false;
     }

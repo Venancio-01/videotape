@@ -8,7 +8,7 @@ import type { QueueStore } from "@/types/storeTypes";
 import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { MiddlewareCombinations } from "../middleware";
+import { MiddlewareCombinations } from "@/middleware";
 
 // 初始状态
 const initialState: QueueState = {

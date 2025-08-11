@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { FileItem, DirectoryItem } from "../../../types/file";
-import type { Video } from "../../../db/schema";
+import type { FileItem, DirectoryItem } from "@/types/file";
+import type { Video } from "@/db/schema";
 
 // 播放列表创建表单验证schema
 export const createPlaylistSchema = z.object({

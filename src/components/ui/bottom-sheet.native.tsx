@@ -22,10 +22,10 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { X } from "../../src/components/Icons";
-import { useColorScheme } from "../../lib/useColorScheme";
-import { cn } from "../../lib/utils";
-import * as Slot from "../../src/components/primitives/slot";
+import { X } from "@/components/Icons";
+import { useColorScheme } from "@/lib/useColorScheme";
+import { cn } from "@/lib/utils";
+import * as Slot from "@/components/primitives/slot";
 import { Button } from "./button";
 
 // TODO: refactor and move to UI

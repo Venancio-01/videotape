@@ -3,20 +3,20 @@
  * 基于 Drizzle ORM 和 Repository Pattern 的具体实现
  */
 
-import { 
-  and, 
-  asc, 
-  desc, 
-  eq, 
-  gte, 
-  ilike, 
-  inArray, 
-  lte, 
-  not, 
-  or, 
-  sql 
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  lte,
+  not,
+  or,
+  sql
 } from 'drizzle-orm';
-import { getDatabase } from '../db/drizzle';
+import { getDatabase } from '@/db/drizzle';
 import {
   videoTable,
   watchHistoryTable,
@@ -32,7 +32,7 @@ import {
   type VideoSearchParams,
   type SearchResult,
   type VideoStats,
-} from '../db/schema';
+} from '@/db/schema';
 import type {
   IVideoRepository,
   Video,
@@ -276,7 +276,7 @@ export class VideoRepository implements IVideoRepository {
     return {
       toSQL: () => ({
         sql: `
-          SELECT 
+          SELECT
             v.*,
             json_group_array(
               json_object('id', t.id, 'name', t.name, 'color', t.color, 'description', t.description)
@@ -351,7 +351,7 @@ export class VideoRepository implements IVideoRepository {
     const db = this.getDb();
     await db
       .update(videoTable)
-      .set({ 
+      .set({
         watchProgress: progress,
         lastWatchedAt: sql`(CURRENT_TIMESTAMP)`,
         updatedAt: sql`(CURRENT_TIMESTAMP)`,
@@ -363,7 +363,7 @@ export class VideoRepository implements IVideoRepository {
     const db = this.getDb();
     await db
       .update(videoTable)
-      .set({ 
+      .set({
         playCount: sql`${videoTable.playCount} + 1`,
         lastWatchedAt: sql`(CURRENT_TIMESTAMP)`,
         updatedAt: sql`(CURRENT_TIMESTAMP)`,
@@ -397,7 +397,7 @@ export class VideoRepository implements IVideoRepository {
     return {
       toSQL: () => ({
         sql: `
-          SELECT 
+          SELECT
             s.total_videos,
             s.total_duration,
             s.total_size,

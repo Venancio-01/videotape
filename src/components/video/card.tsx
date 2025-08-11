@@ -6,8 +6,8 @@ import { formatDuration } from "@/lib/utils";
 import { Link } from "expo-router";
 import type React from "react";
 import { Image, Pressable, View } from "react-native";
-import { Badge } from "../ui/badge";
-import { Progress } from "../ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 
 type VideoCardProps = {
   id: string;

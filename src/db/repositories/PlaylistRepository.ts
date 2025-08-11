@@ -3,15 +3,15 @@
  * 基于 Drizzle ORM 和 Repository Pattern 的具体实现
  */
 
-import { 
-  and, 
-  asc, 
-  desc, 
-  eq, 
-  sql, 
-  max 
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  sql,
+  max
 } from 'drizzle-orm';
-import { getDatabase } from '../db/drizzle';
+import { getDatabase } from '@/db/drizzle';
 import {
   playlistTable,
   playlistVideoTable,
@@ -19,7 +19,7 @@ import {
   type Playlist as PlaylistType,
   type PlaylistWithVideos,
   type Video,
-} from '../db/schema';
+} from '@/db/schema';
 import type {
   IPlaylistRepository,
   Playlist,
@@ -96,7 +96,7 @@ export class PlaylistRepository implements IPlaylistRepository {
     return {
       toSQL: () => ({
         sql: `
-          SELECT 
+          SELECT
             p.*,
             json_group_array(
               json_object(
@@ -166,12 +166,12 @@ export class PlaylistRepository implements IPlaylistRepository {
 
   async delete(id: string): Promise<boolean> {
     const db = this.getDb();
-    
+
     // 删除播放列表视频关联
     await db
       .delete(playlistVideoTable)
       .where(eq(playlistVideoTable.playlistId, id));
-    
+
     // 删除播放列表
     const result = await db.delete(playlistTable).where(eq(playlistTable.id, id));
     return result.changes > 0;
