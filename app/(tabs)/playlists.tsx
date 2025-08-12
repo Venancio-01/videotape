@@ -8,7 +8,6 @@ import { desc } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
-import { useState } from "react";
 
 export default function PlaylistsScreen() {
   const { db } = useDatabase();
@@ -20,12 +19,6 @@ export default function PlaylistsScreen() {
       .from(playlistTable)
       .orderBy(desc(playlistTable.createdAt))
   );
-
-  const handleCreatePlaylist = (playlist: Playlist) => {
-    // 创建成功后的回调函数
-    console.log("播放列表创建成功:", playlist.name);
-    // 可以在这里添加成功提示或其他操作
-  };
 
   if (!db) {
     return (

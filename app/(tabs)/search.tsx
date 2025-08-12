@@ -4,7 +4,7 @@ import { VideoCard } from "@/components/video";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
 import { FlashList } from "@shopify/flash-list";
-import { desc, ilike, or } from "drizzle-orm";
+import { ilike, or } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import { useState } from "react";

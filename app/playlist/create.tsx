@@ -157,14 +157,14 @@ export default function CreatePlaylistScreen() {
           <View className="flex-row items-center">
             <View
               className={`w-8 h-8 rounded-full items-center justify-center ${currentStep >= CreateStep.BASIC_INFO
-                  ? "bg-primary"
-                  : "bg-muted"
+                ? "bg-primary"
+                : "bg-muted"
                 }`}
             >
               <Text
                 className={`text-sm font-medium ${currentStep >= CreateStep.BASIC_INFO
-                    ? "text-primary-foreground"
-                    : "text-muted-foreground"
+                  ? "text-primary-foreground"
+                  : "text-muted-foreground"
                   }`}
               >
                 1
