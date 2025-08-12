@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { PlaylistQuickActions } from "../PlaylistQuickActions";
+import { PlaylistQuickActions } from "@/features/playlist/components/PlaylistQuickActions";
 import { vi } from "vitest";
 
 describe("PlaylistQuickActions", () => {

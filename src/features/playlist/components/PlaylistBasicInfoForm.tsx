@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { TagInput } from "../../../../components/ui/tag-input";
+import { TagInput } from "@/components/ui/tag-input";
 import type { Playlist } from "@/db/schema";
 
 interface PlaylistBasicInfoFormProps {

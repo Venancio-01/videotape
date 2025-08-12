@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import type { CreatePlaylistForm } from "../types/playlist";
-import type { FileItem, DirectoryItem } from "@/src/types/file";
+import type { CreatePlaylistForm } from "@/features/playlist/types/playlist";
+import type { FileItem, DirectoryItem } from "@/types/file";
 import type { Video } from "@/db/schema";
-import { PlaylistService } from "@/src/services/playlistService";
+import { PlaylistService } from "@/services/playlistService";
 
 interface VideoDirectorySelectorProps {
   data: CreatePlaylistForm;
@@ -25,7 +25,7 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
   const [selectedVideoIds, setSelectedVideoIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // 使用 ref 存储 onChange 函数以避免依赖项问题
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;

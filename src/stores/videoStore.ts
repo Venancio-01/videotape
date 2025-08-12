@@ -3,12 +3,12 @@
  */
 
 import type { Video } from "@/db/schema";
-import type { VideoFilter, VideoState } from "@/src/types/stateTypes";
-import type { VideoStore } from "@/src/types/storeTypes";
-import { StateUtils } from "@/src/utils/stateUtils";
+import type { VideoFilter, VideoState } from "@/types/stateTypes";
+import type { VideoStore } from "@/types/storeTypes";
+import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { MiddlewareCombinations } from "../middleware";
+import { MiddlewareCombinations } from "@/middleware";
 
 // 初始状态
 const initialState: VideoState = {

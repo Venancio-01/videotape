@@ -1,6 +1,9 @@
 import { db } from "@/db";
 import type { Playlist, Video } from "@/db/schema";
-import type { CreatePlaylistOptions, CreatePlaylistResult } from "@/src/features/playlist/types/playlist";
+import type {
+  CreatePlaylistOptions,
+  CreatePlaylistResult,
+} from "@/features/playlist/types/playlist";
 import type { FileItem, DirectoryItem } from "@/types/file";
 
 /**
@@ -16,21 +19,21 @@ export class PlaylistService {
    */
   static async createPlaylist(
     options: CreatePlaylistOptions,
-    videos: Video[]
+    videos: Video[],
   ): Promise<CreatePlaylistResult> {
     try {
       // 验证必填字段
       if (!options.name?.trim()) {
         return {
           success: false,
-          error: "播放列表名称不能为空"
+          error: "播放列表名称不能为空",
         };
       }
 
       if (videos.length === 0) {
         return {
           success: false,
-          error: "请选择至少一个视频"
+          error: "请选择至少一个视频",
         };
       }
 
@@ -42,7 +45,10 @@ export class PlaylistService {
         tags: options.tags || [],
         thumbnailPath: options.thumbnailPath || null,
         videoCount: videos.length,
-        totalDuration: videos.reduce((sum, video) => sum + (video.duration || 0), 0),
+        totalDuration: videos.reduce(
+          (sum, video) => sum + (video.duration || 0),
+          0,
+        ),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -68,14 +74,13 @@ export class PlaylistService {
       // 返回成功结果（使用模拟ID）
       return {
         success: true,
-        playlistId: `playlist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        playlistId: `playlist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       };
-
     } catch (error) {
       console.error("创建播放列表失败:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "创建播放列表失败"
+        error: error instanceof Error ? error.message : "创建播放列表失败",
       };
     }
   }
@@ -88,7 +93,7 @@ export class PlaylistService {
     try {
       // 这里应该调用实际的数据库查询
       // const playlists = await db.select().from(playlists);
-      
+
       // 返回模拟数据
       return [
         {
@@ -131,7 +136,7 @@ export class PlaylistService {
     try {
       // 这里应该调用实际的数据库查询
       // const playlist = await db.select().from(playlists).where(eq(playlists.id, id));
-      
+
       // 返回模拟数据
       if (id === "1") {
         return {
@@ -147,7 +152,7 @@ export class PlaylistService {
           updatedAt: new Date().toISOString(),
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error("获取播放列表失败:", error);
@@ -163,14 +168,14 @@ export class PlaylistService {
    */
   static async updatePlaylist(
     id: string,
-    updates: Partial<Playlist>
+    updates: Partial<Playlist>,
   ): Promise<CreatePlaylistResult> {
     try {
       // 验证必填字段
       if (updates.name && !updates.name.trim()) {
         return {
           success: false,
-          error: "播放列表名称不能为空"
+          error: "播放列表名称不能为空",
         };
       }
 
@@ -189,14 +194,13 @@ export class PlaylistService {
 
       return {
         success: true,
-        playlistId: id
+        playlistId: id,
       };
-
     } catch (error) {
       console.error("更新播放列表失败:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "更新播放列表失败"
+        error: error instanceof Error ? error.message : "更新播放列表失败",
       };
     }
   }
@@ -216,14 +220,13 @@ export class PlaylistService {
 
       return {
         success: true,
-        playlistId: id
+        playlistId: id,
       };
-
     } catch (error) {
       console.error("删除播放列表失败:", error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "删除播放列表失败"
+        error: error instanceof Error ? error.message : "删除播放列表失败",
       };
     }
   }
@@ -260,7 +263,6 @@ export class PlaylistService {
           thumbnailUri: null,
         },
       ];
-
     } catch (error) {
       console.error("获取播放列表视频失败:", error);
       return [];
@@ -334,7 +336,6 @@ export class PlaylistService {
           },
         },
       ];
-
     } catch (error) {
       console.error("获取视频文件失败:", error);
       return [];
@@ -371,7 +372,6 @@ export class PlaylistService {
           itemCount: 3,
         },
       ];
-
     } catch (error) {
       console.error("获取视频目录失败:", error);
       return [];
@@ -412,7 +412,6 @@ export class PlaylistService {
           thumbnailUri: null,
         },
       ];
-
     } catch (error) {
       console.error("获取目录视频失败:", error);
       return [];

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { PlaylistCard, PlaylistGrid } from "../PlaylistCard";
+import { PlaylistCard, PlaylistGrid } from "@/features/playlist/components/PlaylistCard";
 import { vi } from "vitest";
 
 const mockPlaylist = {
