@@ -3,12 +3,12 @@
  */
 
 import type { Video } from "@/db/schema";
+import { MiddlewareCombinations } from "@/middleware";
 import type { VideoFilter, VideoState } from "@/types/stateTypes";
 import type { VideoStore } from "@/types/storeTypes";
 import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { MiddlewareCombinations } from "@/middleware";
 
 // 初始状态
 const initialState: VideoState = {
@@ -391,7 +391,7 @@ export const videoSelectors = {
         !searchQuery ||
         video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.tags.some((tag) =>
+        Array.isArray(video.tags) && video.tags.some((tag) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase()),
         );
 
@@ -404,16 +404,16 @@ export const videoSelectors = {
             case "category":
               return video.category === value;
             case "tags":
-              return value.every((tag: string) => video.tags.includes(tag));
+              return Array.isArray(video.tags) && value.every((tag: string) => video.tags.includes(tag));
             case "duration":
               const { min, max } = value as { min: number; max: number };
-              return video.duration >= min && video.duration <= max;
+              return typeof video.duration === 'number' && video.duration >= min && video.duration <= max;
             case "size":
               const { min: minSize, max: maxSize } = value as {
                 min: number;
                 max: number;
               };
-              return video.fileSize >= minSize && video.fileSize <= maxSize;
+              return typeof video.fileSize === 'number' && video.fileSize >= minSize && video.fileSize <= maxSize;
             case "isFavorite":
               return state.favorites.has(video.id) === value;
             case "isWatched":
@@ -445,12 +445,12 @@ export const videoSelectors = {
   getVideoStats: (state: VideoState) => {
     const videos = state.videos;
     const totalDuration = videos.reduce(
-      (sum, video) => sum + video.duration,
+      (sum, video) => sum + (typeof video.duration === 'number' ? video.duration : 0),
       0,
     );
-    const totalSize = videos.reduce((sum, video) => sum + video.fileSize, 0);
+    const totalSize = videos.reduce((sum, video) => sum + (typeof video.fileSize === 'number' ? video.fileSize : 0), 0);
     const totalPlayCount = videos.reduce(
-      (sum, video) => sum + video.playCount,
+      (sum, video) => sum + (typeof video.playCount === 'number' ? video.playCount : 0),
       0,
     );
 
@@ -493,11 +493,13 @@ export const videoSelectors = {
       }
 
       // 从标签中提取建议
-      video.tags.forEach((tag) => {
-        if (tag.toLowerCase().includes(searchQuery.toLowerCase())) {
-          suggestions.add(tag);
-        }
-      });
+      if (Array.isArray(video.tags)) {
+        video.tags.forEach((tag) => {
+          if (tag.toLowerCase().includes(searchQuery.toLowerCase())) {
+            suggestions.add(tag);
+          }
+        });
+      }
 
       // 从分类中提取建议
       if (video.category.toLowerCase().includes(searchQuery.toLowerCase())) {

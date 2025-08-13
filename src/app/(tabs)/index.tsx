@@ -1,15 +1,15 @@
 import { Plus } from "@/components/Icons";
 import { Text } from "@/components/ui/text";
 import { VideoCard } from "@/components/video";
+import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
-import { videoTable, type Video } from "@/db/schema";
+import { type Video, videoTable } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Link, Stack } from "expo-router";
 import * as React from "react";
 import { Pressable, View } from "react-native";
-import { useMigrationHelper } from "@/db/drizzle";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 
 export default function VideoHome() {
   const { success, error } = useMigrationHelper();
@@ -36,9 +36,7 @@ function ScreenContent() {
   const ref = React.useRef(null);
   useScrollToTop(ref);
 
-  const { data } = useLiveQuery(
-    db.select().from(videoTable)
-  );
+  const { data } = useLiveQuery(db.select().from(videoTable));
 
   const renderItem = React.useCallback(({ item }: { item: Video }) => {
     if (!item.id) return null; // 防止 id 不存在时报错
@@ -51,9 +49,9 @@ function ScreenContent() {
         resolution={
           item.resolutionWidth && item.resolutionHeight
             ? {
-              width: Number(item.resolutionWidth),
-              height: Number(item.resolutionHeight),
-            }
+                width: Number(item.resolutionWidth),
+                height: Number(item.resolutionHeight),
+              }
             : undefined
         }
         onToggleFavorite={(videoId) => {

@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { CreatePlaylistDialog } from "@/features/playlist/components/CreatePlaylistDialog";
+import { CreatePlaylistDialog } from "@/playlist/components/CreatePlaylistDialog";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 
 // Mock the database service
@@ -40,7 +40,7 @@ describe("CreatePlaylistDialog", () => {
         open={true}
         onOpenChange={mockOnOpenChange}
         onSuccess={mockOnSuccess}
-      />
+      />,
     );
 
     expect(screen.getByText("创建播放列表")).toBeTruthy();
@@ -55,7 +55,7 @@ describe("CreatePlaylistDialog", () => {
         open={true}
         onOpenChange={mockOnOpenChange}
         onSuccess={mockOnSuccess}
-      />
+      />,
     );
 
     const createButton = screen.getByText("创建");
@@ -74,7 +74,7 @@ describe("CreatePlaylistDialog", () => {
         open={true}
         onOpenChange={mockOnOpenChange}
         onSuccess={mockOnSuccess}
-      />
+      />,
     );
 
     // 输入播放列表名称
@@ -83,7 +83,9 @@ describe("CreatePlaylistDialog", () => {
 
     // 输入描述
     const descriptionInput = screen.getByPlaceholderText("输入播放列表描述");
-    fireEvent.change(descriptionInput, { target: { value: "这是一个测试播放列表" } });
+    fireEvent.change(descriptionInput, {
+      target: { value: "这是一个测试播放列表" },
+    });
 
     // 点击创建按钮
     const createButton = screen.getByText("创建");
@@ -107,7 +109,7 @@ describe("CreatePlaylistDialog", () => {
         open={true}
         onOpenChange={mockOnOpenChange}
         onSuccess={mockOnSuccess}
-      />
+      />,
     );
 
     const cancelButton = screen.getByText("取消");

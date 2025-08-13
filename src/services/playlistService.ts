@@ -3,8 +3,8 @@ import type { Playlist, Video } from "@/db/schema";
 import type {
   CreatePlaylistOptions,
   CreatePlaylistResult,
-} from "@/features/playlist/types/playlist";
-import type { FileItem, DirectoryItem } from "@/types/file";
+} from "@/playlist/types/playlist";
+import type { DirectoryItem, FileItem } from "@/types/file";
 
 /**
  * 播放列表服务类

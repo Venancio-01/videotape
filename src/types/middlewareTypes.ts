@@ -2,11 +2,11 @@
  * 中间件类型定义
  */
 
-import type { Store } from "zustand";
 import type { zustandStorage } from "@/lib/storage";
+import type { StoreApi } from "zustand";
 
 // 基础中间件接口
-export type StoreMiddleware<T> = (store: Store<T>) => Store<T>;
+export type StoreMiddleware<T> = (store: StoreApi<T>) => StoreApi<T>;
 
 // 持久化中间件配置
 export interface PersistMiddlewareConfig<T> {
@@ -229,15 +229,15 @@ export interface MiddlewareRegistry {
 
 // 中间件生命周期钩子
 export interface MiddlewareLifecycle {
-  onMount?: (store: Store<any>) => void;
+  onMount?: (store: StoreApi<any>) => void;
   onUpdate?: (state: any, prevState: any, action: string) => void;
-  onUnmount?: (store: Store<any>) => void;
-  onError?: (error: Error, store: Store<any>) => void;
+  onUnmount?: (store: StoreApi<any>) => void;
+  onError?: (error: Error, store: StoreApi<any>) => void;
 }
 
 // 中间件上下文
 export interface MiddlewareContext {
-  store: Store<any>;
+  store: StoreApi<any>;
   config: any;
   lifecycle: MiddlewareLifecycle;
   dependencies: string[];

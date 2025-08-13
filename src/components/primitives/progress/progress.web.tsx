@@ -1,8 +1,11 @@
+import * as Slot from "@/components/primitives/slot";
+import type {
+  SlottableViewProps,
+  ViewRef,
+} from "@/components/primitives/types";
 import * as Progress from "@radix-ui/react-progress";
 import * as React from "react";
 import { View } from "react-native";
-import * as Slot from "@/components/primitives/slot";
-import type { SlottableViewProps, ViewRef } from "@/components/primitives/types";
 import type { ProgressRootProps } from "./types";
 
 const ProgressContext = React.createContext<ProgressRootProps | null>(null);

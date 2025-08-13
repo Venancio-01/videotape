@@ -28,11 +28,9 @@ const Pressable = React.forwardRef<
   return React.cloneElement<
     React.ComponentPropsWithoutRef<typeof RNPressable>,
     React.ElementRef<typeof RNPressable>
-  >(isTextChildren(children) ? <></> : children, {
-    ...mergeProps(pressableSlotProps, children.props),
-    ref: forwardedRef
-      ? composeRefs(forwardedRef, (children).ref)
-      : (children).ref,
+  >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+    ...mergeProps(pressableSlotProps, children.props as AnyProps),
+    ref: forwardedRef ? composeRefs(forwardedRef, (children as React.ReactElement).ref) : (children as React.ReactElement).ref,
   });
 });
 
@@ -50,11 +48,11 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
     return React.cloneElement<
       React.ComponentPropsWithoutRef<typeof RNView>,
       React.ElementRef<typeof RNView>
-    >(isTextChildren(children) ? <></> : children, {
-      ...mergeProps(viewSlotProps, children.props),
+    >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+      ...mergeProps(viewSlotProps, children.props as AnyProps),
       ref: forwardedRef
-        ? composeRefs(forwardedRef, (children).ref)
-        : (children).ref,
+        ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
+        : (children as React.ReactElement).ref,
     });
   },
 );
@@ -73,11 +71,11 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
     return React.cloneElement<
       React.ComponentPropsWithoutRef<typeof RNText>,
       React.ElementRef<typeof RNText>
-    >(isTextChildren(children) ? <></> : children, {
-      ...mergeProps(textSlotProps, children.props),
+    >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+      ...mergeProps(textSlotProps, children.props as AnyProps),
       ref: forwardedRef
-        ? composeRefs(forwardedRef, (children).ref)
-        : (children).ref,
+        ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
+        : (children as React.ReactElement).ref,
     });
   },
 );
@@ -102,11 +100,9 @@ const Image = React.forwardRef<
   return React.cloneElement<
     React.ComponentPropsWithoutRef<typeof RNImage>,
     React.ElementRef<typeof RNImage>
-  >(isTextChildren(children) ? <></> : children, {
-    ...mergeProps(imageSlotProps, children.props),
-    ref: forwardedRef
-      ? composeRefs(forwardedRef, (children).ref)
-      : (children).ref,
+  >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+    ...mergeProps(imageSlotProps, children.props as AnyProps),
+    ref: forwardedRef ? composeRefs(forwardedRef, (children as React.ReactElement).ref) : (children as React.ReactElement).ref,
   });
 });
 
@@ -119,17 +115,18 @@ export { Image, Pressable, Text, View };
 // https://github.com/radix-ui/primitives/tree/main
 
 function composeRefs<T>(...refs: (React.Ref<T> | undefined)[]) {
-  return (node: T) =>
-    refs.forEach((ref) => {
+  return (node: T) => {
+    for (const ref of refs) {
       if (typeof ref === "function") {
         ref(node);
       } else if (ref != null) {
         (ref as React.MutableRefObject<T>).current = node;
       }
-    });
+    }
+  };
 }
 
-type AnyProps = Record<string, any>;
+type AnyProps = Record<string, unknown>;
 
 function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
   // all child props should override
@@ -144,8 +141,8 @@ function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
       // if the handler exists on both, we compose them
       if (slotPropValue && childPropValue) {
         overrideProps[propName] = (...args: unknown[]) => {
-          childPropValue(...args);
-          slotPropValue(...args);
+          (childPropValue as Function)(...args);
+          (slotPropValue as Function)(...args);
         };
       }
       // but if it exists only on the slot, we use only this one

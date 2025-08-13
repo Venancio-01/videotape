@@ -2,6 +2,7 @@
  * Store 类型定义
  */
 
+import type { Video } from "@/db/schema";
 import type { StoreMiddleware } from "./middlewareTypes";
 import type {
   PlaybackState,

@@ -5,17 +5,17 @@
 
 import { z } from "zod";
 import {
-  VideoSchema,
-  WatchHistorySchema,
-  PlaylistSchema,
-  PlaylistVideoSchema,
-  TagSchema,
-  VideoTagSchema,
-  SettingsSchema,
+  BookmarkSchema,
   FolderSchema,
   FolderVideoSchema,
-  BookmarkSchema,
+  PlaylistSchema,
+  PlaylistVideoSchema,
   SearchIndexSchema,
+  SettingsSchema,
+  TagSchema,
+  VideoSchema,
+  VideoTagSchema,
+  WatchHistorySchema,
 } from "./tables";
 
 // 扩展验证规则
@@ -111,7 +111,9 @@ export const VideoSearchParamsSchema = z.object({
   isFavorite: z.boolean().optional(),
   minDuration: z.number().positive().optional(),
   maxDuration: z.number().positive().optional(),
-  sortBy: z.enum(["created_at", "title", "duration", "rating", "play_count"]).optional(),
+  sortBy: z
+    .enum(["created_at", "title", "duration", "rating", "play_count"])
+    .optional(),
   sortOrder: z.enum(["asc", "desc"]).optional(),
   page: z.number().positive().optional(),
   pageSize: z.number().positive().max(100).optional(),

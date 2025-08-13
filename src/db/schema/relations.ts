@@ -5,17 +5,17 @@
 
 import { relations } from "drizzle-orm";
 import {
-  videoTable,
-  watchHistoryTable,
-  playlistTable,
-  playlistVideoTable,
-  tagTable,
-  videoTagTable,
-  settingsTable,
+  bookmarkTable,
   folderTable,
   folderVideoTable,
-  bookmarkTable,
+  playlistTable,
+  playlistVideoTable,
   searchIndexTable,
+  settingsTable,
+  tagTable,
+  videoTable,
+  videoTagTable,
+  watchHistoryTable,
 } from "./tables";
 
 // 视频关系
@@ -29,12 +29,15 @@ export const videoRelations = relations(videoTable, ({ many, one }) => ({
 }));
 
 // 播放历史关系
-export const watchHistoryRelations = relations(watchHistoryTable, ({ one }) => ({
-  video: one(videoTable, {
-    fields: [watchHistoryTable.videoId],
-    references: [videoTable.id],
+export const watchHistoryRelations = relations(
+  watchHistoryTable,
+  ({ one }) => ({
+    video: one(videoTable, {
+      fields: [watchHistoryTable.videoId],
+      references: [videoTable.id],
+    }),
   }),
-}));
+);
 
 // 播放列表关系
 export const playlistRelations = relations(playlistTable, ({ many }) => ({
@@ -42,16 +45,19 @@ export const playlistRelations = relations(playlistTable, ({ many }) => ({
 }));
 
 // 播放列表视频关系
-export const playlistVideoRelations = relations(playlistVideoTable, ({ one }) => ({
-  playlist: one(playlistTable, {
-    fields: [playlistVideoTable.playlistId],
-    references: [playlistTable.id],
+export const playlistVideoRelations = relations(
+  playlistVideoTable,
+  ({ one }) => ({
+    playlist: one(playlistTable, {
+      fields: [playlistVideoTable.playlistId],
+      references: [playlistTable.id],
+    }),
+    video: one(videoTable, {
+      fields: [playlistVideoTable.videoId],
+      references: [videoTable.id],
+    }),
   }),
-  video: one(videoTable, {
-    fields: [playlistVideoTable.videoId],
-    references: [videoTable.id],
-  }),
-}));
+);
 
 // 标签关系
 export const tagRelations = relations(tagTable, ({ many }) => ({

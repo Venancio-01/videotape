@@ -1,7 +1,10 @@
+import * as Slot from "@/components/primitives/slot";
+import type {
+  SlottableViewProps,
+  ViewRef,
+} from "@/components/primitives/types";
 import * as React from "react";
 import { View } from "react-native";
-import * as Slot from "@/components/primitives/slot";
-import type { SlottableViewProps, ViewRef } from "@/components/primitives/types";
 import type { ProgressRootProps } from "./types";
 
 // This project uses code from WorkOS/Radix Primitives.
@@ -62,8 +65,8 @@ function defaultGetValueLabel(value: number, max: number) {
   return `${Math.round((value / max) * 100)}%`;
 }
 
-function isValidValueNumber(value: any, max: number): value is number {
+function isValidValueNumber(value: unknown, max: number): value is number {
   return (
-    typeof value === "number" && !isNaN(value) && value <= max && value >= 0
+    typeof value === "number" && !Number.isNaN(value) && value <= max && value >= 0
   );
 }

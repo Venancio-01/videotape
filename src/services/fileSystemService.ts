@@ -3,11 +3,20 @@
  * 基于 Expo File System 的文件操作服务
  */
 
-import * as FileSystem from 'expo-file-system';
-import * as DocumentPicker from 'expo-document-picker';
-import * as MediaLibrary from 'expo-media-library';
-import * as Sharing from 'expo-sharing';
-import { IFileSystemService, IVideoService, FileItem, DirectoryItem, FileOperationResult, FileSearchOptions, FileWatchEvent, FileSystemStats } from '@/types/file';
+import {
+  DirectoryItem,
+  type FileItem,
+  type FileOperationResult,
+  type FileSearchOptions,
+  type FileSystemStats,
+  type FileWatchEvent,
+  type IFileSystemService,
+  type IVideoService,
+} from "@/types/file";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
+import * as Sharing from "expo-sharing";
 
 export class FileSystemService implements IFileSystemService {
   private static instance: FileSystemService;
@@ -47,29 +56,35 @@ export class FileSystemService implements IFileSystemService {
     try {
       await FileSystem.deleteAsync(uri);
       this.cache.delete(uri);
-      this.notifyWatchers(uri, 'delete');
+      this.notifyWatchers(uri, "delete");
       return { success: true };
     } catch (error) {
       return { success: false, error: `删除文件失败: ${error.message}` };
     }
   }
 
-  async copyFile(sourceUri: string, destinationUri: string): Promise<FileOperationResult> {
+  async copyFile(
+    sourceUri: string,
+    destinationUri: string,
+  ): Promise<FileOperationResult> {
     try {
       await FileSystem.copyAsync({ from: sourceUri, to: destinationUri });
-      this.notifyWatchers(destinationUri, 'create');
+      this.notifyWatchers(destinationUri, "create");
       return { success: true };
     } catch (error) {
       return { success: false, error: `复制文件失败: ${error.message}` };
     }
   }
 
-  async moveFile(sourceUri: string, destinationUri: string): Promise<FileOperationResult> {
+  async moveFile(
+    sourceUri: string,
+    destinationUri: string,
+  ): Promise<FileOperationResult> {
     try {
       await FileSystem.moveAsync({ from: sourceUri, to: destinationUri });
       this.cache.delete(sourceUri);
-      this.notifyWatchers(sourceUri, 'delete');
-      this.notifyWatchers(destinationUri, 'create');
+      this.notifyWatchers(sourceUri, "delete");
+      this.notifyWatchers(destinationUri, "create");
       return { success: true };
     } catch (error) {
       return { success: false, error: `移动文件失败: ${error.message}` };
@@ -80,14 +95,17 @@ export class FileSystemService implements IFileSystemService {
   async createDirectory(path: string): Promise<FileOperationResult> {
     try {
       await FileSystem.makeDirectoryAsync(path, { intermediates: true });
-      this.notifyWatchers(path, 'create');
+      this.notifyWatchers(path, "create");
       return { success: true };
     } catch (error) {
       return { success: false, error: `创建目录失败: ${error.message}` };
     }
   }
 
-  async deleteDirectory(path: string, recursive = false): Promise<FileOperationResult> {
+  async deleteDirectory(
+    path: string,
+    recursive = false,
+  ): Promise<FileOperationResult> {
     try {
       if (recursive) {
         const contents = await FileSystem.readDirectoryAsync(path);
@@ -102,7 +120,7 @@ export class FileSystemService implements IFileSystemService {
         }
       }
       await FileSystem.deleteAsync(path);
-      this.notifyWatchers(path, 'delete');
+      this.notifyWatchers(path, "delete");
       return { success: true };
     } catch (error) {
       return { success: false, error: `删除目录失败: ${error.message}` };
@@ -139,7 +157,7 @@ export class FileSystemService implements IFileSystemService {
 
       const info = await FileSystem.getInfoAsync(uri);
       if (!info.exists) {
-        throw new Error('文件不存在');
+        throw new Error("文件不存在");
       }
 
       const fileItem: FileItem = {
@@ -189,37 +207,41 @@ export class FileSystemService implements IFileSystemService {
   // 搜索和过滤
   async searchFiles(options: FileSearchOptions): Promise<FileItem[]> {
     try {
-      const files = await this.listDirectory(FileSystem.documentDirectory || '');
+      const files = await this.listDirectory(
+        FileSystem.documentDirectory || "",
+      );
       let filteredFiles = files;
 
       // 按名称搜索
       if (options.query) {
         const query = options.query.toLowerCase();
-        filteredFiles = filteredFiles.filter(file =>
-          file.name.toLowerCase().includes(query)
+        filteredFiles = filteredFiles.filter((file) =>
+          file.name.toLowerCase().includes(query),
         );
       }
 
       // 按类型过滤
       if (options.mimeType && options.mimeType.length > 0) {
-        filteredFiles = filteredFiles.filter(file =>
-          options.mimeType!.includes(file.mimeType)
+        filteredFiles = filteredFiles.filter((file) =>
+          options.mimeType!.includes(file.mimeType),
         );
       }
 
       // 按大小过滤
       if (options.sizeRange) {
-        filteredFiles = filteredFiles.filter(file =>
-          file.size >= options.sizeRange!.min &&
-          file.size <= options.sizeRange!.max
+        filteredFiles = filteredFiles.filter(
+          (file) =>
+            file.size >= options.sizeRange!.min &&
+            file.size <= options.sizeRange!.max,
         );
       }
 
       // 按日期过滤
       if (options.dateRange) {
-        filteredFiles = filteredFiles.filter(file =>
-          file.createdAt >= options.dateRange!.start &&
-          file.createdAt <= options.dateRange!.end
+        filteredFiles = filteredFiles.filter(
+          (file) =>
+            file.createdAt >= options.dateRange!.start &&
+            file.createdAt <= options.dateRange!.end,
         );
       }
 
@@ -229,12 +251,12 @@ export class FileSystemService implements IFileSystemService {
           let valueA = a[options.sortBy!];
           let valueB = b[options.sortBy!];
 
-          if (options.sortBy === 'size') {
+          if (options.sortBy === "size") {
             valueA = Number(valueA);
             valueB = Number(valueB);
           }
 
-          if (options.sortOrder === 'desc') {
+          if (options.sortOrder === "desc") {
             return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
           } else {
             return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
@@ -245,7 +267,9 @@ export class FileSystemService implements IFileSystemService {
       // 分页
       if (options.offset || options.limit) {
         const start = options.offset || 0;
-        const end = options.limit ? start + options.limit : filteredFiles.length;
+        const end = options.limit
+          ? start + options.limit
+          : filteredFiles.length;
         filteredFiles = filteredFiles.slice(start, end);
       }
 
@@ -257,7 +281,9 @@ export class FileSystemService implements IFileSystemService {
 
   async filterFiles(filter: (file: FileItem) => boolean): Promise<FileItem[]> {
     try {
-      const files = await this.listDirectory(FileSystem.documentDirectory || '');
+      const files = await this.listDirectory(
+        FileSystem.documentDirectory || "",
+      );
       return files.filter(filter);
     } catch (error) {
       throw new Error(`过滤文件失败: ${error.message}`);
@@ -265,7 +291,10 @@ export class FileSystemService implements IFileSystemService {
   }
 
   // 监控
-  watchDirectory(path: string, callback: (event: FileWatchEvent) => void): () => void {
+  watchDirectory(
+    path: string,
+    callback: (event: FileWatchEvent) => void,
+  ): () => void {
     this.watchers.set(path, callback);
     return () => this.unwatchDirectory(path);
   }
@@ -296,7 +325,9 @@ export class FileSystemService implements IFileSystemService {
   // 统计信息
   async getSystemStats(): Promise<FileSystemStats> {
     try {
-      const files = await this.listDirectory(FileSystem.documentDirectory || '');
+      const files = await this.listDirectory(
+        FileSystem.documentDirectory || "",
+      );
       const totalFiles = files.length;
       const totalSize = files.reduce((sum, file) => sum + file.size, 0);
 
@@ -337,68 +368,70 @@ export class FileSystemService implements IFileSystemService {
 
   // 私有方法
   private generateId(uri: string): string {
-    return `file_${Buffer.from(uri).toString('base64').replace(/[^a-zA-Z0-9]/g, '')}`;
+    return `file_${Buffer.from(uri)
+      .toString("base64")
+      .replace(/[^a-zA-Z0-9]/g, "")}`;
   }
 
   private getFileName(uri: string): string {
-    return uri.split('/').pop() || '';
+    return uri.split("/").pop() || "";
   }
 
   private getFileType(uri: string): string {
-    const extension = uri.split('.').pop()?.toLowerCase() || '';
+    const extension = uri.split(".").pop()?.toLowerCase() || "";
     const fileTypes: Record<string, string> = {
-      'mp4': 'video',
-      'avi': 'video',
-      'mov': 'video',
-      'wmv': 'video',
-      'flv': 'video',
-      'mkv': 'video',
-      'jpg': 'image',
-      'jpeg': 'image',
-      'png': 'image',
-      'gif': 'image',
-      'bmp': 'image',
-      'pdf': 'document',
-      'doc': 'document',
-      'docx': 'document',
-      'txt': 'text',
-      'json': 'text',
-      'mp3': 'audio',
-      'wav': 'audio',
-      'aac': 'audio',
-      'flac': 'audio',
+      mp4: "video",
+      avi: "video",
+      mov: "video",
+      wmv: "video",
+      flv: "video",
+      mkv: "video",
+      jpg: "image",
+      jpeg: "image",
+      png: "image",
+      gif: "image",
+      bmp: "image",
+      pdf: "document",
+      doc: "document",
+      docx: "document",
+      txt: "text",
+      json: "text",
+      mp3: "audio",
+      wav: "audio",
+      aac: "audio",
+      flac: "audio",
     };
-    return fileTypes[extension] || 'unknown';
+    return fileTypes[extension] || "unknown";
   }
 
   private async getMimeType(uri: string): Promise<string> {
     try {
-      const extension = uri.split('.').pop()?.toLowerCase() || '';
+      const extension = uri.split(".").pop()?.toLowerCase() || "";
       const mimeTypes: Record<string, string> = {
-        'mp4': 'video/mp4',
-        'avi': 'video/x-msvideo',
-        'mov': 'video/quicktime',
-        'wmv': 'video/x-ms-wmv',
-        'flv': 'video/x-flv',
-        'mkv': 'video/x-matroska',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'png': 'image/png',
-        'gif': 'image/gif',
-        'bmp': 'image/bmp',
-        'pdf': 'application/pdf',
-        'doc': 'application/msword',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'txt': 'text/plain',
-        'json': 'application/json',
-        'mp3': 'audio/mpeg',
-        'wav': 'audio/wav',
-        'aac': 'audio/aac',
-        'flac': 'audio/flac',
+        mp4: "video/mp4",
+        avi: "video/x-msvideo",
+        mov: "video/quicktime",
+        wmv: "video/x-ms-wmv",
+        flv: "video/x-flv",
+        mkv: "video/x-matroska",
+        jpg: "image/jpeg",
+        jpeg: "image/jpeg",
+        png: "image/png",
+        gif: "image/gif",
+        bmp: "image/bmp",
+        pdf: "application/pdf",
+        doc: "application/msword",
+        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        txt: "text/plain",
+        json: "application/json",
+        mp3: "audio/mpeg",
+        wav: "audio/wav",
+        aac: "audio/aac",
+        flac: "audio/flac",
       };
-      return mimeTypes[extension] || 'application/octet-stream';
+      return mimeTypes[extension] || "application/octet-stream";
     } catch (error) {
-      return 'application/octet-stream';
+      return "application/octet-stream";
     }
   }
 
@@ -406,13 +439,16 @@ export class FileSystemService implements IFileSystemService {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return hash.toString(16);
   }
 
-  private notifyWatchers(path: string, type: 'create' | 'modify' | 'delete' | 'move') {
+  private notifyWatchers(
+    path: string,
+    type: "create" | "modify" | "delete" | "move",
+  ) {
     const event: FileWatchEvent = {
       type,
       path,
@@ -439,7 +475,10 @@ export class VideoService implements IVideoService {
     return VideoService.instance;
   }
 
-  async importVideo(uri: string, metadata?: Record<string, any>): Promise<FileItem> {
+  async importVideo(
+    uri: string,
+    metadata?: Record<string, any>,
+  ): Promise<FileItem> {
     try {
       const fileSystemService = FileSystemService.getInstance();
       const fileItem = await fileSystemService.getFileInfo(uri);
@@ -478,8 +517,8 @@ export class VideoService implements IVideoService {
         height: 0,
         bitrate: 0,
         frameRate: 0,
-        codec: 'unknown',
-        format: 'unknown',
+        codec: "unknown",
+        format: "unknown",
       };
     } catch (error) {
       throw new Error(`提取视频信息失败: ${error.message}`);
@@ -489,13 +528,16 @@ export class VideoService implements IVideoService {
   async generateThumbnail(uri: string, time = 0): Promise<string> {
     try {
       // 这里需要实现视频缩略图生成
-      return '';
+      return "";
     } catch (error) {
       throw new Error(`生成缩略图失败: ${error.message}`);
     }
   }
 
-  async generateMultipleThumbnails(uri: string, count: number): Promise<string[]> {
+  async generateMultipleThumbnails(
+    uri: string,
+    count: number,
+  ): Promise<string[]> {
     try {
       const thumbnails: string[] = [];
       for (let i = 0; i < count; i++) {
@@ -513,7 +555,7 @@ export class VideoService implements IVideoService {
       const fileSystemService = FileSystemService.getInstance();
       const searchOptions: FileSearchOptions = {
         query,
-        mimeType: ['video/mp4', 'video/avi', 'video/mov', 'video/x-msvideo'],
+        mimeType: ["video/mp4", "video/avi", "video/mov", "video/x-msvideo"],
       };
       return await fileSystemService.searchFiles(searchOptions);
     } catch (error) {
@@ -521,12 +563,14 @@ export class VideoService implements IVideoService {
     }
   }
 
-  async filterVideos(filter: (video: FileItem) => boolean): Promise<FileItem[]> {
+  async filterVideos(
+    filter: (video: FileItem) => boolean,
+  ): Promise<FileItem[]> {
     try {
       const fileSystemService = FileSystemService.getInstance();
       const allVideos = await fileSystemService.searchFiles({
-        query: '',
-        mimeType: ['video/mp4', 'video/avi', 'video/mov', 'video/x-msvideo'],
+        query: "",
+        mimeType: ["video/mp4", "video/avi", "video/mov", "video/x-msvideo"],
       });
       return allVideos.filter(filter);
     } catch (error) {
@@ -536,11 +580,11 @@ export class VideoService implements IVideoService {
 
   async categorizeVideos(): Promise<Map<string, FileItem[]>> {
     try {
-      const videos = await this.searchVideos('');
+      const videos = await this.searchVideos("");
       const categories = new Map<string, FileItem[]>();
 
-      videos.forEach(video => {
-        const category = video.type || 'other';
+      videos.forEach((video) => {
+        const category = video.type || "other";
         if (!categories.has(category)) {
           categories.set(category, []);
         }
@@ -576,7 +620,11 @@ export class VideoService implements IVideoService {
     }
   }
 
-  async trimVideo(uri: string, startTime: number, endTime: number): Promise<string> {
+  async trimVideo(
+    uri: string,
+    startTime: number,
+    endTime: number,
+  ): Promise<string> {
     try {
       // 这里需要实现视频裁剪逻辑
       return uri;

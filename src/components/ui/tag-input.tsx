@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
-import { Text } from "@/components/ui/text";
 import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/text";
+import { useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import type { ViewStyle } from "react-native";
 
 interface TagInputProps {
@@ -30,7 +30,7 @@ export function TagInput({
   };
 
   const removeTag = (tagToRemove: string) => {
-    onChangeTags(tags.filter(tag => tag !== tagToRemove));
+    onChangeTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleKeyPress = (e: { nativeEvent: { key: string } }) => {

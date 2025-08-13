@@ -1,11 +1,5 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, X, Plus, Eye, EyeOff, Loader2 } from "@/components/Icons";
+import { Check, Eye, EyeOff, Loader2, Plus, X } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
 import {
   Dialog,
   DialogContent,
@@ -14,13 +8,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  createPlaylistSchema,
-  type CreatePlaylistForm,
-} from "../types/playlist";
+import { Form, FormElement } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/text";
 import { DatabaseService } from "@/db/database-service";
 import type { Playlist } from "@/db/schema";
-import { Form, FormElement } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, View } from "react-native";
+import {
+  type CreatePlaylistForm,
+  createPlaylistSchema,
+} from "../types/playlist";
 
 interface CreatePlaylistDialogProps {
   open: boolean;
@@ -173,7 +173,10 @@ export function CreatePlaylistDialog({
 
         {!isSuccess && (
           <Form {...form}>
-            <FormElement onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <FormElement
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
               <View className="space-y-2">
                 <View className="flex items-center justify-between">
                   <Text className="text-sm font-medium">播放列表名称 *</Text>

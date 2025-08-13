@@ -11,6 +11,7 @@ import {
   or,
   sql,
 } from "drizzle-orm";
+import { getDatabase } from "./drizzle";
 import {
   bookmarkTable,
   folderTable,
@@ -38,7 +39,6 @@ import type {
   VideoStats,
   WatchHistory,
 } from "./schema";
-import { getDatabase } from "./drizzle";
 
 export class DatabaseService {
   private getDb() {

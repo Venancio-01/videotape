@@ -3,29 +3,22 @@
  * 基于 Drizzle ORM 和 Repository Pattern 的具体实现
  */
 
+import { getDatabase } from "@/db/drizzle";
 import {
-  and,
-  asc,
-  desc,
-  eq,
-  sql,
-  max
-} from 'drizzle-orm';
-import { getDatabase } from '@/db/drizzle';
-import {
-  playlistTable,
-  playlistVideoTable,
-  videoTable,
   type Playlist as PlaylistType,
   type PlaylistWithVideos,
   type Video,
-} from '@/db/schema';
+  playlistTable,
+  playlistVideoTable,
+  videoTable,
+} from "@/db/schema";
+import { and, asc, desc, eq, max, sql } from "drizzle-orm";
 import type {
   IPlaylistRepository,
   Playlist,
-  PlaylistWithVideos as PlaylistWithVideosInterface,
   PlaylistVideoOptions,
-} from './interfaces';
+  PlaylistWithVideos as PlaylistWithVideosInterface,
+} from "./interfaces";
 
 export class PlaylistRepository implements IPlaylistRepository {
   private getDb() {
@@ -148,7 +141,7 @@ export class PlaylistRepository implements IPlaylistRepository {
 
   // ===== 写操作方法 =====
 
-  async create(data: Omit<Playlist, 'id'>): Promise<Playlist> {
+  async create(data: Omit<Playlist, "id">): Promise<Playlist> {
     const db = this.getDb();
     const [playlist] = await db.insert(playlistTable).values(data).returning();
     return playlist;
@@ -173,7 +166,9 @@ export class PlaylistRepository implements IPlaylistRepository {
       .where(eq(playlistVideoTable.playlistId, id));
 
     // 删除播放列表
-    const result = await db.delete(playlistTable).where(eq(playlistTable.id, id));
+    const result = await db
+      .delete(playlistTable)
+      .where(eq(playlistTable.id, id));
     return result.changes > 0;
   }
 
@@ -257,7 +252,10 @@ export class PlaylistRepository implements IPlaylistRepository {
 
   // ===== 统计更新方法 =====
 
-  async updatePlaylistStats(playlistId: string, tx = this.getDb()): Promise<void> {
+  async updatePlaylistStats(
+    playlistId: string,
+    tx = this.getDb(),
+  ): Promise<void> {
     // 计算视频数量
     const [videoCount] = await tx
       .select({ count: sql<number>`COUNT(*)` })

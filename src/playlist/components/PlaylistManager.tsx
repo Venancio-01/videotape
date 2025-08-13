@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
-import { Search, Plus, Filter, SortAsc, SortDesc } from "@/components/Icons";
+import { Filter, Plus, Search, SortAsc, SortDesc } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
-import { PlaylistQuickActions } from "./PlaylistQuickActions";
-import { PlaylistGrid } from "./PlaylistCard";
 import { DatabaseService } from "@/db/database-service";
 import type { Playlist } from "@/db/schema";
+import { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { PlaylistGrid } from "./PlaylistCard";
+import { PlaylistQuickActions } from "./PlaylistQuickActions";
 
 interface PlaylistManagerProps {
   className?: string;
@@ -287,7 +287,7 @@ export function PlaylistManager({ className = "" }: PlaylistManagerProps) {
                   <Text className="text-lg font-semibold">
                     {Math.floor(
                       playlists.reduce((sum, p) => sum + p.totalDuration, 0) /
-                      3600,
+                        3600,
                     )}
                     h
                   </Text>

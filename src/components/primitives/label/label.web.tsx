@@ -13,7 +13,7 @@ import type { LabelRootProps, LabelTextProps } from "./types";
 const Root = React.forwardRef<
   PressableRef,
   Omit<SlottablePressableProps, "children" | "hitSlop" | "style"> &
-  LabelRootProps
+    LabelRootProps
 >(({ asChild, ...props }, ref) => {
   const Component = asChild ? Slot.View : Slot.View;
   return <Component ref={ref} {...props} />;

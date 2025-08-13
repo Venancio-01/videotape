@@ -3,6 +3,23 @@
  * 基于 Drizzle ORM 和 Repository Pattern 的具体实现
  */
 
+import { getDatabase } from "@/db/drizzle";
+import {
+  type SearchResult,
+  type VideoSearchParams,
+  type VideoStats,
+  type Video as VideoType,
+  type VideoWithHistory,
+  type VideoWithRelations,
+  bookmarkTable,
+  folderTable,
+  folderVideoTable,
+  playlistVideoTable,
+  tagTable,
+  videoTable,
+  videoTagTable,
+  watchHistoryTable,
+} from "@/db/schema";
 import {
   and,
   asc,
@@ -14,33 +31,16 @@ import {
   lte,
   not,
   or,
-  sql
-} from 'drizzle-orm';
-import { getDatabase } from '@/db/drizzle';
-import {
-  videoTable,
-  watchHistoryTable,
-  playlistVideoTable,
-  videoTagTable,
-  tagTable,
-  folderVideoTable,
-  folderTable,
-  bookmarkTable,
-  type Video as VideoType,
-  type VideoWithHistory,
-  type VideoWithRelations,
-  type VideoSearchParams,
-  type SearchResult,
-  type VideoStats,
-} from '@/db/schema';
+  sql,
+} from "drizzle-orm";
 import type {
   IVideoRepository,
-  Video,
-  VideoWithRelations as VideoWithRelationsInterface,
   SearchResult as SearchResultInterface,
-  VideoStats as VideoStatsInterface,
   UserStats as UserStatsInterface,
-} from './interfaces';
+  Video,
+  VideoStats as VideoStatsInterface,
+  VideoWithRelations as VideoWithRelationsInterface,
+} from "./interfaces";
 
 export class VideoRepository implements IVideoRepository {
   private getDb() {
@@ -70,8 +70,8 @@ export class VideoRepository implements IVideoRepository {
       isFavorite,
       minDuration,
       maxDuration,
-      sortBy = 'created_at',
-      sortOrder = 'desc',
+      sortBy = "created_at",
+      sortOrder = "desc",
       page = 1,
       pageSize = 20,
     } = params;
@@ -136,13 +136,13 @@ export class VideoRepository implements IVideoRepository {
       play_count: videoTable.playCount,
     }[sortBy];
 
-    const orderByDirection = sortOrder === 'desc' ? desc : asc;
+    const orderByDirection = sortOrder === "desc" ? desc : asc;
     const sortedQuery = filteredQuery.orderBy(orderByDirection(orderByColumn));
 
     // 获取总数
     const countQuery = db
       .select({ count: sql<number>`COUNT(*)` })
-      .from(filteredQuery.as('videos_filtered'));
+      .from(filteredQuery.as("videos_filtered"));
 
     // 获取分页数据
     const paginatedQuery = sortedQuery.limit(pageSize).offset(offset);
@@ -151,7 +151,10 @@ export class VideoRepository implements IVideoRepository {
     return {
       toSQL: () => ({
         sql: `SELECT * FROM (${paginatedQuery.toSQL().sql}) as items CROSS JOIN (${countQuery.toSQL().sql}) as counts`,
-        params: [...paginatedQuery.toSQL().params, ...countQuery.toSQL().params],
+        params: [
+          ...paginatedQuery.toSQL().params,
+          ...countQuery.toSQL().params,
+        ],
       }),
     };
   }
@@ -193,7 +196,10 @@ export class VideoRepository implements IVideoRepository {
         count: sql<number>`COUNT(*)`,
       })
       .from(videoTable)
-      .innerJoin(watchHistoryTable, eq(videoTable.id, watchHistoryTable.videoId))
+      .innerJoin(
+        watchHistoryTable,
+        eq(videoTable.id, watchHistoryTable.videoId),
+      )
       .groupBy(videoTable.category)
       .orderBy(desc(sql`COUNT(*)`))
       .limit(3);
@@ -211,13 +217,13 @@ export class VideoRepository implements IVideoRepository {
         and(
           inArray(
             videoTable.category,
-            favoriteCategories.map(fc => fc.category)
+            favoriteCategories.map((fc) => fc.category),
           ),
           not(
             inArray(
               videoTable.id,
-              watchedVideoIds.map(wv => wv.videoId)
-            )
+              watchedVideoIds.map((wv) => wv.videoId),
+            ),
           ),
           eq(videoTable.isArchived, false),
         ),
@@ -317,7 +323,7 @@ export class VideoRepository implements IVideoRepository {
 
   // ===== 写操作方法 =====
 
-  async create(data: Omit<Video, 'id'>): Promise<Video> {
+  async create(data: Omit<Video, "id">): Promise<Video> {
     const db = this.getDb();
     const [video] = await db.insert(videoTable).values(data).returning();
     return video;
@@ -341,7 +347,7 @@ export class VideoRepository implements IVideoRepository {
 
   // ===== 批量操作方法 =====
 
-  async batchCreate(videos: Omit<Video, 'id'>[]): Promise<Video[]> {
+  async batchCreate(videos: Omit<Video, "id">[]): Promise<Video[]> {
     const db = this.getDb();
     const result = await db.insert(videoTable).values(videos).returning();
     return Array.isArray(result) ? result : [result];

@@ -3,6 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { useDatabase } from "@/db/provider";
 import { videoTable } from "@/db/schema";
+import type { Video } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { AVPlaybackStatus, Video as ExpoVideo } from "expo-av";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   ArrowLeft,
   Heart,
@@ -13,11 +17,7 @@ import {
   SkipBack,
   SkipForward,
   Volume2,
-} from "@/lib/icons";
-import { videoService } from "@/services/videoService";
-import { eq } from "drizzle-orm";
-import { AVPlaybackStatus, Video } from "expo-av";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+} from "lucide-react-native";
 import * as React from "react";
 import { Alert, Dimensions, Pressable, View } from "react-native";
 
@@ -25,7 +25,7 @@ export default function VideoPlayerScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { db } = useDatabase();
-  const [video, setVideo] = React.useState<any>(null);
+  const [video, setVideo] = React.useState<Video | null>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
 
@@ -63,7 +63,7 @@ export default function VideoPlayerScreen() {
   const handleSeek = (seconds: number) => {
     const newTime = Math.max(
       0,
-      Math.min(video?.duration || 0, currentTime + seconds),
+      Math.min(typeof video?.duration === 'number' ? video.duration : 0, currentTime + seconds),
     );
     setCurrentTime(newTime);
   };
@@ -112,7 +112,7 @@ export default function VideoPlayerScreen() {
             <Text className="text-xl font-bold mb-2">{video.title}</Text>
             <View className="flex-row gap-4 mb-3">
               <Text className="text-muted-foreground">
-                {formatDuration(video.duration)}
+                {formatDuration(typeof video.duration === 'number' ? video.duration : 0)}
               </Text>
               <Text className="text-muted-foreground">
                 {video.format.toUpperCase()}
@@ -124,7 +124,7 @@ export default function VideoPlayerScreen() {
               )}
             </View>
             <Text className="text-sm text-muted-foreground">
-              {Math.round(video.fileSize / (1024 * 1024))} MB
+              {Math.round((typeof video.fileSize === 'number' ? video.fileSize : 0) / (1024 * 1024))} MB
             </Text>
           </CardContent>
         </Card>
@@ -137,7 +137,7 @@ export default function VideoPlayerScreen() {
               <View className="bg-muted h-1 rounded-full">
                 <View
                   className="bg-primary h-1 rounded-full"
-                  style={{ width: `${(currentTime / video.duration) * 100}%` }}
+                  style={{ width: `${(currentTime / (typeof video.duration === 'number' ? video.duration : 1)) * 100}%` }}
                 />
               </View>
               <View className="flex-row justify-between mt-1">
@@ -145,7 +145,7 @@ export default function VideoPlayerScreen() {
                   {formatDuration(currentTime)}
                 </Text>
                 <Text className="text-xs text-muted-foreground">
-                  {formatDuration(video.duration)}
+                  {formatDuration(typeof video.duration === 'number' ? video.duration : 0)}
                 </Text>
               </View>
             </View>

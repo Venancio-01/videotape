@@ -1,9 +1,9 @@
-import { View } from "react-native";
-import { Plus, List, Heart, Star, Clock, Users } from "@/components/Icons";
+import { Clock, Heart, List, Plus, Star, Users } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { useRouter } from "expo-router";
 import type { Playlist } from "@/db/schema";
+import { useRouter } from "expo-router";
+import { View } from "react-native";
 
 interface PlaylistQuickActionsProps {
   onPlaylistCreated?: (playlist: Playlist) => void;
@@ -67,10 +67,10 @@ export function PlaylistQuickActions({
             className="flex-1 min-w-[140px] h-20"
           >
             <View className="flex items-center gap-2">
-              <View className={`w-8 h-8 rounded-full ${action.color} flex items-center justify-center`}>
-                <View className="text-white">
-                  {action.icon}
-                </View>
+              <View
+                className={`w-8 h-8 rounded-full ${action.color} flex items-center justify-center`}
+              >
+                <View className="text-white">{action.icon}</View>
               </View>
               <View className="flex-1">
                 <Text className="text-sm font-medium text-center">

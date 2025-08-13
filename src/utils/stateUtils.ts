@@ -5,7 +5,7 @@
 import type { EqualityChecker, StateSelector } from "zustand";
 
 // 深度比较函数
-export const deepEqual = (a: any, b: any): boolean => {
+export const deepEqual = (a: unknown, b: unknown): boolean => {
   if (a === b) return true;
 
   if (typeof a !== typeof b) return false;
@@ -28,7 +28,7 @@ export const deepEqual = (a: any, b: any): boolean => {
 };
 
 // 浅度比较函数
-export const shallowEqual = (a: any, b: any): boolean => {
+export const shallowEqual = (a: unknown, b: unknown): boolean => {
   if (a === b) return true;
 
   if (
@@ -66,7 +66,7 @@ export const createSelector = <T, U>(
   return (state: T): U => {
     if (lastState === undefined || !equalityFn(lastState, state)) {
       lastState = state;
-      lastResult = selector(state);
+      lastResult = selector(lastState);
     }
     return lastResult!;
   };
@@ -80,26 +80,26 @@ export const createDeepSelector = <T, U>(
 };
 
 // 防抖函数
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number,
 ): T => {
-  let timeout: NodeJS.Timeout;
+  let timeout: ReturnType<typeof setTimeout>;
 
-  return ((...args: any[]) => {
+  return ((...args: unknown[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
   }) as T;
 };
 
 // 节流函数
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number,
 ): T => {
   let inThrottle: boolean;
 
-  return ((...args: any[]) => {
+  return ((...args: unknown[]) => {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
@@ -148,7 +148,7 @@ export const deepFreeze = <T>(object: T): T => {
   const propNames = Object.getOwnPropertyNames(object);
 
   for (const name of propNames) {
-    const value = (object )[name];
+    const value = object[name];
     if (value && typeof value === "object") {
       deepFreeze(value);
     }
@@ -170,9 +170,9 @@ export const deepMerge = <T extends Record<string, any>>(
       typeof source[key] === "object" &&
       !Array.isArray(source[key])
     ) {
-      result[key] = deepMerge(result[key] || {}, source[key] );
+      result[key] = deepMerge(result[key] as Record<string, any>, source[key] as Record<string, any>);
     } else {
-      result[key] = source[key] ;
+      result[key] = source[key] as T[Extract<keyof T, string>];
     }
   }
 

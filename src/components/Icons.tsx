@@ -24,6 +24,7 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   CircleUserRound,
+  Clock,
   Cloud,
   Code,
   Copy,
@@ -34,6 +35,7 @@ import {
   EyeOff,
   Fan,
   Filter,
+  FolderOpen,
   GalleryHorizontal,
   Github,
   Heart,
@@ -51,6 +53,7 @@ import {
   MessageSquare,
   MoonStar,
   MoreVertical,
+  Play,
   Plus,
   PlusCircle,
   Search,
@@ -67,9 +70,6 @@ import {
   UserPlus,
   Users,
   X,
-  Clock,
-  FolderOpen,
-  Play
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -223,5 +223,5 @@ export {
   X,
   Clock,
   FolderOpen,
-  Play
+  Play,
 };

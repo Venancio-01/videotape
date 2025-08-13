@@ -13,12 +13,18 @@ import { useMemo } from "react";
 export const usePlaylistStore = baseUsePlaylistStore;
 
 // 选择器 Hooks
-export const useAllPlaylists = () => usePlaylistSelector(playlistSelectors.getAllPlaylists);
-export const useCurrentPlaylist = () => usePlaylistSelector(playlistSelectors.getCurrentPlaylist);
-export const useIsLoading = () => usePlaylistSelector(playlistSelectors.getIsLoading);
-export const useFilteredPlaylists = () => usePlaylistSelector(playlistSelectors.getFilteredPlaylists);
-export const useSortedPlaylists = () => usePlaylistSelector(playlistSelectors.getSortedPlaylists);
-export const usePlaylistStats = () => usePlaylistSelector(playlistSelectors.getPlaylistStats);
+export const useAllPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getAllPlaylists);
+export const useCurrentPlaylist = () =>
+  usePlaylistSelector(playlistSelectors.getCurrentPlaylist);
+export const useIsLoading = () =>
+  usePlaylistSelector(playlistSelectors.getIsLoading);
+export const useFilteredPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getFilteredPlaylists);
+export const useSortedPlaylists = () =>
+  usePlaylistSelector(playlistSelectors.getSortedPlaylists);
+export const usePlaylistStats = () =>
+  usePlaylistSelector(playlistSelectors.getPlaylistStats);
 
 // 操作 Hooks
 export const usePlaylistActions = () => {
@@ -26,12 +32,16 @@ export const usePlaylistActions = () => {
   const removePlaylist = usePlaylistStore((state) => state.removePlaylist);
   const updatePlaylist = usePlaylistStore((state) => state.updatePlaylist);
   const setPlaylists = usePlaylistStore((state) => state.setPlaylists);
-  const setCurrentPlaylist = usePlaylistStore((state) => state.setCurrentPlaylist);
+  const setCurrentPlaylist = usePlaylistStore(
+    (state) => state.setCurrentPlaylist,
+  );
   const setSearchQuery = usePlaylistStore((state) => state.setSearchQuery);
   const setFilter = usePlaylistStore((state) => state.setFilter);
   const clearFilters = usePlaylistStore((state) => state.clearFilters);
   const setPagination = usePlaylistStore((state) => state.setPagination);
-  const loadMorePlaylists = usePlaylistStore((state) => state.loadMorePlaylists);
+  const loadMorePlaylists = usePlaylistStore(
+    (state) => state.loadMorePlaylists,
+  );
   const setLoading = usePlaylistStore((state) => state.setLoading);
   const setError = usePlaylistStore((state) => state.setError);
   const clearError = usePlaylistStore((state) => state.clearError);
@@ -77,9 +87,15 @@ export const usePlaylistSearch = () => {
 export const usePlaylistPagination = () => {
   const pagination = usePlaylistStore((state) => state.pagination);
   const setPagination = usePlaylistStore((state) => state.setPagination);
-  const loadMorePlaylists = usePlaylistStore((state) => state.loadMorePlaylists);
-  const filteredPlaylists = usePlaylistSelector(playlistSelectors.getFilteredPlaylists);
-  const paginatedPlaylists = usePlaylistSelector(playlistSelectors.getPaginatedPlaylists);
+  const loadMorePlaylists = usePlaylistStore(
+    (state) => state.loadMorePlaylists,
+  );
+  const filteredPlaylists = usePlaylistSelector(
+    playlistSelectors.getFilteredPlaylists,
+  );
+  const paginatedPlaylists = usePlaylistSelector(
+    playlistSelectors.getPaginatedPlaylists,
+  );
 
   return {
     pagination,
@@ -97,7 +113,9 @@ export const usePlaylistStateMonitor = () => {
   const isLoading = usePlaylistSelector(playlistSelectors.getIsLoading);
   const error = usePlaylistStore((state) => state.error);
   const playlists = usePlaylistSelector(playlistSelectors.getAllPlaylists);
-  const currentPlaylist = usePlaylistSelector(playlistSelectors.getCurrentPlaylist);
+  const currentPlaylist = usePlaylistSelector(
+    playlistSelectors.getCurrentPlaylist,
+  );
 
   return {
     isLoading,

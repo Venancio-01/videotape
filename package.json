@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "packageManager": "npm@10.9.2",
   "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 expo start --tunnel",
-    "dev:android": "expo start -c --android --tunnel",
+    "dev": "EXPO_NO_TELEMETRY=1 expo start",
+    "dev:android": "expo start -c --android",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "build:web": "expo export --platform web",
@@ -49,12 +49,14 @@
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.5.1",
     "expo": "^53.0.0",
+    "expo-av": "^15.1.7",
     "expo-dev-client": "~5.2.0",
     "expo-document-picker": "^13.1.6",
     "expo-font": "~13.3.1",
     "expo-image-picker": "^16.1.4",
     "expo-intent-launcher": "~12.1.5",
     "expo-linking": "~7.1.5",
+    "expo-media-library": "^17.1.7",
     "expo-navigation-bar": "~4.2.5",
     "expo-notifications": "~0.31.3",
     "expo-router": "~5.1.0",
@@ -80,6 +82,7 @@
     "react-native-web": "^0.20.0",
     "sql.js": "^1.13.0",
     "tailwind-merge": "^2.6.0",
+    "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.1",
     "zustand": "^4.5.6"
@@ -100,12 +103,8 @@
     "happy-dom": "^18.0.1",
     "jsdom": "^25.0.1",
     "react-test-renderer": "^19.1.1",
-    "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "vitest": "^2.1.8"
   },
-  "trustedDependencies": [
-    "tailwindcss",
-    "nativewind"
-  ]
+  "trustedDependencies": ["tailwindcss", "nativewind"]
 }

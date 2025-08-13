@@ -15,13 +15,17 @@ export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: videos } = useLiveQuery(
-    db.select().from(videoTable).where(
-      or(
-        ilike(videoTable.title, `%${searchQuery}%`),
-        ilike(videoTable.category, `%${searchQuery}%`),
-        ilike(videoTable.tags, `%${searchQuery}%`),
-      )))
-
+    db
+      .select()
+      .from(videoTable)
+      .where(
+        or(
+          ilike(videoTable.title, `%${searchQuery}%`),
+          ilike(videoTable.category, `%${searchQuery}%`),
+          ilike(videoTable.tags, `%${searchQuery}%`),
+        ),
+      ),
+  );
 
   if (!db) {
     return (

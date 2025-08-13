@@ -2,13 +2,13 @@
  * UI 状态管理 Store
  */
 
+import { MiddlewareCombinations } from "@/middleware";
 import type { Notification, UIState } from "@/types/stateTypes";
 import type { UIStore } from "@/types/storeTypes";
 import { StateUtils } from "@/utils/stateUtils";
+import React from "react";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { MiddlewareCombinations } from "@/middleware";
-import React from "react";
 
 // 初始状态
 const initialState: UIState = {

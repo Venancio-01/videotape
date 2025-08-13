@@ -1,27 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, FlatList, TouchableOpacity, Alert } from "react-native";
-import { Text } from "@/components/ui/text";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import type { CreatePlaylistForm } from "@/features/playlist/types/playlist";
-import type { FileItem, DirectoryItem } from "@/types/file";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
+import type { CreatePlaylistForm } from "@/playlist/types/playlist";
 import { PlaylistService } from "@/services/playlistService";
+import type { DirectoryItem, FileItem } from "@/types/file";
+import React, { useState, useEffect, useRef } from "react";
+import { Alert, FlatList, TouchableOpacity, View } from "react-native";
 
 interface VideoDirectorySelectorProps {
   data: CreatePlaylistForm;
   onChange: (data: Partial<CreatePlaylistForm>) => void;
 }
 
-export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelectorProps) {
-  const [selectionMode, setSelectionMode] = useState<"files" | "directory">(data.selectionMode);
+export function VideoDirectorySelector({
+  data,
+  onChange,
+}: VideoDirectorySelectorProps) {
+  const [selectionMode, setSelectionMode] = useState<"files" | "directory">(
+    data.selectionMode,
+  );
   const [fileItems, setFileItems] = useState<FileItem[]>([]);
   const [directoryItems, setDirectoryItems] = useState<DirectoryItem[]>([]);
-  const [selectedDirectory, setSelectedDirectory] = useState<DirectoryItem | null>(data.selectedDirectory);
-  const [directoryVideos, setDirectoryVideos] = useState<Video[]>(data.directoryVideos);
+  const [selectedDirectory, setSelectedDirectory] =
+    useState<DirectoryItem | null>(data.selectedDirectory);
+  const [directoryVideos, setDirectoryVideos] = useState<Video[]>(
+    data.directoryVideos,
+  );
   const [selectedVideoIds, setSelectedVideoIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +86,9 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
 
       setIsLoading(true);
       try {
-        const videos = await PlaylistService.getDirectoryVideos(selectedDirectory.path);
+        const videos = await PlaylistService.getDirectoryVideos(
+          selectedDirectory.path,
+        );
         setDirectoryVideos(videos);
         onChangeRef.current({ selectedDirectory, directoryVideos: videos });
       } catch (error) {
@@ -94,11 +104,11 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
 
   // 处理文件选择
   const handleFileSelect = (file: FileItem) => {
-    const isSelected = data.selectedFiles.some(f => f.id === file.id);
+    const isSelected = data.selectedFiles.some((f) => f.id === file.id);
     let updatedFiles: FileItem[];
 
     if (isSelected) {
-      updatedFiles = data.selectedFiles.filter(f => f.id !== file.id);
+      updatedFiles = data.selectedFiles.filter((f) => f.id !== file.id);
     } else {
       updatedFiles = [...data.selectedFiles, file];
     }
@@ -117,7 +127,7 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
     let updatedVideoIds: string[];
 
     if (isSelected) {
-      updatedVideoIds = selectedVideoIds.filter(id => id !== videoId);
+      updatedVideoIds = selectedVideoIds.filter((id) => id !== videoId);
     } else {
       updatedVideoIds = [...selectedVideoIds, videoId];
     }
@@ -126,17 +136,17 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
   };
 
   // 过滤文件和目录
-  const filteredFiles = fileItems.filter(file =>
-    file.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFiles = fileItems.filter((file) =>
+    file.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const filteredDirectories = directoryItems.filter(directory =>
-    directory.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredDirectories = directoryItems.filter((directory) =>
+    directory.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // 渲染文件项
   const renderFileItem = ({ item }: { item: FileItem }) => {
-    const isSelected = data.selectedFiles.some(f => f.id === item.id);
+    const isSelected = data.selectedFiles.some((f) => f.id === item.id);
 
     return (
       <TouchableOpacity
@@ -152,7 +162,8 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
         <View className="ml-3 flex-1">
           <Text className="text-base">{item.name}</Text>
           <Text className="text-sm text-muted-foreground mt-1">
-            {formatFileSize(item.size)} · {formatDuration(item.metadata?.duration || 0)}
+            {formatFileSize(item.size)} ·{" "}
+            {formatDuration(item.metadata?.duration || 0)}
           </Text>
         </View>
       </TouchableOpacity>
@@ -219,7 +230,9 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
         <Text className="text-base font-medium mb-3">选择模式</Text>
         <RadioGroup
           value={selectionMode}
-          onValueChange={(value) => setSelectionMode(value as "files" | "directory")}
+          onValueChange={(value) =>
+            setSelectionMode(value as "files" | "directory")
+          }
           className="flex-row gap-6"
         >
           <View className="flex-row items-center gap-2">
@@ -245,7 +258,9 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
       {selectionMode === "files" ? (
         <View className="flex-1 p-4">
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-base">已选择 {data.selectedFiles.length} 个文件</Text>
+            <Text className="text-base">
+              已选择 {data.selectedFiles.length} 个文件
+            </Text>
             {data.selectedFiles.length > 0 && (
               <Badge variant="secondary" className="px-2 py-1">
                 {data.selectedFiles.length}
@@ -288,13 +303,18 @@ export function VideoDirectorySelector({ data, onChange }: VideoDirectorySelecto
             <>
               <View className="border-b border-border">
                 <View className="p-4">
-                  <Text className="text-base font-medium">{selectedDirectory.name}</Text>
-                  <Text className="text-sm text-muted-foreground">{selectedDirectory.path}</Text>
+                  <Text className="text-base font-medium">
+                    {selectedDirectory.name}
+                  </Text>
+                  <Text className="text-sm text-muted-foreground">
+                    {selectedDirectory.path}
+                  </Text>
                 </View>
 
                 <View className="flex-row items-center justify-between px-4 pb-3">
                   <Text className="text-base">
-                    已选择 {selectedVideoIds.length} / {directoryVideos.length} 个视频
+                    已选择 {selectedVideoIds.length} / {directoryVideos.length}{" "}
+                    个视频
                   </Text>
                   {selectedVideoIds.length > 0 && (
                     <Badge variant="secondary" className="px-2 py-1">
@@ -340,9 +360,9 @@ function formatDuration(seconds: number): string {
   const secs = seconds % 60;
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }
 
 // 样式已转换为Tailwind CSS类

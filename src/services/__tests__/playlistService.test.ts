@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { PlaylistService } from "@/services/playlistService";
-import type { CreatePlaylistOptions } from "@/features/playlist/types/playlist";
 import type { Video } from "@/db/schema";
+import type { CreatePlaylistOptions } from "@/playlist/types/playlist";
+import { PlaylistService } from "@/services/playlistService";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the database and file system
 vi.mock("@/db", () => ({
@@ -49,7 +49,10 @@ describe("PlaylistService", () => {
 
   describe("createPlaylist", () => {
     it("应该成功创建播放列表", async () => {
-      const result = await PlaylistService.createPlaylist(mockPlaylistOptions, mockVideoItems);
+      const result = await PlaylistService.createPlaylist(
+        mockPlaylistOptions,
+        mockVideoItems,
+      );
 
       expect(result.success).toBe(true);
       expect(result.playlistId).toBeDefined();
@@ -59,7 +62,7 @@ describe("PlaylistService", () => {
     it("应该验证必填字段 - 播放列表名称", async () => {
       const result = await PlaylistService.createPlaylist(
         { ...mockPlaylistOptions, name: "" },
-        mockVideoItems
+        mockVideoItems,
       );
 
       expect(result.success).toBe(false);
@@ -67,7 +70,10 @@ describe("PlaylistService", () => {
     });
 
     it("应该验证必填字段 - 视频列表", async () => {
-      const result = await PlaylistService.createPlaylist(mockPlaylistOptions, []);
+      const result = await PlaylistService.createPlaylist(
+        mockPlaylistOptions,
+        [],
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe("请选择至少一个视频");
@@ -76,7 +82,7 @@ describe("PlaylistService", () => {
     it("应该处理空格的播放列表名称", async () => {
       const result = await PlaylistService.createPlaylist(
         { ...mockPlaylistOptions, name: "   " },
-        mockVideoItems
+        mockVideoItems,
       );
 
       expect(result.success).toBe(false);
@@ -86,7 +92,7 @@ describe("PlaylistService", () => {
     it("应该修剪播放列表名称", async () => {
       const result = await PlaylistService.createPlaylist(
         { ...mockPlaylistOptions, name: "  测试播放列表  " },
-        mockVideoItems
+        mockVideoItems,
       );
 
       expect(result.success).toBe(true);
@@ -169,7 +175,8 @@ describe("PlaylistService", () => {
 
   describe("getDirectoryVideos", () => {
     it("应该返回目录中的视频数组", async () => {
-      const videos = await PlaylistService.getDirectoryVideos("/path/to/movies");
+      const videos =
+        await PlaylistService.getDirectoryVideos("/path/to/movies");
 
       expect(Array.isArray(videos)).toBe(true);
       expect(videos.length).toBeGreaterThan(0);

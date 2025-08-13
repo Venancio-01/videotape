@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { PlaylistQuickActions } from "@/features/playlist/components/PlaylistQuickActions";
+import { PlaylistQuickActions } from "@/playlist/components/PlaylistQuickActions";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 
 describe("PlaylistQuickActions", () => {
@@ -21,7 +21,7 @@ describe("PlaylistQuickActions", () => {
         onViewAll={mockOnViewAll}
         onViewFavorites={mockOnViewFavorites}
         onViewRecent={mockOnViewRecent}
-      />
+      />,
     );
 
     expect(screen.getByText("新建播放列表")).toBeTruthy();
@@ -39,7 +39,7 @@ describe("PlaylistQuickActions", () => {
         onViewAll={mockOnViewAll}
         onViewFavorites={mockOnViewFavorites}
         onViewRecent={mockOnViewRecent}
-      />
+      />,
     );
 
     const createButton = screen.getByText("新建播放列表");
@@ -57,7 +57,7 @@ describe("PlaylistQuickActions", () => {
         onViewAll={mockOnViewAll}
         onViewFavorites={mockOnViewFavorites}
         onViewRecent={mockOnViewRecent}
-      />
+      />,
     );
 
     fireEvent.press(screen.getByText("收藏夹"));
@@ -78,7 +78,7 @@ describe("PlaylistQuickActions", () => {
         onViewAll={mockOnViewAll}
         onViewFavorites={mockOnViewFavorites}
         onViewRecent={mockOnViewRecent}
-      />
+      />,
     );
 
     expect(screen.getByText("创建播放列表来组织您的视频内容")).toBeTruthy();

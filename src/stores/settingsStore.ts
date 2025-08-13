@@ -2,12 +2,12 @@
  * 设置状态管理 Store
  */
 
-import { StateUtils } from "@/utils/stateUtils";
+import { MiddlewareCombinations } from "@/middleware";
 import type { SettingsState } from "@/types/stateTypes";
 import type { SettingsStore } from "@/types/storeTypes";
+import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { MiddlewareCombinations } from "@/middleware";
 
 // 初始状态
 const initialState: SettingsState = {

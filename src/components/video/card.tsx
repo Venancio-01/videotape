@@ -1,13 +1,13 @@
 import { Clock, Heart, Play } from "@/components/Icons";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Text } from "@/components/ui/text";
 import { formatDuration } from "@/lib/utils";
 import { Link } from "expo-router";
 import type React from "react";
 import { Image, Pressable, View } from "react-native";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 
 type VideoCardProps = {
   id: string;

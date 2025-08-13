@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { PlaylistCard, PlaylistGrid } from "@/features/playlist/components/PlaylistCard";
+import { PlaylistCard, PlaylistGrid } from "@/playlist/components/PlaylistCard";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 const mockPlaylist = {
@@ -37,7 +37,7 @@ describe("PlaylistCard", () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.getByText("测试播放列表")).toBeTruthy();
@@ -57,7 +57,7 @@ describe("PlaylistCard", () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.getByText("#测试")).toBeTruthy();
@@ -74,7 +74,7 @@ describe("PlaylistCard", () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
-      />
+      />,
     );
 
     const playButton = screen.getByText("播放");
@@ -91,7 +91,7 @@ describe("PlaylistCard", () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
-      />
+      />,
     );
 
     const favoriteButton = screen.getByTestId("favorite-button");
@@ -109,7 +109,7 @@ describe("PlaylistCard", () => {
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
         showActions={false}
-      />
+      />,
     );
 
     expect(screen.queryByTestId("edit-button")).not.toBeTruthy();
@@ -126,7 +126,7 @@ describe("PlaylistCard", () => {
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onToggleFavorite={mockOnToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.queryByText("公开")).not.toBeTruthy();
@@ -154,7 +154,7 @@ describe("PlaylistGrid", () => {
         onPlaylistEdit={mockOnPlaylistEdit}
         onPlaylistDelete={mockOnPlaylistDelete}
         onPlaylistToggleFavorite={mockOnPlaylistToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.getByText("测试播放列表")).toBeTruthy();
@@ -169,11 +169,13 @@ describe("PlaylistGrid", () => {
         onPlaylistEdit={mockOnPlaylistEdit}
         onPlaylistDelete={mockOnPlaylistDelete}
         onPlaylistToggleFavorite={mockOnPlaylistToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.getByText("暂无播放列表")).toBeTruthy();
-    expect(screen.getByText("创建您的第一个播放列表来开始组织视频")).toBeTruthy();
+    expect(
+      screen.getByText("创建您的第一个播放列表来开始组织视频"),
+    ).toBeTruthy();
   });
 
   it("应该渲染多个播放列表", () => {
@@ -190,7 +192,7 @@ describe("PlaylistGrid", () => {
         onPlaylistEdit={mockOnPlaylistEdit}
         onPlaylistDelete={mockOnPlaylistDelete}
         onPlaylistToggleFavorite={mockOnPlaylistToggleFavorite}
-      />
+      />,
     );
 
     expect(screen.getByText("测试播放列表")).toBeTruthy();

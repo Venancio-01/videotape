@@ -1,3 +1,5 @@
+import * as Slot from "@/components/primitives/slot";
+import { Button } from "@/components/ui";
 import { X } from "@/lib/icons/Times";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
@@ -25,8 +27,6 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Button } from "@/components/ui";
-import * as Slot from "@/components/primitives/slot";
 
 type BottomSheetRef = React.ElementRef<typeof View>;
 type BottomSheetProps = React.ComponentPropsWithoutRef<typeof View>;

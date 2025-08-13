@@ -1,3 +1,7 @@
+import {
+  useAugmentedRef,
+  useControllableState,
+} from "@/components/primitives/hooks";
 import * as Slot from "@/components/primitives/slot";
 import type {
   PressableRef,
@@ -15,7 +19,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useAugmentedRef, useControllableState } from "@/components/primitives/hooks";
 import type {
   DialogContentProps,
   DialogOverlayProps,

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
+import type { CreatePlaylistForm } from "@/playlist/types/playlist";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { PlaylistBasicInfoForm } from "./PlaylistBasicInfoForm";
 import { VideoDirectorySelector } from "./VideoDirectorySelector";
-import type { CreatePlaylistForm } from "@/features/playlist/types/playlist";
 
 export function CreatePlaylistPage() {
   const router = useRouter();
@@ -65,10 +65,7 @@ export function CreatePlaylistPage() {
         </View>
 
         <ScrollView style={styles.content}>
-          <CurrentStepComponent
-            data={formData}
-            onChange={updateFormData}
-          />
+          <CurrentStepComponent data={formData} onChange={updateFormData} />
         </ScrollView>
 
         <View style={styles.footer}>

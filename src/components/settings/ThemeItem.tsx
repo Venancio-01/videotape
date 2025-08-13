@@ -5,8 +5,8 @@ import {
   BottomSheetOpenTrigger,
   BottomSheetView,
 } from "@/components/primitives/bottomSheet/bottom-sheet.native";
-import { Text } from "@/components/ui/text";
 import ListItem from "@/components/ui/list-item";
+import { Text } from "@/components/ui/text";
 import { H4 } from "@/components/ui/typography";
 import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
 import { Check } from "@/lib/icons/Check";

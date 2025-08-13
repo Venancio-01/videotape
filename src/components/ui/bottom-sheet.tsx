@@ -1,3 +1,6 @@
+import { X } from "@/components/Icons";
+import * as Slot from "@/components/primitives/slot";
+import { cn } from "@/lib/utils";
 import type { BottomSheetFooterProps as GBottomSheetFooterProps } from "@gorhom/bottom-sheet";
 import {
   type BottomSheetBackdrop,
@@ -17,9 +20,6 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { X } from "@/components/Icons";
-import { cn } from "@/lib/utils";
-import * as Slot from "@/components/primitives/slot";
 import { Button } from "./button";
 
 // !IMPORTANT: This file is only for web.

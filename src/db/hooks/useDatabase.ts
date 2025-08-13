@@ -3,16 +3,16 @@
  * 基于 useLiveQuery 和仓库模式的响应式数据获取
  */
 
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useCallback, useEffect, useState } from "react";
 import { databaseService } from "@/db/repositories/DatabaseService";
 import type {
   IQuerier,
-  Video,
   Playlist,
   SearchResult,
+  Video,
   VideoStats,
 } from "@/db/repositories/interfaces";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
 
 // ===== 基础 Live Query Hook =====
 

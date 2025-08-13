@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { TagInput } from "@/components/ui/tag-input";
+import { Text } from "@/components/ui/text";
+import { Textarea } from "@/components/ui/textarea";
 import type { Playlist } from "@/db/schema";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
 interface PlaylistBasicInfoFormProps {
   initialData?: Partial<Playlist>;
@@ -34,7 +34,7 @@ export function PlaylistBasicInfoForm({
     setName(initialData?.name || "");
     setDescription(initialData?.description || "");
     setTags((initialData?.tags as string[]) || []);
-    setIsPublic(!!(initialData?.isPublic));
+    setIsPublic(!!initialData?.isPublic);
   }, [initialData]);
 
   const validateForm = () => {
@@ -86,11 +86,7 @@ export function PlaylistBasicInfoForm({
 
       <View className="space-y-2">
         <Text className="text-base font-medium">标签</Text>
-        <TagInput
-          placeholder="添加标签"
-          tags={tags}
-          onChangeTags={setTags}
-        />
+        <TagInput placeholder="添加标签" tags={tags} onChangeTags={setTags} />
         <Text className="text-xs text-muted-foreground">
           添加标签以帮助分类和搜索播放列表
         </Text>
@@ -103,10 +99,7 @@ export function PlaylistBasicInfoForm({
             其他用户可以查看此播放列表
           </Text>
         </View>
-        <Switch
-          checked={isPublic}
-          onCheckedChange={setIsPublic}
-        />
+        <Switch checked={isPublic} onCheckedChange={setIsPublic} />
       </View>
 
       <View className="flex-row gap-3 pt-4">
@@ -120,11 +113,7 @@ export function PlaylistBasicInfoForm({
             <Text>取消</Text>
           </Button>
         )}
-        <Button
-          onPress={handleSubmit}
-          className="flex-1"
-          disabled={isLoading}
-        >
+        <Button onPress={handleSubmit} className="flex-1" disabled={isLoading}>
           <Text>{isLoading ? "保存中..." : "下一步"}</Text>
         </Button>
       </View>

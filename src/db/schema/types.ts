@@ -23,7 +23,7 @@ export type {
   SearchResult,
   VideoStats,
   UserStats,
-} from './tables';
+} from "./tables";
 
 // 重新导出基础实体类型
 export interface BaseEntity {
@@ -42,7 +42,7 @@ export interface QueryOptions {
   limit?: number;
   offset?: number;
   orderBy?: string;
-  orderDirection?: 'asc' | 'desc';
+  orderDirection?: "asc" | "desc";
 }
 
 export interface SearchOptions extends QueryOptions {

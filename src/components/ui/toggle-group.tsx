@@ -13,7 +13,7 @@ const ToggleGroupContext = React.createContext<VariantProps<
 const ToggleGroup = React.forwardRef<
   React.ElementRef<typeof ToggleGroupPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleVariants>
+    VariantProps<typeof toggleVariants>
 >(({ className, variant, size, children, ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}
@@ -41,7 +41,7 @@ function useToggleGroupContext() {
 const ToggleGroupItem = React.forwardRef<
   React.ElementRef<typeof ToggleGroupPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
-  VariantProps<typeof toggleVariants>
+    VariantProps<typeof toggleVariants>
 >(({ className, children, variant, size, ...props }, ref) => {
   const context = useToggleGroupContext();
   const { value } = ToggleGroupPrimitive.useRootContext();
@@ -64,7 +64,7 @@ const ToggleGroupItem = React.forwardRef<
           }),
           props.disabled && "web:pointer-events-none opacity-50",
           ToggleGroupPrimitive.utils.getIsSelected(value, props.value) &&
-          "bg-accent",
+            "bg-accent",
           className,
         )}
         {...props}

@@ -29,9 +29,9 @@ import type {
 
 const SelectContext = React.createContext<
   | (RootContext & {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-  })
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+    })
   | null
 >(null);
 

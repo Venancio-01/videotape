@@ -50,7 +50,7 @@ const EmptyGestureResponderEvent: GestureResponderEvent = {
   },
   bubbles: false,
   cancelable: false,
-  currentTarget: {} ,
+  currentTarget: {},
   defaultPrevented: false,
   eventPhase: 0,
   persist: () => {},
@@ -59,7 +59,7 @@ const EmptyGestureResponderEvent: GestureResponderEvent = {
   isTrusted: false,
   preventDefault: () => {},
   stopPropagation: () => {},
-  target: {} ,
+  target: {},
   timeStamp: 0,
   type: "",
 };

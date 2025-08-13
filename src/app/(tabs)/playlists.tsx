@@ -14,10 +14,7 @@ export default function PlaylistsScreen() {
   const router = useRouter();
 
   const { data: playlists } = useLiveQuery(
-    db
-      .select()
-      .from(playlistTable)
-      .orderBy(desc(playlistTable.createdAt))
+    db.select().from(playlistTable).orderBy(desc(playlistTable.createdAt)),
   );
 
   if (!db) {
@@ -39,7 +36,9 @@ export default function PlaylistsScreen() {
         </CardHeader>
         <CardContent>
           {item.description && (
-            <Text className="text-muted-foreground mb-3">{item.description}</Text>
+            <Text className="text-muted-foreground mb-3">
+              {item.description}
+            </Text>
           )}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
@@ -91,7 +90,6 @@ export default function PlaylistsScreen() {
         )}
         ListFooterComponent={<View className="py-20" />}
       />
-
     </View>
   );
 }

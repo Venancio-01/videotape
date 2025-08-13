@@ -2,8 +2,8 @@
  * 持久化中间件
  */
 
-import { persist } from "zustand/middleware";
 import { zustandStorage } from "@/lib/storage";
+import { persist } from "zustand/middleware";
 
 // 持久化配置接口
 export interface PersistConfig<T> {

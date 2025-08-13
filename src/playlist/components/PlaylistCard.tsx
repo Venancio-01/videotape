@@ -1,16 +1,16 @@
-import { View, StyleSheet } from "react-native";
 import {
-  Heart,
-  Play,
   Clock,
-  Users,
-  MoreVertical,
   Edit,
+  Heart,
+  MoreVertical,
+  Play,
   Trash2,
+  Users,
 } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import type { Playlist } from "@/db/schema";
+import { StyleSheet, View } from "react-native";
 
 interface PlaylistCardProps {
   playlist: Playlist;

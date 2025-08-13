@@ -1,7 +1,7 @@
-import { type ExpoSQLiteDatabase, drizzle } from "drizzle-orm/expo-sqlite";
-import { openDatabaseSync } from "expo-sqlite";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "@/db/migrations/migrations";
+import { type ExpoSQLiteDatabase, drizzle } from "drizzle-orm/expo-sqlite";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { openDatabaseSync } from "expo-sqlite";
 
 const expoDb = openDatabaseSync("videotape.db", { enableChangeListener: true });
 const db = drizzle(expoDb);

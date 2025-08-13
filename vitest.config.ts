@@ -10,9 +10,9 @@ export default defineConfig({
     setupFiles: ["./tests/setup.ts"],
     include: ["**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}"],
     exclude: ["node_modules", "dist", ".idea", ".git", ".cache"],
-    transformMode: {
-      web: [/\.[jt]sx?$/],
-      ssr: [/\.vue$/],
+    testTransformMode: {
+      web: ["/\\.[jt]sx?$/"],
+      ssr: ["\\.vue$/"],
     },
   },
   resolve: {

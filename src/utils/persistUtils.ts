@@ -9,13 +9,13 @@ import { deserializeState, getStateSize, serializeState } from "./stateUtils";
 export interface PersistConfig {
   key: string;
   storage?: typeof zustandStorage;
-  serialize?: (state: any) => string;
-  deserialize?: (serialized: string) => any;
+  serialize?: (state: unknown) => string;
+  deserialize?: (serialized: string) => unknown;
   whitelist?: (string | RegExp)[];
   blacklist?: (string | RegExp)[];
-  merge?: (persistedState: any, currentState: any) => any;
+  merge?: (persistedState: unknown, currentState: unknown) => unknown;
   version?: number;
-  migrate?: (persistedState: any, version: number) => any | Promise<any>;
+  migrate?: (persistedState: unknown, version: number) => unknown | Promise<unknown>;
   timeout?: number;
   debug?: boolean;
 }
@@ -35,7 +35,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
   const { key, storage, serialize, deserialize, timeout, debug } = finalConfig;
 
   let isPersisting = false;
-  let persistTimeout: NodeJS.Timeout | null = null;
+  let persistTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // 检查字段是否应该被持久化
   const shouldPersist = (path: string): boolean => {
@@ -161,7 +161,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
         return null;
       }
 
-      const persistedState = deserialize!(serialized);
+      const persistedState = deserialize!(serialized) as T;
 
       // 执行版本迁移
       const { version } = finalConfig;
@@ -169,18 +169,18 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
         const storedVersion = await storage!.getItem(`${key}_version`);
         if (
           storedVersion !== null &&
-          Number.parseInt(storedVersion) !== version
+          Number.parseInt(storedVersion as string) !== version
         ) {
           const migratedState = await migrateState(
             persistedState,
-            Number.parseInt(storedVersion),
+            Number.parseInt(storedVersion as string),
           );
           await storage!.setItem(`${key}_version`, version.toString());
-          return migratedState;
+          return migratedState as Partial<T>;
         }
       }
 
-      return persistedState;
+      return persistedState as Partial<T>;
     } catch (error) {
       if (debug) {
         console.error("Failed to load persisted state:", error);
@@ -213,7 +213,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
     available: number;
   }> => {
     try {
-      const keys = await storage!.getAllKeys();
+      const keys = (storage as any).getAllKeys?.() || [];
       const totalSize = keys.reduce((sum, key) => {
         const item = storage!.getItem(key);
         return sum + (item ? getStateSize(item) : 0);
@@ -239,7 +239,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
   // 清理过期数据
   const cleanupOldItems = async (maxAge: number): Promise<number> => {
     const now = Date.now();
-    const keys = await storage!.getAllKeys();
+    const keys = (storage as any).getAllKeys?.() || [];
     let cleanedCount = 0;
 
     for (const storageKey of keys) {
@@ -291,7 +291,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
     }
 
     try {
-      await storage!.multiSet(batch);
+      batch.forEach(([key, value]) => storage!.setItem(key, value));
 
       if (debug) {
         console.log(`Batch persisted ${batch.length} items for key: ${key}`);
@@ -308,7 +308,7 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
     const fullKeys = keys.map((key) => `${key}_${key}`);
 
     try {
-      const results = await storage!.multiGet(fullKeys);
+      const results = await Promise.all(fullKeys.map(async key => [key, await storage!.getItem(key)]));
       const result: Record<string, any> = {};
 
       for (let i = 0; i < fullKeys.length; i++) {
@@ -356,7 +356,7 @@ export const createAutoPersist = <T>(
   const { debounceMs = 1000, throttleMs = 2000, condition } = config;
 
   let lastPersistTime = 0;
-  let timeoutId: NodeJS.Timeout | null = null;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   const shouldPersist = (state: T): boolean => {
     if (condition) {

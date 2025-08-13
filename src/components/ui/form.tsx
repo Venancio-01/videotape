@@ -2,6 +2,7 @@
 // The code is licensed under the MIT License.
 // https://github.com/shadcn-ui/ui
 
+import { cn } from "@/lib/utils";
 import * as React from "react";
 import {
   Controller,
@@ -14,7 +15,6 @@ import {
 } from "react-hook-form";
 import { Platform, View } from "react-native";
 import Animated, { FadeInDown, FadeOut } from "react-native-reanimated";
-import { cn } from "@/lib/utils";
 import { Checkbox } from "./checkbox";
 import { Combobox, type ComboboxOption } from "./combobox";
 import { Input } from "./input";
