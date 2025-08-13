@@ -65,7 +65,7 @@
     "expo-web-browser": "~14.2.0",
     "gh-pages": "^6.3.0",
     "lucide-react-native": "^0.514.0 ",
-    "nativewind": "^4.1.23 ",
+    "nativewind": "^4.1.23",
     "next-themes": "^0.4.6",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -100,7 +100,7 @@
     "happy-dom": "^18.0.1",
     "jsdom": "^25.0.1",
     "react-test-renderer": "^19.1.1",
-    "tailwindcss": "3.4.1",
+    "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "vitest": "^2.1.8"
   },
