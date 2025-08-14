@@ -3,8 +3,6 @@
  * 基于 Repository Pattern 的数据访问层抽象
  */
 
-import { SQL } from "drizzle-orm";
-
 // 查询器接口 - 代表任何可以被 useLiveQuery 执行的查询
 export interface IQuerier<T> {
   toSQL(): { sql: string; params: any[] };

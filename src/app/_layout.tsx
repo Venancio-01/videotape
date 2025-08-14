@@ -12,15 +12,16 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { type Theme, ThemeProvider } from "@react-navigation/native";
+import { ThemeProvider } from "@react-navigation/native";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
+import { useSQLiteContext } from "expo-sqlite";
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from "expo-router";
 
@@ -32,6 +33,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const db = useSQLiteContext()
+  useDrizzleStudio(db)
   const { colorScheme, setColorScheme } = useColorScheme();
 
   const [loaded, error] = useFonts({

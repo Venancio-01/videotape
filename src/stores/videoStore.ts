@@ -389,11 +389,7 @@ export const videoSelectors = {
       // 搜索过滤
       const matchesSearch =
         !searchQuery ||
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        Array.isArray(video.tags) && video.tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
+        video.title.toLowerCase().includes(searchQuery.toLowerCase());
 
       // 条件过滤
       const matchesFilter = Object.entries(currentFilter).every(
@@ -401,19 +397,24 @@ export const videoSelectors = {
           if (value === undefined || value === null) return true;
 
           switch (key) {
-            case "category":
-              return video.category === value;
-            case "tags":
-              return Array.isArray(video.tags) && value.every((tag: string) => video.tags.includes(tag));
+            // 移除了category和tags过滤功能
             case "duration":
               const { min, max } = value as { min: number; max: number };
-              return typeof video.duration === 'number' && video.duration >= min && video.duration <= max;
+              return (
+                typeof video.duration === "number" &&
+                video.duration >= min &&
+                video.duration <= max
+              );
             case "size":
               const { min: minSize, max: maxSize } = value as {
                 min: number;
                 max: number;
               };
-              return typeof video.fileSize === 'number' && video.fileSize >= minSize && video.fileSize <= maxSize;
+              return (
+                typeof video.fileSize === "number" &&
+                video.fileSize >= minSize &&
+                video.fileSize <= maxSize
+              );
             case "isFavorite":
               return state.favorites.has(video.id) === value;
             case "isWatched":
@@ -445,21 +446,19 @@ export const videoSelectors = {
   getVideoStats: (state: VideoState) => {
     const videos = state.videos;
     const totalDuration = videos.reduce(
-      (sum, video) => sum + (typeof video.duration === 'number' ? video.duration : 0),
+      (sum, video) =>
+        sum + (typeof video.duration === "number" ? video.duration : 0),
       0,
     );
-    const totalSize = videos.reduce((sum, video) => sum + (typeof video.fileSize === 'number' ? video.fileSize : 0), 0);
+    const totalSize = videos.reduce(
+      (sum, video) =>
+        sum + (typeof video.fileSize === "number" ? video.fileSize : 0),
+      0,
+    );
     const totalPlayCount = videos.reduce(
-      (sum, video) => sum + (typeof video.playCount === 'number' ? video.playCount : 0),
+      (sum, video) =>
+        sum + (typeof video.playCount === "number" ? video.playCount : 0),
       0,
-    );
-
-    const categories = videos.reduce(
-      (acc, video) => {
-        acc[video.category] = (acc[video.category] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
     );
 
     return {
@@ -467,11 +466,6 @@ export const videoSelectors = {
       totalDuration,
       totalSize,
       totalPlayCount,
-      averageRating:
-        videos.length > 0
-          ? videos.reduce((sum, video) => sum + video.rating, 0) / videos.length
-          : 0,
-      categories,
     };
   },
 
@@ -492,19 +486,7 @@ export const videoSelectors = {
         suggestions.add(video.title);
       }
 
-      // 从标签中提取建议
-      if (Array.isArray(video.tags)) {
-        video.tags.forEach((tag) => {
-          if (tag.toLowerCase().includes(searchQuery.toLowerCase())) {
-            suggestions.add(tag);
-          }
-        });
-      }
-
-      // 从分类中提取建议
-      if (video.category.toLowerCase().includes(searchQuery.toLowerCase())) {
-        suggestions.add(video.category);
-      }
+      // 移除了标签和分类建议功能
     });
 
     return Array.from(suggestions).slice(0, 5);

@@ -52,8 +52,6 @@ export interface VideoState {
 
 // 视频过滤器类型
 export interface VideoFilter {
-  category?: string;
-  tags?: string[];
   duration?: { min: number; max: number };
   size?: { min: number; max: number };
   isFavorite?: boolean;
@@ -63,7 +61,6 @@ export interface VideoFilter {
     | "title"
     | "duration"
     | "size"
-    | "rating"
     | "play_count";
   sortOrder?: "asc" | "desc";
 }
@@ -125,27 +122,15 @@ export interface SettingsState {
   // 界面设置
   theme: "light" | "dark" | "system";
   language: string;
-  fontSize: "small" | "medium" | "large";
 
   // 播放设置
   defaultPlaybackSpeed: number;
   defaultVolume: number;
-  defaultQuality: "auto" | "low" | "medium" | "high";
   autoPlay: boolean;
-  autoNext: boolean;
-
-  // 缓存设置
-  maxCacheSize: number;
-  cacheRetentionDays: number;
-  autoClearCache: boolean;
-
-  // 隐私设置
-  analyticsEnabled: boolean;
-  crashReportingEnabled: boolean;
-
-  // 开发者设置
-  debugMode: boolean;
-  logLevel: "debug" | "info" | "warn" | "error";
+  loopMode: "none" | "single" | "all";
+  showControls: boolean;
+  enableGestures: boolean;
+  enableHaptics: boolean;
 
   // 加载状态
   isLoading: boolean;

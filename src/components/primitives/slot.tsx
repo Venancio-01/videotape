@@ -28,9 +28,11 @@ const Pressable = React.forwardRef<
   return React.cloneElement<
     React.ComponentPropsWithoutRef<typeof RNPressable>,
     React.ElementRef<typeof RNPressable>
-  >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+  >(isTextChildren(children) ? <></> : (children as React.ReactElement), {
     ...mergeProps(pressableSlotProps, children.props as AnyProps),
-    ref: forwardedRef ? composeRefs(forwardedRef, (children as React.ReactElement).ref) : (children as React.ReactElement).ref,
+    ref: forwardedRef
+      ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
+      : (children as React.ReactElement).ref,
   });
 });
 
@@ -48,7 +50,7 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
     return React.cloneElement<
       React.ComponentPropsWithoutRef<typeof RNView>,
       React.ElementRef<typeof RNView>
-    >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+    >(isTextChildren(children) ? <></> : (children as React.ReactElement), {
       ...mergeProps(viewSlotProps, children.props as AnyProps),
       ref: forwardedRef
         ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
@@ -71,7 +73,7 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
     return React.cloneElement<
       React.ComponentPropsWithoutRef<typeof RNText>,
       React.ElementRef<typeof RNText>
-    >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+    >(isTextChildren(children) ? <></> : (children as React.ReactElement), {
       ...mergeProps(textSlotProps, children.props as AnyProps),
       ref: forwardedRef
         ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
@@ -100,9 +102,11 @@ const Image = React.forwardRef<
   return React.cloneElement<
     React.ComponentPropsWithoutRef<typeof RNImage>,
     React.ElementRef<typeof RNImage>
-  >(isTextChildren(children) ? <></> : children as React.ReactElement, {
+  >(isTextChildren(children) ? <></> : (children as React.ReactElement), {
     ...mergeProps(imageSlotProps, children.props as AnyProps),
-    ref: forwardedRef ? composeRefs(forwardedRef, (children as React.ReactElement).ref) : (children as React.ReactElement).ref,
+    ref: forwardedRef
+      ? composeRefs(forwardedRef, (children as React.ReactElement).ref)
+      : (children as React.ReactElement).ref,
   });
 });
 

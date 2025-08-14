@@ -23,7 +23,7 @@ export class VideoService {
     try {
       // 这里应该调用实际的数据库查询
       // const video = await db.select().from(videoTable).where(eq(videoTable.id, id));
-      
+
       // 返回模拟数据
       return {
         id,

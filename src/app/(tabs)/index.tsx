@@ -43,20 +43,7 @@ function ScreenContent() {
 
     return (
       <VideoCard
-        {...item}
-        id={item.id}
-        isFavorite={Boolean(item.isFavorite)}
-        resolution={
-          item.resolutionWidth && item.resolutionHeight
-            ? {
-                width: Number(item.resolutionWidth),
-                height: Number(item.resolutionHeight),
-              }
-            : undefined
-        }
-        onToggleFavorite={(videoId) => {
-          console.log("Toggle favorite for video:", videoId);
-        }}
+        video={item}
       />
     );
   }, []);

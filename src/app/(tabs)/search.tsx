@@ -19,11 +19,7 @@ export default function SearchScreen() {
       .select()
       .from(videoTable)
       .where(
-        or(
-          ilike(videoTable.title, `%${searchQuery}%`),
-          ilike(videoTable.category, `%${searchQuery}%`),
-          ilike(videoTable.tags, `%${searchQuery}%`),
-        ),
+        ilike(videoTable.title, `%${searchQuery}%`),
       ),
   );
 
@@ -37,16 +33,7 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }: { item: Video }) => (
     <VideoCard
-      {...item}
-      isFavorite={item.isFavorite ?? false}
-      resolution={
-        item.resolutionWidth && item.resolutionHeight
-          ? { width: item.resolutionWidth, height: item.resolutionHeight }
-          : undefined
-      }
-      onToggleFavorite={(videoId) => {
-        console.log("Toggle favorite for video:", videoId);
-      }}
+      video={item}
     />
   );
 
@@ -64,7 +51,7 @@ export default function SearchScreen() {
           <SearchIcon className="w-5 h-5 text-muted-foreground mr-3" />
           <TextInput
             className="flex-1 text-base text-foreground"
-            placeholder="搜索视频标题、分类或标签..."
+            placeholder="搜索视频标题..."
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="hsl(var(--muted-foreground))"

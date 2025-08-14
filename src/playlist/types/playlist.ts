@@ -13,8 +13,6 @@ export const createPlaylistSchema = z.object({
     .max(500, "播放列表描述不能超过500个字符")
     .optional()
     .nullable(),
-  isPublic: z.boolean().default(false),
-  tags: z.array(z.string()).default([]),
   // 新增：视频选择模式
   selectionMode: z.enum(["files", "directory"]).default("files"),
   // 新增：选择的文件
@@ -31,8 +29,6 @@ export type CreatePlaylistForm = z.infer<typeof createPlaylistSchema>;
 export interface CreatePlaylistOptions {
   name: string;
   description?: string;
-  isPublic?: boolean;
-  tags?: string[];
   thumbnailPath?: string;
   // 新增：视频选择相关选项
   selectionMode?: "files" | "directory";

@@ -7,7 +7,7 @@ import { Link } from "expo-router";
 import type React from "react";
 import { Image, Pressable, View } from "react-native";
 
-interface VideoCardProps {
+export interface VideoCardProps {
   video: Video;
 }
 
@@ -64,11 +64,6 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
                   <Badge variant="outline" className="text-xs">
                     <Text>{video.format.toUpperCase()}</Text>
                   </Badge>
-                  {video.category !== "general" && (
-                    <Badge variant="secondary" className="text-xs">
-                      <Text>{video.category}</Text>
-                    </Badge>
-                  )}
                 </View>
 
                 <Text className="text-sm text-muted-foreground">

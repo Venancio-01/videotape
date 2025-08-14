@@ -63,7 +63,10 @@ export default function VideoPlayerScreen() {
   const handleSeek = (seconds: number) => {
     const newTime = Math.max(
       0,
-      Math.min(typeof video?.duration === 'number' ? video.duration : 0, currentTime + seconds),
+      Math.min(
+        typeof video?.duration === "number" ? video.duration : 0,
+        currentTime + seconds,
+      ),
     );
     setCurrentTime(newTime);
   };
@@ -112,7 +115,9 @@ export default function VideoPlayerScreen() {
             <Text className="text-xl font-bold mb-2">{video.title}</Text>
             <View className="flex-row gap-4 mb-3">
               <Text className="text-muted-foreground">
-                {formatDuration(typeof video.duration === 'number' ? video.duration : 0)}
+                {formatDuration(
+                  typeof video.duration === "number" ? video.duration : 0,
+                )}
               </Text>
               <Text className="text-muted-foreground">
                 {video.format.toUpperCase()}
@@ -124,7 +129,11 @@ export default function VideoPlayerScreen() {
               )}
             </View>
             <Text className="text-sm text-muted-foreground">
-              {Math.round((typeof video.fileSize === 'number' ? video.fileSize : 0) / (1024 * 1024))} MB
+              {Math.round(
+                (typeof video.fileSize === "number" ? video.fileSize : 0) /
+                  (1024 * 1024),
+              )}{" "}
+              MB
             </Text>
           </CardContent>
         </Card>
@@ -137,7 +146,9 @@ export default function VideoPlayerScreen() {
               <View className="bg-muted h-1 rounded-full">
                 <View
                   className="bg-primary h-1 rounded-full"
-                  style={{ width: `${(currentTime / (typeof video.duration === 'number' ? video.duration : 1)) * 100}%` }}
+                  style={{
+                    width: `${(currentTime / (typeof video.duration === "number" ? video.duration : 1)) * 100}%`,
+                  }}
                 />
               </View>
               <View className="flex-row justify-between mt-1">
@@ -145,7 +156,9 @@ export default function VideoPlayerScreen() {
                   {formatDuration(currentTime)}
                 </Text>
                 <Text className="text-xs text-muted-foreground">
-                  {formatDuration(typeof video.duration === 'number' ? video.duration : 0)}
+                  {formatDuration(
+                    typeof video.duration === "number" ? video.duration : 0,
+                  )}
                 </Text>
               </View>
             </View>

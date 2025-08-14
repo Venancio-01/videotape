@@ -15,7 +15,10 @@ export interface PersistConfig {
   blacklist?: (string | RegExp)[];
   merge?: (persistedState: unknown, currentState: unknown) => unknown;
   version?: number;
-  migrate?: (persistedState: unknown, version: number) => unknown | Promise<unknown>;
+  migrate?: (
+    persistedState: unknown,
+    version: number,
+  ) => unknown | Promise<unknown>;
   timeout?: number;
   debug?: boolean;
 }
@@ -308,7 +311,9 @@ export const createPersistMiddleware = <T>(config: PersistConfig) => {
     const fullKeys = keys.map((key) => `${key}_${key}`);
 
     try {
-      const results = await Promise.all(fullKeys.map(async key => [key, await storage!.getItem(key)]));
+      const results = await Promise.all(
+        fullKeys.map(async (key) => [key, await storage!.getItem(key)]),
+      );
       const result: Record<string, any> = {};
 
       for (let i = 0; i < fullKeys.length; i++) {

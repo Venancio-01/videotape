@@ -5,19 +5,9 @@
 
 import { getDatabase } from "@/db/drizzle";
 import {
-  type SearchResult,
   type VideoSearchParams,
-  type VideoStats,
-  type Video as VideoType,
-  type VideoWithHistory,
-  type VideoWithRelations,
-  bookmarkTable,
-  folderTable,
-  folderVideoTable,
   playlistVideoTable,
-  tagTable,
   videoTable,
-  videoTagTable,
   watchHistoryTable,
 } from "@/db/schema";
 import {
@@ -33,14 +23,7 @@ import {
   or,
   sql,
 } from "drizzle-orm";
-import type {
-  IVideoRepository,
-  SearchResult as SearchResultInterface,
-  UserStats as UserStatsInterface,
-  Video,
-  VideoStats as VideoStatsInterface,
-  VideoWithRelations as VideoWithRelationsInterface,
-} from "./interfaces";
+import type { IVideoRepository, Video } from "./interfaces";
 
 export class VideoRepository implements IVideoRepository {
   private getDb() {
@@ -65,8 +48,6 @@ export class VideoRepository implements IVideoRepository {
     const db = this.getDb();
     const {
       query,
-      category,
-      tags,
       isFavorite,
       minDuration,
       maxDuration,
@@ -82,18 +63,11 @@ export class VideoRepository implements IVideoRepository {
     // 搜索查询
     if (query) {
       whereConditions.push(
-        or(
-          ilike(videoTable.title, `%${query}%`),
-          ilike(videoTable.description, `%${query}%`),
-        ),
+        ilike(videoTable.title, `%${query}%`),
       );
     }
 
-    // 分类过滤
-    if (category) {
-      whereConditions.push(eq(videoTable.category, category));
-    }
-
+  
     // 收藏过滤
     if (isFavorite !== undefined) {
       whereConditions.push(eq(videoTable.isFavorite, isFavorite));
@@ -107,17 +81,7 @@ export class VideoRepository implements IVideoRepository {
       whereConditions.push(lte(videoTable.duration, maxDuration));
     }
 
-    // 标签过滤
-    if (tags && tags.length > 0) {
-      const tagFilter = db
-        .select({ videoId: videoTagTable.videoId })
-        .from(videoTagTable)
-        .innerJoin(tagTable, eq(videoTagTable.tagId, tagTable.id))
-        .where(inArray(tagTable.name, tags));
-
-      whereConditions.push(inArray(videoTable.id, tagFilter));
-    }
-
+  
     // 构建基础查询
     const baseQuery = db.select().from(videoTable);
 
@@ -132,7 +96,6 @@ export class VideoRepository implements IVideoRepository {
       created_at: videoTable.createdAt,
       title: videoTable.title,
       duration: videoTable.duration,
-      rating: videoTable.rating,
       play_count: videoTable.playCount,
     }[sortBy];
 
@@ -159,15 +122,7 @@ export class VideoRepository implements IVideoRepository {
     };
   }
 
-  getVideosByCategoryQuery(category: string) {
-    const db = this.getDb();
-    return db
-      .select()
-      .from(videoTable)
-      .where(eq(videoTable.category, category))
-      .orderBy(desc(videoTable.createdAt));
-  }
-
+  
   getFavoriteVideosQuery() {
     const db = this.getDb();
     return db
@@ -189,22 +144,7 @@ export class VideoRepository implements IVideoRepository {
   getRecommendedVideosQuery(limit = 10) {
     const db = this.getDb();
 
-    // 获取用户经常观看的分类
-    const favoriteCategories = db
-      .select({
-        category: videoTable.category,
-        count: sql<number>`COUNT(*)`,
-      })
-      .from(videoTable)
-      .innerJoin(
-        watchHistoryTable,
-        eq(videoTable.id, watchHistoryTable.videoId),
-      )
-      .groupBy(videoTable.category)
-      .orderBy(desc(sql`COUNT(*)`))
-      .limit(3);
-
-    // 获取这些分类中的视频，排除已观看的
+    // 获取排除已观看的视频ID
     const watchedVideoIds = db
       .select({ videoId: watchHistoryTable.videoId })
       .from(watchHistoryTable)
@@ -214,21 +154,14 @@ export class VideoRepository implements IVideoRepository {
       .select()
       .from(videoTable)
       .where(
-        and(
+        not(
           inArray(
-            videoTable.category,
-            favoriteCategories.map((fc) => fc.category),
+            videoTable.id,
+            watchedVideoIds.map((wv) => wv.videoId),
           ),
-          not(
-            inArray(
-              videoTable.id,
-              watchedVideoIds.map((wv) => wv.videoId),
-            ),
-          ),
-          eq(videoTable.isArchived, false),
         ),
       )
-      .orderBy(desc(videoTable.playCount), desc(videoTable.rating))
+      .orderBy(desc(videoTable.playCount))
       .limit(limit);
 
     return recommendedQuery;
@@ -246,29 +179,14 @@ export class VideoRepository implements IVideoRepository {
       .where(eq(videoTable.id, id))
       .limit(1);
 
-    // 获取标签
-    const tagsQuery = db
-      .select()
-      .from(tagTable)
-      .innerJoin(videoTagTable, eq(tagTable.id, videoTagTable.tagId))
-      .where(eq(videoTagTable.videoId, id));
-
     // 获取播放列表
     const playlistsQuery = db
       .select({
         id: playlistVideoTable.playlistId,
-        name: playlistVideoTable.playlistId, // 这里需要关联playlist表
         position: playlistVideoTable.position,
       })
       .from(playlistVideoTable)
       .where(eq(playlistVideoTable.videoId, id));
-
-    // 获取书签
-    const bookmarksQuery = db
-      .select()
-      .from(bookmarkTable)
-      .where(eq(bookmarkTable.videoId, id))
-      .orderBy(asc(bookmarkTable.position));
 
     // 获取观看历史
     const historyQuery = db
@@ -285,22 +203,13 @@ export class VideoRepository implements IVideoRepository {
           SELECT
             v.*,
             json_group_array(
-              json_object('id', t.id, 'name', t.name, 'color', t.color, 'description', t.description)
-            ) as tags,
-            json_group_array(
               json_object('id', p.id, 'position', p.position)
             ) as playlists,
-            json_group_array(
-              json_object('id', b.id, 'title', b.title, 'position', b.position, 'color', b.color)
-            ) as bookmarks,
             json_group_array(
               json_object('id', h.id, 'position', h.position, 'duration', h.duration, 'watchedAt', h.watchedAt)
             ) as watchHistory
           FROM videos v
-          LEFT JOIN video_tags vt ON v.id = vt.video_id
-          LEFT JOIN tags t ON vt.tag_id = t.id
           LEFT JOIN playlist_videos p ON v.id = p.video_id
-          LEFT JOIN bookmarks b ON v.id = b.video_id
           LEFT JOIN watch_history h ON v.id = h.video_id
           WHERE v.id = ?
           GROUP BY v.id
@@ -310,17 +219,7 @@ export class VideoRepository implements IVideoRepository {
     };
   }
 
-  getVideosByTagQuery(tag: string) {
-    const db = this.getDb();
-    return db
-      .select()
-      .from(videoTable)
-      .innerJoin(videoTagTable, eq(videoTable.id, videoTagTable.videoId))
-      .innerJoin(tagTable, eq(videoTagTable.tagId, tagTable.id))
-      .where(eq(tagTable.name, tag))
-      .orderBy(desc(videoTable.createdAt));
-  }
-
+  
   // ===== 写操作方法 =====
 
   async create(data: Omit<Video, "id">): Promise<Video> {
@@ -388,17 +287,8 @@ export class VideoRepository implements IVideoRepository {
         totalDuration: sql<number>`SUM(duration)`,
         totalSize: sql<number>`SUM(file_size)`,
         totalPlayCount: sql<number>`SUM(play_count)`,
-        averageRating: sql<number>`AVG(rating)`,
       })
       .from(videoTable);
-
-    const categoryStatsQuery = db
-      .select({
-        category: videoTable.category,
-        count: sql<number>`COUNT(*)`,
-      })
-      .from(videoTable)
-      .groupBy(videoTable.category);
 
     return {
       toSQL: () => ({
@@ -407,14 +297,8 @@ export class VideoRepository implements IVideoRepository {
             s.total_videos,
             s.total_duration,
             s.total_size,
-            s.total_play_count,
-            s.average_rating,
-            json_group_object(
-              cs.category,
-              cs.count
-            ) as categories
-          FROM (${statsQuery.toSQL().sql}) s,
-          LATERAL (SELECT category, COUNT(*) as count FROM videos GROUP BY category) cs
+            s.total_play_count
+          FROM (${statsQuery.toSQL().sql}) s
         `,
         params: statsQuery.toSQL().params,
       }),

@@ -1,10 +1,12 @@
-import { db } from "@/db";
+import { getDatabase } from "@/db/drizzle";
 import type { Playlist, Video } from "@/db/schema";
+import { playlistTable, playlistVideoTable, videoTable } from "@/db/schema";
 import type {
   CreatePlaylistOptions,
   CreatePlaylistResult,
 } from "@/playlist/types/playlist";
 import type { DirectoryItem, FileItem } from "@/types/file";
+import { desc, eq, sql } from "drizzle-orm";
 
 /**
  * 播放列表服务类
@@ -37,44 +39,115 @@ export class PlaylistService {
         };
       }
 
-      // 准备播放列表数据
-      const playlistData = {
-        name: options.name.trim(),
-        description: options.description?.trim() || "",
-        isPublic: options.isPublic || false,
-        tags: options.tags || [],
-        thumbnailPath: options.thumbnailPath || null,
-        videoCount: videos.length,
-        totalDuration: videos.reduce(
-          (sum, video) => sum + (video.duration || 0),
-          0,
-        ),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      const db = getDatabase();
 
-      // 这里应该调用实际的数据库操作
-      // 由于当前使用模拟数据，我们返回成功结果
-      console.log("创建播放列表:", playlistData);
-      console.log("视频项目:", videos);
+      // 使用事务确保数据一致性
+      const result = await db.transaction(async (tx) => {
+        try {
+          // 1. 插入播放列表
+          const playlistData = {
+            name: options.name.trim(),
+            description: options.description?.trim() || null,
+            thumbnailPath: options.thumbnailPath || null,
+            videoCount: videos.length,
+            totalDuration: videos.reduce(
+              (sum, video) => sum + (video.duration || 0),
+              0,
+            ),
+          };
 
-      // 模拟数据库插入操作
-      // const createdPlaylist = await db.insert(playlists).values(playlistData).returning();
-      // const playlistId = createdPlaylist[0].id;
+          const [createdPlaylist] = await tx
+            .insert(playlistTable)
+            .values(playlistData)
+            .returning();
 
-      // 为播放列表添加视频项目
-      // const playlistVideos = videos.map(video => ({
-      //   playlistId,
-      //   videoId: video.id,
-      //   order: videos.indexOf(video),
-      //   addedAt: new Date().toISOString(),
-      // }));
-      // await db.insert(playlistVideos).values(playlistVideos);
+          const playlistId = createdPlaylist.id;
 
-      // 返回成功结果（使用模拟ID）
+          // 2. 处理视频数据 - 检查是否存在，不存在则插入
+          const processedVideos: Video[] = [];
+
+          for (const video of videos) {
+            // 检查视频是否已存在（通过文件路径）
+            const existingVideo = await tx
+              .select()
+              .from(videoTable)
+              .where(eq(videoTable.filePath, video.filePath))
+              .limit(1);
+
+            let videoId: string;
+
+            if (existingVideo.length > 0) {
+              // 视频已存在，使用现有ID
+              videoId = existingVideo[0].id;
+              processedVideos.push(existingVideo[0]);
+            } else {
+              // 视频不存在，插入新视频
+              const videoData = {
+                title: video.title,
+                filePath: video.filePath,
+                thumbnailPath: video.thumbnailPath,
+                duration: video.duration || 0,
+                fileSize: video.fileSize || 0,
+                format: video.format || "unknown",
+                resolutionWidth: video.resolutionWidth || 0,
+                resolutionHeight: video.resolutionHeight || 0,
+                watchProgress: video.watchProgress || 0,
+                isFavorite: video.isFavorite || false,
+                playCount: video.playCount || 0,
+              };
+
+              const [newVideo] = await tx
+                .insert(videoTable)
+                .values(videoData)
+                .returning();
+
+              videoId = newVideo.id;
+              processedVideos.push(newVideo);
+            }
+          }
+
+          // 3. 创建播放列表与视频的关联关系
+          const playlistVideos = processedVideos.map((video, index) => ({
+            playlistId,
+            videoId: video.id,
+            position: index + 1,
+          }));
+
+          await tx.insert(playlistVideoTable).values(playlistVideos);
+
+          // 4. 更新播放列表统计信息
+          const actualTotalDuration = processedVideos.reduce(
+            (sum, video) => sum + (video.duration || 0),
+            0,
+          );
+
+          await tx
+            .update(playlistTable)
+            .set({
+              totalDuration: actualTotalDuration,
+              updatedAt: sql`(CURRENT_TIMESTAMP)`,
+            })
+            .where(eq(playlistTable.id, playlistId));
+
+          console.log(
+            `成功创建播放列表: ${playlistId}, 包含 ${processedVideos.length} 个视频`,
+          );
+
+          return {
+            success: true,
+            playlistId,
+            videos: processedVideos,
+          };
+        } catch (txError) {
+          console.error("事务执行失败:", txError);
+          // 事务会自动回滚
+          throw txError;
+        }
+      });
+
       return {
         success: true,
-        playlistId: `playlist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        playlistId: result.playlistId,
       };
     } catch (error) {
       console.error("创建播放列表失败:", error);
@@ -91,36 +164,9 @@ export class PlaylistService {
    */
   static async getAllPlaylists(): Promise<Playlist[]> {
     try {
-      // 这里应该调用实际的数据库查询
-      // const playlists = await db.select().from(playlists);
-
-      // 返回模拟数据
-      return [
-        {
-          id: "1",
-          name: "我的收藏",
-          description: "喜欢的视频集合",
-          isPublic: false,
-          tags: ["收藏", "个人"],
-          thumbnailPath: null,
-          videoCount: 5,
-          totalDuration: 3600,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          name: "学习视频",
-          description: "编程学习相关视频",
-          isPublic: true,
-          tags: ["学习", "编程"],
-          thumbnailPath: null,
-          videoCount: 12,
-          totalDuration: 7200,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ];
+      const db = getDatabase();
+      const playlists = await db.select().from(playlistTable).orderBy(desc(playlistTable.createdAt));
+      return playlists;
     } catch (error) {
       console.error("获取播放列表失败:", error);
       return [];
@@ -134,26 +180,9 @@ export class PlaylistService {
    */
   static async getPlaylistById(id: string): Promise<Playlist | null> {
     try {
-      // 这里应该调用实际的数据库查询
-      // const playlist = await db.select().from(playlists).where(eq(playlists.id, id));
-
-      // 返回模拟数据
-      if (id === "1") {
-        return {
-          id: "1",
-          name: "我的收藏",
-          description: "喜欢的视频集合",
-          isPublic: false,
-          tags: ["收藏", "个人"],
-          thumbnailPath: null,
-          videoCount: 5,
-          totalDuration: 3600,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-      }
-
-      return null;
+      const db = getDatabase();
+      const playlist = await db.select().from(playlistTable).where(eq(playlistTable.id, id)).limit(1);
+      return playlist.length > 0 ? playlist[0] : null;
     } catch (error) {
       console.error("获取播放列表失败:", error);
       return null;
@@ -171,6 +200,8 @@ export class PlaylistService {
     updates: Partial<Playlist>,
   ): Promise<CreatePlaylistResult> {
     try {
+      const db = getDatabase();
+      
       // 验证必填字段
       if (updates.name && !updates.name.trim()) {
         return {
@@ -183,12 +214,11 @@ export class PlaylistService {
       const updateData = {
         ...updates,
         name: updates.name?.trim(),
-        description: updates.description?.trim() || "",
-        updatedAt: new Date().toISOString(),
+        description: updates.description?.trim() || null,
+        updatedAt: sql`(CURRENT_TIMESTAMP)`,
       };
 
-      // 这里应该调用实际的数据库更新
-      // await db.update(playlists).set(updateData).where(eq(playlists.id, id));
+      await db.update(playlistTable).set(updateData).where(eq(playlistTable.id, id));
 
       console.log("更新播放列表:", { id, ...updateData });
 
@@ -212,9 +242,15 @@ export class PlaylistService {
    */
   static async deletePlaylist(id: string): Promise<CreatePlaylistResult> {
     try {
-      // 这里应该调用实际的数据库删除
-      // await db.delete(playlists).where(eq(playlists.id, id));
-      // await db.delete(playlistVideos).where(eq(playlistVideos.playlistId, id));
+      const db = getDatabase();
+      
+      // 使用事务确保数据一致性
+      await db.transaction(async (tx) => {
+        // 先删除播放列表与视频的关联关系
+        await tx.delete(playlistVideoTable).where(eq(playlistVideoTable.playlistId, id));
+        // 再删除播放列表
+        await tx.delete(playlistTable).where(eq(playlistTable.id, id));
+      });
 
       console.log("删除播放列表:", id);
 
@@ -238,31 +274,31 @@ export class PlaylistService {
    */
   static async getPlaylistVideos(playlistId: string): Promise<Video[]> {
     try {
-      // 这里应该调用实际的数据库查询
-      // const videos = await db
-      //   .select()
-      //   .from(playlistVideos)
-      //   .innerJoin(videos, eq(playlistVideos.videoId, videos.id))
-      //   .where(eq(playlistVideos.playlistId, playlistId))
-      //   .orderBy(playlistVideos.order);
+      const db = getDatabase();
+      const videos = await db
+        .select({
+          id: videoTable.id,
+          title: videoTable.title,
+          filePath: videoTable.filePath,
+          thumbnailPath: videoTable.thumbnailPath,
+          duration: videoTable.duration,
+          fileSize: videoTable.fileSize,
+          format: videoTable.format,
+          resolutionWidth: videoTable.resolutionWidth,
+          resolutionHeight: videoTable.resolutionHeight,
+          watchProgress: videoTable.watchProgress,
+          isFavorite: videoTable.isFavorite,
+          playCount: videoTable.playCount,
+          lastWatchedAt: videoTable.lastWatchedAt,
+          createdAt: videoTable.createdAt,
+          updatedAt: videoTable.updatedAt,
+        })
+        .from(playlistVideoTable)
+        .innerJoin(videoTable, eq(playlistVideoTable.videoId, videoTable.id))
+        .where(eq(playlistVideoTable.playlistId, playlistId))
+        .orderBy(playlistVideoTable.position);
 
-      // 返回模拟数据
-      return [
-        {
-          id: "1",
-          title: "视频1",
-          filePath: "/path/to/video1.mp4",
-          duration: 120,
-          thumbnailUri: null,
-        },
-        {
-          id: "2",
-          title: "视频2",
-          filePath: "/path/to/video2.mp4",
-          duration: 180,
-          thumbnailUri: null,
-        },
-      ];
+      return videos;
     } catch (error) {
       console.error("获取播放列表视频失败:", error);
       return [];

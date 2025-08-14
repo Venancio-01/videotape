@@ -11,12 +11,10 @@ import { initialize } from "./drizzle";
 
 type ContextType = {
   db: SQLJsDatabase | ExpoSQLiteDatabase | null;
-  databaseService: typeof databaseService;
 };
 
 export const DatabaseContext = React.createContext<ContextType>({
-  db: null,
-  databaseService,
+  db: null
 });
 
 export const useDatabase = () => useContext(DatabaseContext);
@@ -32,7 +30,7 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
   }, []);
 
   return (
-    <DatabaseContext.Provider value={{ db, databaseService }}>
+    <DatabaseContext.Provider value={{ db }}>
       {children}
     </DatabaseContext.Provider>
   );

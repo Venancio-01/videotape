@@ -4,7 +4,7 @@
  */
 
 import { getDatabase } from "@/db/config/connection";
-import { MigrationError } from "@/db/types";
+import { MigrationError } from "@/db/types/index";
 import { sql } from "drizzle-orm";
 
 /**
