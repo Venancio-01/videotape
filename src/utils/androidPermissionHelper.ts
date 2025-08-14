@@ -3,10 +3,10 @@
  * 解决 Android 11+ Scoped Storage 问题
  */
 
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
-import { Audio } from 'expo-av';
-import { Platform } from 'react-native';
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import { Audio } from "expo-av";
+import { Platform } from "react-native";
 
 export interface VideoAsset {
   id: string;
@@ -19,7 +19,7 @@ export interface VideoAsset {
   creationTime: number;
   modificationTime: number;
   albumId?: string;
-  mediaType: 'video' | 'image' | 'audio';
+  mediaType: "video" | "image" | "audio";
 }
 
 export class AndroidPermissionHelper {
@@ -39,15 +39,15 @@ export class AndroidPermissionHelper {
    */
   async requestMediaPermissions(): Promise<boolean> {
     try {
-      if (Platform.OS !== 'android') {
+      if (Platform.OS !== "android") {
         return true;
       }
 
       // 使用标准权限请求 API
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      return status === 'granted';
+      return status === "granted";
     } catch (error) {
-      console.error('请求媒体权限失败:', error);
+      console.error("请求媒体权限失败:", error);
       return false;
     }
   }
@@ -57,15 +57,15 @@ export class AndroidPermissionHelper {
    */
   async requestAudioPermissions(): Promise<boolean> {
     try {
-      if (Platform.OS === 'ios') {
+      if (Platform.OS === "ios") {
         const { status } = await Audio.requestPermissionsAsync();
-        return status === 'granted';
+        return status === "granted";
       }
 
       // Android 音频权限通过 expo-av 自动处理
       return true;
     } catch (error) {
-      console.error('请求音频权限失败:', error);
+      console.error("请求音频权限失败:", error);
       return false;
     }
   }
@@ -82,7 +82,7 @@ export class AndroidPermissionHelper {
 
       return mediaPermission && audioPermission;
     } catch (error) {
-      console.error('请求权限失败:', error);
+      console.error("请求权限失败:", error);
       return false;
     }
   }
@@ -94,7 +94,7 @@ export class AndroidPermissionHelper {
     try {
       const hasPermission = await this.requestMediaPermissions();
       if (!hasPermission) {
-        throw new Error('缺少媒体访问权限');
+        throw new Error("缺少媒体访问权限");
       }
 
       const media = await MediaLibrary.getAssetsAsync({
@@ -116,14 +116,14 @@ export class AndroidPermissionHelper {
           creationTime: asset.creationTime,
           modificationTime: asset.modificationTime,
           albumId: asset.albumId,
-          mediaType: 'video',
+          mediaType: "video",
         };
         videoAssets.push(videoAsset);
       }
 
       return videoAssets;
     } catch (error) {
-      console.error('获取视频资源失败:', error);
+      console.error("获取视频资源失败:", error);
       throw error;
     }
   }
@@ -147,10 +147,10 @@ export class AndroidPermissionHelper {
         creationTime: asset.creationTime,
         modificationTime: asset.modificationTime,
         albumId: asset.albumId,
-        mediaType: 'video',
+        mediaType: "video",
       };
     } catch (error) {
-      console.error('获取视频资源失败:', error);
+      console.error("获取视频资源失败:", error);
       return null;
     }
   }
@@ -162,22 +162,24 @@ export class AndroidPermissionHelper {
   async getAccessibleUri(originalUri: string): Promise<string> {
     try {
       // 如果是 content:// URI，直接返回
-      if (originalUri.startsWith('content://')) {
+      if (originalUri.startsWith("content://")) {
         return originalUri;
       }
 
       // 如果是 file:// URI，检查是否可访问
-      if (originalUri.startsWith('file://')) {
+      if (originalUri.startsWith("file://")) {
         const fileInfo = await FileSystem.getInfoAsync(originalUri);
         if (fileInfo.exists && !fileInfo.isDirectory) {
           return originalUri;
         }
 
         // 如果文件不存在，尝试从媒体库查找
-        const filename = originalUri.split('/').pop();
+        const filename = originalUri.split("/").pop();
         if (filename) {
           const assets = await this.getVideoAssets();
-          const matchingAsset = assets.find(asset => asset.filename === filename);
+          const matchingAsset = assets.find(
+            (asset) => asset.filename === filename,
+          );
           if (matchingAsset) {
             return matchingAsset.uri;
           }
@@ -186,7 +188,7 @@ export class AndroidPermissionHelper {
 
       return originalUri;
     } catch (error) {
-      console.error('获取可访问 URI 失败:', error);
+      console.error("获取可访问 URI 失败:", error);
       return originalUri;
     }
   }
@@ -197,9 +199,10 @@ export class AndroidPermissionHelper {
   async cacheVideoFile(originalUri: string): Promise<string> {
     try {
       const accessibleUri = await this.getAccessibleUri(originalUri);
-      
+
       // 生成缓存文件名
-      const filename = accessibleUri.split('/').pop() || `video_${Date.now()}.mp4`;
+      const filename =
+        accessibleUri.split("/").pop() || `video_${Date.now()}.mp4`;
       const cacheDir = `${FileSystem.cacheDirectory}videos/`;
       const cachePath = `${cacheDir}${filename}`;
 
@@ -220,7 +223,7 @@ export class AndroidPermissionHelper {
 
       return cachePath;
     } catch (error) {
-      console.error('缓存视频文件失败:', error);
+      console.error("缓存视频文件失败:", error);
       throw error;
     }
   }
@@ -232,12 +235,12 @@ export class AndroidPermissionHelper {
     try {
       const cacheDir = `${FileSystem.cacheDirectory}videos/`;
       const cacheInfo = await FileSystem.getInfoAsync(cacheDir);
-      
+
       if (cacheInfo.exists && cacheInfo.isDirectory) {
         await FileSystem.deleteAsync(cacheDir);
       }
     } catch (error) {
-      console.error('清理缓存失败:', error);
+      console.error("清理缓存失败:", error);
     }
   }
 

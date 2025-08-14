@@ -3,7 +3,23 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
 import { PlaylistService } from "@/services/playlistService";
-import * as DocumentPicker from "expo-document-picker";
+import { NativeModules } from "react-native";
+const { PersistableDirModule } = NativeModules;
+
+// 格式化时长显示
+const formatDuration = (seconds: number): string => {
+  if (seconds <= 0) return "0:00";
+  
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  } else {
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+};
 import { Stack, useRouter } from "expo-router";
 import { Trash2, Video as VideoIcon } from "lucide-react-native";
 import { useState } from "react";
@@ -15,24 +31,33 @@ export default function CreatePlaylistScreen() {
   const [playlistName, setPlaylistName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideos, setSelectedVideos] = useState<
-    DocumentPicker.DocumentPickerAsset[]
+    Array<{
+      uri: string, 
+      name: string, 
+      size: number,
+      duration: number,
+      width: number,
+      height: number,
+      resolutionWidth: number,
+      resolutionHeight: number,
+      format: string,
+      mimeType: string
+    }>
   >([]);
 
   // 选择视频文件
   const handleSelectVideos = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["video/*"],
-        multiple: true,
-        copyToCacheDirectory: false,
-      });
-
-      if (!result.canceled) {
-        setSelectedVideos((prev) => [...prev, ...result.assets]);
+      const result = await PersistableDirModule.getVideosFromDir();
+      
+      if (result && result.length > 0) {
+        setSelectedVideos((prev) => [...prev, ...result]);
+      } else {
+        Alert.alert("提示", "未找到视频文件，请选择包含视频文件的目录");
       }
     } catch (error) {
       console.error("选择视频失败:", error);
-      Alert.alert("错误", "选择视频文件失败");
+      Alert.alert("错误", "选择视频文件失败：" + (error.message || "未知错误"));
     }
   };
 
@@ -41,20 +66,31 @@ export default function CreatePlaylistScreen() {
     setSelectedVideos((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // 将 DocumentPickerAsset 转换为 Video 类型
+  // 将原生模块返回的视频转换为 Video 类型
   const convertAssetToVideo = (
-    asset: DocumentPicker.DocumentPickerAsset,
+    asset: {
+      uri: string, 
+      name: string, 
+      size: number,
+      duration: number,
+      width: number,
+      height: number,
+      resolutionWidth: number,
+      resolutionHeight: number,
+      format: string,
+      mimeType: string
+    },
   ): Video => {
     return {
       id: asset.uri,
       title: asset.name,
       filePath: asset.uri,
       thumbnailPath: null,
-      duration: 0,
-      fileSize: asset.size || 0,
-      format: asset.mimeType?.split("/")[1] || "unknown",
-      resolutionWidth: 0,
-      resolutionHeight: 0,
+      duration: asset.duration,
+      fileSize: asset.size,
+      format: asset.format,
+      resolutionWidth: asset.resolutionWidth,
+      resolutionHeight: asset.resolutionHeight,
       watchProgress: 0,
       isFavorite: false,
       playCount: 0,
@@ -152,7 +188,7 @@ export default function CreatePlaylistScreen() {
                 className="bg-card border border-border rounded-lg p-3 items-center"
               >
                 <VideoIcon size={20} className="text-primary mb-1" />
-                <Text className="text-sm text-foreground">选择视频文件</Text>
+                <Text className="text-sm text-foreground">选择视频目录</Text>
               </TouchableOpacity>
 
               {/* 已选择的视频列表 */}
@@ -183,10 +219,7 @@ export default function CreatePlaylistScreen() {
                             {video.name}
                           </Text>
                           <Text className="text-xs text-muted-foreground">
-                            {video.mimeType} •{" "}
-                            {video.size
-                              ? `${(video.size / 1024 / 1024).toFixed(1)} MB`
-                              : "大小未知"}
+                            {video.format.toUpperCase()} • {video.resolutionWidth}×{video.resolutionHeight} • {formatDuration(video.duration)} • {(video.size / 1024 / 1024).toFixed(1)} MB
                           </Text>
                         </View>
                         <TouchableOpacity

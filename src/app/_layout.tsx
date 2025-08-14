@@ -1,7 +1,6 @@
 import "./global.css";
 import { PortalHost } from "@/components/primitives/portal";
 import { DatabaseProvider } from "@/db/provider";
-import { useFrameworkReady } from "@/hooks/useFrameworkReady";
 import { setAndroidNavigationBar } from "@/lib/android-navigation-bar";
 import { DARK_THEME, LIGHT_THEME } from "@/lib/constants";
 import { getItem, setItem } from "@/lib/storage";
@@ -35,8 +34,6 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_600SemiBold,
   });
-
-  useFrameworkReady();
 
   useEffect(() => {
     const theme = getItem("theme");
