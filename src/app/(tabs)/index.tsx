@@ -1,4 +1,3 @@
-import { Plus } from "@/components/Icons";
 import { Text } from "@/components/ui/text";
 import { VideoCard } from "@/components/video";
 import { useMigrationHelper } from "@/db/drizzle";
@@ -7,11 +6,12 @@ import { type Video, videoTable } from "@/db/schema";
 import { useScrollToTop } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Link, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import * as React from "react";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 
 export default function VideoHome() {
+
   const { success, error } = useMigrationHelper();
 
   if (error) {
@@ -32,7 +32,7 @@ export default function VideoHome() {
 }
 
 function ScreenContent() {
-  const { db, databaseService } = useDatabase();
+  const db = useDatabase()
   const ref = React.useRef(null);
   useScrollToTop(ref);
 

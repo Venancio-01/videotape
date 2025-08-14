@@ -10,7 +10,7 @@ import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, View } from "react-native";
 
 export default function PlaylistsScreen() {
-  const { db } = useDatabase();
+  const db = useDatabase();
   const router = useRouter();
 
   const { data: playlists } = useLiveQuery(

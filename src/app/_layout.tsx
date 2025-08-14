@@ -18,8 +18,6 @@ import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useDrizzleStudio } from 'expo-drizzle-studio-plugin';
-import { useSQLiteContext } from "expo-sqlite";
 
 export {
   ErrorBoundary,
@@ -33,8 +31,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const db = useSQLiteContext()
-  useDrizzleStudio(db)
   const { colorScheme, setColorScheme } = useColorScheme();
 
   const [loaded, error] = useFonts({

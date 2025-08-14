@@ -1,1 +1,1 @@
-export { VideoCard } from "./card";
+export { VideoCard } from "./VideoCard";

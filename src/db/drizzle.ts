@@ -3,7 +3,9 @@ import { type ExpoSQLiteDatabase, drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { openDatabaseSync } from "expo-sqlite";
 
-const expoDb = openDatabaseSync("videotape.db", { enableChangeListener: true });
+export const DATABASE_NAME = "videotape.db";
+
+const expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
 const db = drizzle(expoDb);
 
 export const initialize = (): Promise<ExpoSQLiteDatabase> => {

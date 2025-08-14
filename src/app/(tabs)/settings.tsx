@@ -2,9 +2,8 @@ import { NotificationItem } from "@/components/settings/NotificationItem";
 import { ThemeSettingItem } from "@/components/settings/ThemeItem";
 import List, { ListHeader } from "@/components/ui/list";
 import { Muted } from "@/components/ui/typography";
-import * as WebBrowser from "expo-web-browser";
 import * as React from "react";
-import { Linking, Platform } from "react-native";
+import { Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Settings() {

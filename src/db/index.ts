@@ -15,12 +15,8 @@ export * from "./hooks";
 // ===== 迁移管理 =====
 export * from "./migrations";
 
-// ===== 组件 =====
-export * from "./components/DatabaseErrorHandler";
-
 // ===== 基础类型 =====
 export * from "./types";
 
 // ===== 便捷导出 =====
 export { databaseService } from "./repositories/DatabaseService";
-export { useDatabase } from "./hooks/useDatabase";
