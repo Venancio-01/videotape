@@ -22,6 +22,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.expostarter.base",
+    infoPlist: {
+      UIBackgroundModes: ["audio"],
+    },
   },
   android: {
     adaptiveIcon: {
@@ -41,6 +44,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-font",
     "expo-web-browser",
     "expo-media-library",
+    "expo-file-system",
+    "expo-document-picker",
+    "expo-image-picker",
+    [
+      "expo-av",
+      {
+        microphonePermission: "允许 $(PRODUCT_NAME) 访问您的麦克风来录制音频。"
+      }
+    ],
   ],
   experiments: {
     typedRoutes: true,

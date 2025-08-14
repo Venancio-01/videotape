@@ -1,6 +1,8 @@
 import type { Video } from "@/db/schema";
 import { useVideoStore } from "@/stores/videoStore";
+import { AndroidPermissionHelper } from "@/utils/androidPermissionHelper";
 import type { AVPlaybackStatus } from "expo-av";
+import { Video as ExpoVideo } from "expo-av";
 import * as React from "react";
 
 interface VideoPlaybackHookProps {
@@ -12,7 +14,7 @@ interface VideoPlaybackState {
   isPlaying: boolean;
   isMuted: boolean;
   playbackStatus: AVPlaybackStatus | null;
-  videoRef: React.RefObject<any>;
+  videoRef: React.RefObject<ExpoVideo | null>;
 }
 
 interface VideoPlaybackActions {
@@ -25,12 +27,14 @@ export const useVideoPlayback = ({
   video,
   isVisible,
 }: VideoPlaybackHookProps): VideoPlaybackState & VideoPlaybackActions => {
-  const videoRef = React.useRef<any>(null);
+  const videoRef = React.useRef<ExpoVideo | null>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(true);
   const [playbackStatus, setPlaybackStatus] =
     React.useState<AVPlaybackStatus | null>(null);
+  const [cachedVideoUri, setCachedVideoUri] = React.useState<string | null>(null);
   const { updateVideo } = useVideoStore();
+  const permissionHelper = AndroidPermissionHelper.getInstance();
 
   React.useEffect(() => {
     if (!isVisible) {
@@ -56,20 +60,50 @@ export const useVideoPlayback = ({
 
     const loadAndPlay = async () => {
       try {
+        // 检查并请求权限
+        const hasPermission = await permissionHelper.requestAllPermissions();
+        if (!hasPermission) {
+          console.error("缺少媒体访问权限");
+          return;
+        }
+
+        // 获取可访问的 URI
+        const accessibleUri = await permissionHelper.getAccessibleUri(video.filePath);
+        
         if (videoRef.current) {
           await videoRef.current.loadAsync(
-            { uri: video.filePath },
+            { uri: accessibleUri },
             {
               shouldPlay: true,
               isMuted: true,
               progressUpdateIntervalMillis: 100,
-              positionMillis: video.watchProgress * 1000,
+              positionMillis: (video.watchProgress || 0) * 1000,
             },
           );
           setIsPlaying(true);
+          setCachedVideoUri(accessibleUri);
         }
       } catch (error) {
         console.error("Error loading video:", error);
+        // 如果直接访问失败，尝试缓存文件
+        try {
+          const cachedUri = await permissionHelper.cacheVideoFile(video.filePath);
+          if (videoRef.current && cachedUri) {
+            await videoRef.current.loadAsync(
+              { uri: cachedUri },
+              {
+                shouldPlay: true,
+                isMuted: true,
+                progressUpdateIntervalMillis: 100,
+                positionMillis: (video.watchProgress || 0) * 1000,
+              },
+            );
+            setIsPlaying(true);
+            setCachedVideoUri(cachedUri);
+          }
+        } catch (cacheError) {
+          console.error("Error caching and loading video:", cacheError);
+        }
       }
     };
 

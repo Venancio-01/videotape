@@ -1,20 +1,25 @@
 import { useVideoActions } from "@/hooks/useVideoActions";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 import { Text } from "@/components/ui/text";
-import { Heart, MessageCircle, Share } from "lucide-react-native";
+import { Heart, MessageCircle, Share, Volume2, VolumeX } from "lucide-react-native";
 import { Animated, TouchableOpacity, View } from "react-native";
 import React from "react";
+import type { Video } from "@/db/schema";
 
 interface VideoActionsProps {
-  video: {
-    id: string;
-    isFavorite: boolean;
-  };
+  video: Video;
+  videoRef?: React.RefObject<any>;
 }
 
-export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
+export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef }) => {
   const [isLiked, setIsLiked] = React.useState(video.isFavorite);
   const [likeAnimation] = React.useState(new Animated.Value(1));
   const { handleLike } = useVideoActions({ video });
+  
+  const { isMuted, toggleMute } = useVideoPlayback({
+    video,
+    isVisible: true,
+  });
 
   React.useEffect(() => {
     setIsLiked(video.isFavorite);
@@ -38,6 +43,10 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
     ]).start();
   };
 
+  const onMuteToggle = async () => {
+    await toggleMute();
+  };
+
   return (
     <View className="absolute right-4 bottom-24 gap-4">
       <TouchableOpacity onPress={onLike} className="items-center">
@@ -52,6 +61,19 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
         </Animated.View>
         <Text className="text-white text-xs">
           {isLiked ? "已收藏" : "收藏"}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onMuteToggle} className="items-center">
+        <View className="bg-black/50 rounded-full p-3 mb-1">
+          {isMuted ? (
+            <VolumeX className="text-white" size={24} />
+          ) : (
+            <Volume2 className="text-white" size={24} />
+          )}
+        </View>
+        <Text className="text-white text-xs">
+          {isMuted ? "静音" : "有声"}
         </Text>
       </TouchableOpacity>
     </View>
