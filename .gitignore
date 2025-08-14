@@ -42,6 +42,7 @@ expo-env.d.ts
 
 android
 ios
+!android/app/src/main/java/com/expostarter/
 notes.txt
 
 
