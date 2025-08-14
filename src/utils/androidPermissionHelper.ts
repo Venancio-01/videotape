@@ -43,26 +43,7 @@ export class AndroidPermissionHelper {
         return true;
       }
 
-      // Android 13+ 需要请求具体媒体权限
-      if (Platform.Version >= 33) {
-        const { status: videoStatus } = await MediaLibrary.requestPermissionsAsync({
-          ios: false,
-          android: {
-            permission: MediaLibrary.PermissionAccessType.READ_WRITE,
-            granularPermissions: {
-              photo: false,
-              video: true,
-              audio: false,
-              'read-external-storage': false,
-              'write-external-storage': false,
-            },
-          },
-        });
-
-        return videoStatus === 'granted';
-      }
-
-      // Android 12 及以下
+      // 使用标准权限请求 API
       const { status } = await MediaLibrary.requestPermissionsAsync();
       return status === 'granted';
     } catch (error) {

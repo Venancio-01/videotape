@@ -53,6 +53,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         microphonePermission: "允许 $(PRODUCT_NAME) 访问您的麦克风来录制音频。"
       }
     ],
+    [
+      "expo-media-library",
+      {
+        photosPermission: "允许 $(PRODUCT_NAME) 访问您的照片和视频。",
+        savePhotosPermission: "允许 $(PRODUCT_NAME) 保存照片和视频到您的相册。"
+      }
+    ],
   ],
   experiments: {
     typedRoutes: true,
