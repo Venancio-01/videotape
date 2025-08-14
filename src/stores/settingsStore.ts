@@ -5,7 +5,6 @@
 import { MiddlewareCombinations } from "@/middleware";
 import type { SettingsState } from "@/types/stateTypes";
 import type { SettingsStore } from "@/types/storeTypes";
-import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -23,6 +22,13 @@ const initialState: SettingsState = {
   showControls: true,
   enableGestures: true,
   enableHaptics: true,
+
+  // 自动播放播放列表设置
+  currentPlaylistId: null,
+  autoPlayPlaylist: false,
+  resumeFromPosition: true,
+  lastPlayedVideoId: null,
+  lastPlayedPosition: 0,
 
   // 加载状态
   isLoading: false,
@@ -90,6 +96,37 @@ export const useSettingsStore = create<SettingsStore>()(
         set((state) => ({
           ...state,
           enableHaptics,
+        })),
+
+      // 自动播放播放列表设置
+      setCurrentPlaylistId: (playlistId: string | null) =>
+        set((state) => ({
+          ...state,
+          currentPlaylistId: playlistId,
+        })),
+
+      setAutoPlayPlaylist: (autoPlayPlaylist: boolean) =>
+        set((state) => ({
+          ...state,
+          autoPlayPlaylist,
+        })),
+
+      setResumeFromPosition: (resumeFromPosition: boolean) =>
+        set((state) => ({
+          ...state,
+          resumeFromPosition,
+        })),
+
+      setLastPlayedVideoId: (videoId: string | null) =>
+        set((state) => ({
+          ...state,
+          lastPlayedVideoId: videoId,
+        })),
+
+      setLastPlayedPosition: (position: number) =>
+        set((state) => ({
+          ...state,
+          lastPlayedPosition: Math.max(0, position),
         })),
 
       // 批量更新
@@ -271,6 +308,13 @@ export const settingsSelectors = {
   getEnableGestures: (state: SettingsState) => state.enableGestures,
   getEnableHaptics: (state: SettingsState) => state.enableHaptics,
 
+  // 自动播放播放列表设置
+  getCurrentPlaylistId: (state: SettingsState) => state.currentPlaylistId,
+  getAutoPlayPlaylist: (state: SettingsState) => state.autoPlayPlaylist,
+  getResumeFromPosition: (state: SettingsState) => state.resumeFromPosition,
+  getLastPlayedVideoId: (state: SettingsState) => state.lastPlayedVideoId,
+  getLastPlayedPosition: (state: SettingsState) => state.lastPlayedPosition,
+
   // 加载状态
   getIsLoading: (state: SettingsState) => state.isLoading,
   getError: (state: SettingsState) => state.error,
@@ -291,22 +335,19 @@ export const settingsSelectors = {
     enableHaptics: state.enableHaptics,
   }),
 
+  getAutoPlayPlaylistSettings: (state: SettingsState) => ({
+    currentPlaylistId: state.currentPlaylistId,
+    autoPlayPlaylist: state.autoPlayPlaylist,
+    resumeFromPosition: state.resumeFromPosition,
+    lastPlayedVideoId: state.lastPlayedVideoId,
+    lastPlayedPosition: state.lastPlayedPosition,
+  }),
+
   // 格式化选项
   getThemeOptions: () => [
     { value: "light", label: "浅色模式" },
     { value: "dark", label: "深色模式" },
     { value: "system", label: "跟随系统" },
-  ],
-
-  getPlaybackSpeedOptions: () => [
-    { value: 0.25, label: "0.25x" },
-    { value: 0.5, label: "0.5x" },
-    { value: 0.75, label: "0.75x" },
-    { value: 1.0, label: "1.0x (正常)" },
-    { value: 1.25, label: "1.25x" },
-    { value: 1.5, label: "1.5x" },
-    { value: 1.75, label: "1.75x" },
-    { value: 2.0, label: "2.0x" },
   ],
 
   // 验证状态
@@ -341,10 +382,12 @@ export const useLanguage = () =>
   useSettingsSelector(settingsSelectors.getLanguage);
 export const usePlaybackSettings = () =>
   useSettingsSelector(settingsSelectors.getPlaybackSettings);
+export const useAutoPlayPlaylistSettings = () =>
+  useSettingsSelector(settingsSelectors.getAutoPlayPlaylistSettings);
+export const useCurrentPlaylistId = () =>
+  useSettingsSelector(settingsSelectors.getCurrentPlaylistId);
 export const useSettingsValidation = () =>
   useSettingsSelector(settingsSelectors.getSettingsValidation);
 
 // 便捷的选项 Hook
 export const useThemeOptions = () => settingsSelectors.getThemeOptions();
-export const usePlaybackSpeedOptions = () =>
-  settingsSelectors.getPlaybackSpeedOptions();

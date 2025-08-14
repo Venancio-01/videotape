@@ -19,7 +19,6 @@ export * from "../middleware/devToolsMiddleware";
 // 导出所有 Hooks
 export * from "../hooks/useVideoStore";
 export * from "../hooks/usePlaybackStore";
-export * from "../hooks/useQueueStore";
 export * from "../hooks/useSettingsStore";
 export * from "../hooks/usePlaylistStore";
 

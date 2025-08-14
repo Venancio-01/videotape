@@ -150,9 +150,12 @@ export const PersistConfigs = {
       defaultVolume: state.defaultVolume || 1.0,
       autoPlay: state.autoPlay !== undefined ? state.autoPlay : true,
       loopMode: state.loopMode || "none",
-      showControls: state.showControls !== undefined ? state.showControls : true,
-      enableGestures: state.enableGestures !== undefined ? state.enableGestures : true,
-      enableHaptics: state.enableHaptics !== undefined ? state.enableHaptics : true,
+      showControls:
+        state.showControls !== undefined ? state.showControls : true,
+      enableGestures:
+        state.enableGestures !== undefined ? state.enableGestures : true,
+      enableHaptics:
+        state.enableHaptics !== undefined ? state.enableHaptics : true,
     }),
   },
 

@@ -91,6 +91,15 @@ export const settingsTable = sqliteTable("settings", {
   showControls: integer("show_controls", { mode: "boolean" }).default(true), // 显示控制条
   enableGestures: integer("enable_gestures", { mode: "boolean" }).default(true), // 启用手势控制
   enableHaptics: integer("enable_haptics", { mode: "boolean" }).default(true), // 启用触觉反馈
+  currentPlaylistId: text("current_playlist_id"), // 当前选中的播放列表ID
+  autoPlayPlaylist: integer("auto_play_playlist", { mode: "boolean" }).default(
+    false,
+  ), // 启动时自动播放播放列表
+  resumeFromPosition: integer("resume_from_position", {
+    mode: "boolean",
+  }).default(true), // 从上次位置恢复播放
+  lastPlayedVideoId: text("last_played_video_id"), // 上次播放的视频ID
+  lastPlayedPosition: real("last_played_position").default(0), // 上次播放的位置（秒）
   createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`), // 创建时间
   updatedAt: text("updated_at").default(sql`(CURRENT_TIMESTAMP)`), // 更新时间
 });

@@ -165,7 +165,10 @@ export class PlaylistService {
   static async getAllPlaylists(): Promise<Playlist[]> {
     try {
       const db = getDatabase();
-      const playlists = await db.select().from(playlistTable).orderBy(desc(playlistTable.createdAt));
+      const playlists = await db
+        .select()
+        .from(playlistTable)
+        .orderBy(desc(playlistTable.createdAt));
       return playlists;
     } catch (error) {
       console.error("获取播放列表失败:", error);
@@ -181,7 +184,11 @@ export class PlaylistService {
   static async getPlaylistById(id: string): Promise<Playlist | null> {
     try {
       const db = getDatabase();
-      const playlist = await db.select().from(playlistTable).where(eq(playlistTable.id, id)).limit(1);
+      const playlist = await db
+        .select()
+        .from(playlistTable)
+        .where(eq(playlistTable.id, id))
+        .limit(1);
       return playlist.length > 0 ? playlist[0] : null;
     } catch (error) {
       console.error("获取播放列表失败:", error);
@@ -201,7 +208,7 @@ export class PlaylistService {
   ): Promise<CreatePlaylistResult> {
     try {
       const db = getDatabase();
-      
+
       // 验证必填字段
       if (updates.name && !updates.name.trim()) {
         return {
@@ -218,7 +225,10 @@ export class PlaylistService {
         updatedAt: sql`(CURRENT_TIMESTAMP)`,
       };
 
-      await db.update(playlistTable).set(updateData).where(eq(playlistTable.id, id));
+      await db
+        .update(playlistTable)
+        .set(updateData)
+        .where(eq(playlistTable.id, id));
 
       console.log("更新播放列表:", { id, ...updateData });
 
@@ -243,11 +253,13 @@ export class PlaylistService {
   static async deletePlaylist(id: string): Promise<CreatePlaylistResult> {
     try {
       const db = getDatabase();
-      
+
       // 使用事务确保数据一致性
       await db.transaction(async (tx) => {
         // 先删除播放列表与视频的关联关系
-        await tx.delete(playlistVideoTable).where(eq(playlistVideoTable.playlistId, id));
+        await tx
+          .delete(playlistVideoTable)
+          .where(eq(playlistVideoTable.playlistId, id));
         // 再删除播放列表
         await tx.delete(playlistTable).where(eq(playlistTable.id, id));
       });

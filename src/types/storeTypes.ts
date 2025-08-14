@@ -165,6 +165,13 @@ export interface SettingsStore extends BaseStore<SettingsState> {
   setEnableGestures: (enableGestures: boolean) => void;
   setEnableHaptics: (enableHaptics: boolean) => void;
 
+  // 自动播放播放列表设置
+  setCurrentPlaylistId: (playlistId: string | null) => void;
+  setAutoPlayPlaylist: (autoPlayPlaylist: boolean) => void;
+  setResumeFromPosition: (resumeFromPosition: boolean) => void;
+  setLastPlayedVideoId: (videoId: string | null) => void;
+  setLastPlayedPosition: (position: number) => void;
+
   // 批量设置
   updateSettings: (settings: Partial<SettingsState>) => void;
   resetSettings: () => void;

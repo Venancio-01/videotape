@@ -1,17 +1,17 @@
 import { Text } from "@/components/ui/text";
-import { VideoCard } from "@/components/video";
+import { VideoActions, VideoControls, VideoOverlay } from "@/components/video";
 import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
-import { useScrollToTop } from "@react-navigation/native";
-import { FlashList } from "@shopify/flash-list";
+import { useVideoPlayback } from "@/hooks/useVideoPlayback";
+import { useVideoStore } from "@/stores/videoStore";
+import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import * as React from "react";
-import { View } from "react-native";
+import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 
 export default function VideoHome() {
-
   const { success, error } = useMigrationHelper();
 
   if (error) {
@@ -31,52 +31,132 @@ export default function VideoHome() {
   return <ScreenContent />;
 }
 
+const { width, height } = Dimensions.get("window");
+
+interface VideoItemProps {
+  video: Video;
+  isVisible: boolean;
+  onVideoPress: () => void;
+}
+
+const VideoItem: React.FC<VideoItemProps> = ({
+  video,
+  isVisible,
+  onVideoPress,
+}) => {
+  const playback = useVideoPlayback({ video, isVisible });
+
+  return (
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={onVideoPress}
+      className="flex-1 bg-black"
+    >
+      <View className="flex-1 relative">
+        <VideoPlayer video={video} playback={playback} />
+        <VideoOverlay video={video} />
+        <VideoControls
+          isPlaying={playback.isPlaying}
+          isMuted={playback.isMuted}
+          onPlayPause={playback.togglePlayPause}
+          onToggleMute={playback.toggleMute}
+        />
+        <VideoActions video={video} />
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 function ScreenContent() {
-  const db = useDatabase()
-  const ref = React.useRef(null);
-  useScrollToTop(ref);
+  const db = useDatabase();
+  const flatListRef = React.useRef<FlatList>(null);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const { data } = useLiveQuery(db.select().from(videoTable));
 
-  const renderItem = React.useCallback(({ item }: { item: Video }) => {
-    if (!item.id) return null; // 防止 id 不存在时报错
+  const onViewableItemsChanged = React.useCallback(
+    ({
+      viewableItems,
+    }: {
+      viewableItems: Array<{ index: number; item: Video }>;
+    }) => {
+      if (viewableItems.length > 0) {
+        const visibleIndex = viewableItems[0].index;
+        setCurrentIndex(visibleIndex);
+      }
+    },
+    [],
+  );
 
-    return (
-      <VideoCard
-        video={item}
-      />
-    );
-  }, []);
+  const viewabilityConfig = React.useMemo(
+    () => ({
+      itemVisiblePercentThreshold: 50,
+      minimumViewTime: 300,
+    }),
+    [],
+  );
+
+  const renderItem = React.useCallback(
+    ({ item, index }: { item: Video; index: number }) => {
+      return (
+        <VideoItem
+          video={item}
+          isVisible={index === currentIndex}
+          onVideoPress={() => {
+            // 可以在这里添加更多交互逻辑
+          }}
+        />
+      );
+    },
+    [currentIndex],
+  );
+
+  const getItemLayout = React.useCallback(
+    (data: Array<Video> | null, index: number) => ({
+      length: height,
+      offset: height * index,
+      index,
+    }),
+    [height],
+  );
 
   return (
-    <View className="flex flex-col basis-full bg-background p-8">
+    <View className="flex-1 bg-black">
       <Stack.Screen
         options={{
           title: "视频",
+          headerShown: false,
         }}
       />
-      <FlashList
-        ref={ref}
-        className="native:overflow-hidden rounded-t-lg"
-        estimatedItemSize={200}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={() => (
-          <View className="items-center justify-center py-12">
-            <Text className="text-lg mb-2">📹 欢迎使用 Videotape</Text>
-            <Text className="text-sm text-muted-foreground text-center mb-4">
-              您的视频播放器应用
-            </Text>
-            <Text className="text-sm text-muted-foreground text-center">
-              点击右下角的 + 按钮开始添加视频
-            </Text>
-          </View>
-        )}
-        ItemSeparatorComponent={() => <View className="p-2" />}
-        data={data || []}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        ListFooterComponent={<View className="py-4" />}
-      />
+
+      {data && data.length > 0 ? (
+        <FlatList
+          ref={flatListRef}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          getItemLayout={getItemLayout}
+          snapToInterval={height}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          showsVerticalScrollIndicator={false}
+          onViewableItemsChanged={onViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          initialNumToRender={3}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+        />
+      ) : (
+        <View className="flex-1 items-center justify-center bg-black">
+          <Text className="text-white text-lg mb-2">📹 欢迎使用 Videotape</Text>
+          <Text className="text-white/60 text-center mb-4">
+            您的视频播放器应用
+          </Text>
+          <Text className="text-white/60 text-center">
+            点击右下角的 + 按钮开始添加视频
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

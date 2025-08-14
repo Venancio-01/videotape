@@ -62,12 +62,9 @@ export class VideoRepository implements IVideoRepository {
 
     // 搜索查询
     if (query) {
-      whereConditions.push(
-        ilike(videoTable.title, `%${query}%`),
-      );
+      whereConditions.push(ilike(videoTable.title, `%${query}%`));
     }
 
-  
     // 收藏过滤
     if (isFavorite !== undefined) {
       whereConditions.push(eq(videoTable.isFavorite, isFavorite));
@@ -81,7 +78,6 @@ export class VideoRepository implements IVideoRepository {
       whereConditions.push(lte(videoTable.duration, maxDuration));
     }
 
-  
     // 构建基础查询
     const baseQuery = db.select().from(videoTable);
 
@@ -122,7 +118,6 @@ export class VideoRepository implements IVideoRepository {
     };
   }
 
-  
   getFavoriteVideosQuery() {
     const db = this.getDb();
     return db
@@ -219,7 +214,6 @@ export class VideoRepository implements IVideoRepository {
     };
   }
 
-  
   // ===== 写操作方法 =====
 
   async create(data: Omit<Video, "id">): Promise<Video> {

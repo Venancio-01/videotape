@@ -2,7 +2,13 @@
  * 状态类型定义
  */
 
-import type { Playlist, Settings, Video, WatchHistory } from "@/db/schema";
+import type {
+  Playlist,
+  PlaylistWithVideos,
+  Settings,
+  Video,
+  WatchHistory,
+} from "@/db/schema";
 
 // 视频状态类型
 export interface VideoState {
@@ -56,12 +62,7 @@ export interface VideoFilter {
   size?: { min: number; max: number };
   isFavorite?: boolean;
   isWatched?: boolean;
-  sortBy?:
-    | "created_at"
-    | "title"
-    | "duration"
-    | "size"
-    | "play_count";
+  sortBy?: "created_at" | "title" | "duration" | "size" | "play_count";
   sortOrder?: "asc" | "desc";
 }
 
@@ -106,7 +107,7 @@ export interface QueueState {
 
   // 播放列表
   playlists: Playlist[];
-  currentPlaylist: Playlist | null;
+  currentPlaylist: PlaylistWithVideos | null;
 
   // 队列操作
   isShuffleOn: boolean;
@@ -131,6 +132,13 @@ export interface SettingsState {
   showControls: boolean;
   enableGestures: boolean;
   enableHaptics: boolean;
+
+  // 自动播放播放列表设置
+  currentPlaylistId: string | null;
+  autoPlayPlaylist: boolean;
+  resumeFromPosition: boolean;
+  lastPlayedVideoId: string | null;
+  lastPlayedPosition: number;
 
   // 加载状态
   isLoading: boolean;

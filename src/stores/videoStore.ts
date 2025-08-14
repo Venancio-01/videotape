@@ -480,14 +480,12 @@ export const videoSelectors = {
 
     const suggestions = new Set<string>();
 
-    videos.forEach((video) => {
+    for (const video of videos) {
       // 从标题中提取建议
       if (video.title.toLowerCase().includes(searchQuery.toLowerCase())) {
         suggestions.add(video.title);
       }
-
-      // 移除了标签和分类建议功能
-    });
+    }
 
     return Array.from(suggestions).slice(0, 5);
   },

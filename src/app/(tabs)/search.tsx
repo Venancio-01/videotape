@@ -18,9 +18,7 @@ export default function SearchScreen() {
     db
       .select()
       .from(videoTable)
-      .where(
-        ilike(videoTable.title, `%${searchQuery}%`),
-      ),
+      .where(ilike(videoTable.title, `%${searchQuery}%`)),
   );
 
   if (!db) {
@@ -31,11 +29,7 @@ export default function SearchScreen() {
     );
   }
 
-  const renderItem = ({ item }: { item: Video }) => (
-    <VideoCard
-      video={item}
-    />
-  );
+  const renderItem = ({ item }: { item: Video }) => <VideoCard video={item} />;
 
   return (
     <View className="flex-1 bg-background">

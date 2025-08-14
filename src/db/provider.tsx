@@ -1,11 +1,7 @@
-import { drizzle, type ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite'
+import { type ExpoSQLiteDatabase, drizzle } from "drizzle-orm/expo-sqlite";
 import type { SQLJsDatabase } from "drizzle-orm/sql-js";
-import React, {
-  type PropsWithChildren,
-  useEffect,
-  useState,
-} from "react";
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
+import React, { type PropsWithChildren, useEffect, useState } from "react";
 import { DATABASE_NAME, initialize } from "./drizzle";
 import * as schema from "./schema";
 
@@ -14,14 +10,14 @@ type ContextType = {
 };
 
 export const DatabaseContext = React.createContext<ContextType>({
-  db: null
+  db: null,
 });
 
 export const useDatabase = () => {
-  const db = useSQLiteContext()
-  const drizzleDb = drizzle(db, { schema })
-  return drizzleDb
-}
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db, { schema });
+  return drizzleDb;
+};
 
 export function DatabaseProvider({ children }: PropsWithChildren) {
   const [db, setDb] = useState<SQLJsDatabase | ExpoSQLiteDatabase | null>(null);

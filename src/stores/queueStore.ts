@@ -2,7 +2,7 @@
  * 队列状态管理 Store
  */
 
-import type { Playlist, Video } from "@/db/schema";
+import type { Playlist, PlaylistWithVideos, Video } from "@/db/schema";
 import { MiddlewareCombinations } from "@/middleware";
 import type { QueueState } from "@/types/stateTypes";
 import type { QueueStore } from "@/types/storeTypes";
@@ -188,14 +188,14 @@ export const useQueueStore = create<QueueStore>()(
               : state.currentPlaylist,
         })),
 
-      setCurrentPlaylist: (playlist: Playlist | null) =>
+      setCurrentPlaylist: (playlist: PlaylistWithVideos | null) =>
         set((state) => ({
           ...state,
           currentPlaylist: playlist,
         })),
 
       // 从播放列表播放
-      playPlaylist: (playlist: Playlist, startIndex = 0) =>
+      playPlaylist: (playlist: PlaylistWithVideos, startIndex = 0) =>
         set((state) => ({
           ...state,
           currentPlaylist: playlist,
@@ -396,7 +396,7 @@ export const useQueueStore = create<QueueStore>()(
         }),
 
       // 播放列表到队列
-      loadPlaylistToQueue: (playlist: Playlist) =>
+      loadPlaylistToQueue: (playlist: PlaylistWithVideos) =>
         set((state) => ({
           ...state,
           queue: playlist.videos,
