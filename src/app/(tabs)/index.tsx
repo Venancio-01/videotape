@@ -1,5 +1,10 @@
 import { Text } from "@/components/ui/text";
-import { VideoActions, VideoControls, VideoOverlay, VideoPlayer } from "@/components/video";
+import {
+  VideoActions,
+  VideoControls,
+  VideoOverlay,
+  VideoPlayer,
+} from "@/components/video";
 import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";

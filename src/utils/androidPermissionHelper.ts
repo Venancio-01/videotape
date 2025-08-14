@@ -3,9 +3,9 @@
  * 解决 Android 11+ Scoped Storage 问题
  */
 
-import * as MediaLibrary from "expo-media-library";
-import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import { Platform } from "react-native";
 
 export interface VideoAsset {
@@ -43,7 +43,7 @@ export class AndroidPermissionHelper {
         return true;
       }
 
-      // 使用标准权限请求 API
+      // 使用标准 API，消除特殊情况
       const { status } = await MediaLibrary.requestPermissionsAsync();
       return status === "granted";
     } catch (error) {
@@ -72,6 +72,7 @@ export class AndroidPermissionHelper {
 
   /**
    * 请求所有必需权限
+   * @deprecated 使用 useMediaPermissions hook 代替
    */
   async requestAllPermissions(): Promise<boolean> {
     try {

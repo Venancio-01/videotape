@@ -1,8 +1,9 @@
 import type { Video } from "@/db/schema";
+import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 import { useVideoStore } from "@/stores/videoStore";
 import { AndroidPermissionHelper } from "@/utils/androidPermissionHelper";
 import type { AVPlaybackStatus } from "expo-av";
-import { Video as ExpoVideo } from "expo-av";
+import type { Video as ExpoVideo } from "expo-av";
 import * as React from "react";
 
 interface VideoPlaybackHookProps {
@@ -32,8 +33,11 @@ export const useVideoPlayback = ({
   const [isMuted, setIsMuted] = React.useState(true);
   const [playbackStatus, setPlaybackStatus] =
     React.useState<AVPlaybackStatus | null>(null);
-  const [cachedVideoUri, setCachedVideoUri] = React.useState<string | null>(null);
+  const [cachedVideoUri, setCachedVideoUri] = React.useState<string | null>(
+    null,
+  );
   const { updateVideo } = useVideoStore();
+  const { requestAllPermissions } = useMediaPermissions();
   const permissionHelper = AndroidPermissionHelper.getInstance();
 
   React.useEffect(() => {
@@ -61,15 +65,17 @@ export const useVideoPlayback = ({
     const loadAndPlay = async () => {
       try {
         // 检查并请求权限
-        const hasPermission = await permissionHelper.requestAllPermissions();
+        const hasPermission = await requestAllPermissions();
         if (!hasPermission) {
           console.error("缺少媒体访问权限");
           return;
         }
 
         // 获取可访问的 URI
-        const accessibleUri = await permissionHelper.getAccessibleUri(video.filePath);
-        
+        const accessibleUri = await permissionHelper.getAccessibleUri(
+          video.filePath,
+        );
+
         if (videoRef.current) {
           await videoRef.current.loadAsync(
             { uri: accessibleUri },
@@ -87,7 +93,9 @@ export const useVideoPlayback = ({
         console.error("Error loading video:", error);
         // 如果直接访问失败，尝试缓存文件
         try {
-          const cachedUri = await permissionHelper.cacheVideoFile(video.filePath);
+          const cachedUri = await permissionHelper.cacheVideoFile(
+            video.filePath,
+          );
           if (videoRef.current && cachedUri) {
             await videoRef.current.loadAsync(
               { uri: cachedUri },

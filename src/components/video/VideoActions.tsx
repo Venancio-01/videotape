@@ -1,21 +1,30 @@
+import { Text } from "@/components/ui/text";
+import type { Video } from "@/db/schema";
 import { useVideoActions } from "@/hooks/useVideoActions";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
-import { Text } from "@/components/ui/text";
-import { Heart, MessageCircle, Share, Volume2, VolumeX } from "lucide-react-native";
-import { Animated, TouchableOpacity, View } from "react-native";
+import {
+  Heart,
+  MessageCircle,
+  Share,
+  Volume2,
+  VolumeX,
+} from "lucide-react-native";
 import React from "react";
-import type { Video } from "@/db/schema";
+import { Animated, TouchableOpacity, View } from "react-native";
 
 interface VideoActionsProps {
   video: Video;
   videoRef?: React.RefObject<any>;
 }
 
-export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef }) => {
+export const VideoActions: React.FC<VideoActionsProps> = ({
+  video,
+  videoRef,
+}) => {
   const [isLiked, setIsLiked] = React.useState(video.isFavorite);
   const [likeAnimation] = React.useState(new Animated.Value(1));
   const { handleLike } = useVideoActions({ video });
-  
+
   const { isMuted, toggleMute } = useVideoPlayback({
     video,
     isVisible: true,
@@ -72,9 +81,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef }) =
             <Volume2 className="text-white" size={24} />
           )}
         </View>
-        <Text className="text-white text-xs">
-          {isMuted ? "静音" : "有声"}
-        </Text>
+        <Text className="text-white text-xs">{isMuted ? "静音" : "有声"}</Text>
       </TouchableOpacity>
     </View>
   );
