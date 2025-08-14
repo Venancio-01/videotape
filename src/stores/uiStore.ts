@@ -435,7 +435,7 @@ export const useUISelector = <T>(selector: (state: UIState) => T): T => {
 };
 
 // 预定义的 Hook
-export const useTheme = () => useUISelector(uiSelectors.getTheme);
+export const useUITheme = () => useUISelector(uiSelectors.getTheme);
 export const useColorScheme = () => useUISelector(uiSelectors.getColorScheme);
 export const useIsDarkMode = () => useUISelector(uiSelectors.getIsDarkMode);
 export const useModalState = (modalType: string) =>

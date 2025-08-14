@@ -146,24 +146,13 @@ export const PersistConfigs = {
     partialize: (state: any) => ({
       theme: state.theme || "system",
       language: state.language || "zh-CN",
-      fontSize: state.fontSize || "medium",
       defaultPlaybackSpeed: state.defaultPlaybackSpeed || 1.0,
       defaultVolume: state.defaultVolume || 1.0,
-      defaultQuality: state.defaultQuality || "auto",
       autoPlay: state.autoPlay !== undefined ? state.autoPlay : true,
-      autoNext: state.autoNext !== undefined ? state.autoNext : true,
-      maxCacheSize: state.maxCacheSize || 1024,
-      cacheRetentionDays: state.cacheRetentionDays || 30,
-      autoClearCache:
-        state.autoClearCache !== undefined ? state.autoClearCache : true,
-      analyticsEnabled:
-        state.analyticsEnabled !== undefined ? state.analyticsEnabled : false,
-      crashReportingEnabled:
-        state.crashReportingEnabled !== undefined
-          ? state.crashReportingEnabled
-          : true,
-      debugMode: state.debugMode !== undefined ? state.debugMode : false,
-      logLevel: state.logLevel || "info",
+      loopMode: state.loopMode || "none",
+      showControls: state.showControls !== undefined ? state.showControls : true,
+      enableGestures: state.enableGestures !== undefined ? state.enableGestures : true,
+      enableHaptics: state.enableHaptics !== undefined ? state.enableHaptics : true,
     }),
   },
 

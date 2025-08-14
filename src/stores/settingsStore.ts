@@ -155,7 +155,7 @@ export const useSettingsStore = create<SettingsStore>()(
 
       // 导出设置
       exportSettings: () => {
-        const state = get();
+        const state = get() as SettingsState;
         const exportData = {
           version: "1.0",
           timestamp: new Date().toISOString(),
@@ -332,7 +332,7 @@ export const settingsSelectors = {
 export const useSettingsSelector = <T>(
   selector: (state: SettingsState) => T,
 ): T => {
-  return useSettingsStore(StateUtils.createSelector(selector));
+  return useSettingsStore(selector);
 };
 
 // 预定义的 Hook

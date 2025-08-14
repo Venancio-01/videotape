@@ -155,37 +155,31 @@ export interface SettingsStore extends BaseStore<SettingsState> {
   // 界面设置
   setTheme: (theme: "light" | "dark" | "system") => void;
   setLanguage: (language: string) => void;
-  setFontSize: (size: "small" | "medium" | "large") => void;
 
   // 播放设置
   setDefaultPlaybackSpeed: (speed: number) => void;
   setDefaultVolume: (volume: number) => void;
-  setDefaultQuality: (quality: "auto" | "low" | "medium" | "high") => void;
   setAutoPlay: (autoPlay: boolean) => void;
-  setAutoNext: (autoNext: boolean) => void;
-
-  // 缓存设置
-  setMaxCacheSize: (size: number) => void;
-  setCacheRetentionDays: (days: number) => void;
-  setAutoClearCache: (autoClear: boolean) => void;
-
-  // 隐私设置
-  setAnalyticsEnabled: (enabled: boolean) => void;
-  setCrashReportingEnabled: (enabled: boolean) => void;
-
-  // 开发者设置
-  setDebugMode: (enabled: boolean) => void;
-  setLogLevel: (level: "debug" | "info" | "warn" | "error") => void;
+  setLoopMode: (loopMode: "none" | "single" | "all") => void;
+  setShowControls: (showControls: boolean) => void;
+  setEnableGestures: (enableGestures: boolean) => void;
+  setEnableHaptics: (enableHaptics: boolean) => void;
 
   // 批量设置
   updateSettings: (settings: Partial<SettingsState>) => void;
   resetSettings: () => void;
+  resetUISettings: () => void;
+  resetPlaybackSettings: () => void;
+  resetCacheSettings: () => void;
+  resetPrivacySettings: () => void;
+  resetDeveloperSettings: () => void;
   exportSettings: () => string;
   importSettings: (settings: string) => boolean;
 
   // 加载状态
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  clearError: () => void;
 }
 
 // 播放列表 Store 接口
