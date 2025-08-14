@@ -1,10 +1,20 @@
 [
   {
-    "id": "cmd-swarm-1755160415457",
-    "type": "swarm",
+    "id": "cmd-init-1755163561333",
+    "type": "init",
+    "success": false,
+    "duration": 0.41250000000002274,
+    "timestamp": 1755163561333,
+    "metadata": {
+      "error": "cwd is not defined"
+    }
+  },
+  {
+    "id": "cmd-init-1755163606574",
+    "type": "init",
     "success": true,
-    "duration": 4.515585000000044,
-    "timestamp": 1755160415461,
+    "duration": 21051.258832,
+    "timestamp": 1755163627625,
     "metadata": {}
   }
 ]
