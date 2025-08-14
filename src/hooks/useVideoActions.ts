@@ -20,21 +20,7 @@ export const useVideoActions = ({ video }: VideoActionsProps) => {
     }
   };
 
-  const handleComment = () => {
-    Alert.alert("评论", "评论功能开发中...");
-  };
-
-  const handleShare = async () => {
-    try {
-      Alert.alert("分享", "分享功能开发中...");
-    } catch (error) {
-      console.error("Error sharing:", error);
-    }
-  };
-
   return {
     handleLike,
-    handleComment,
-    handleShare,
   };
 };

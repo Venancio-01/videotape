@@ -1,5 +1,5 @@
 import type { VideoPlaybackState } from "@/hooks/useVideoPlayback";
-import { Video as ExpoVideo } from "expo-av";
+import { Video as ExpoVideo, ResizeMode } from "expo-av";
 import { Dimensions, View } from "react-native";
 
 const { width, height } = Dimensions.get("window");
@@ -23,7 +23,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         ref={playback.videoRef}
         source={{ uri: video.filePath }}
         style={{ width, height }}
-        resizeMode={ExpoVideo.RESIZE_MODE_COVER}
+        resizeMode={ResizeMode.COVER}
         shouldPlay={false}
         isLooping={true}
         isMuted={playback.isMuted}

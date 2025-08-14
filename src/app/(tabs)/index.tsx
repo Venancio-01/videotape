@@ -1,11 +1,9 @@
 import { Text } from "@/components/ui/text";
-import { VideoActions, VideoControls, VideoOverlay } from "@/components/video";
+import { VideoActions, VideoControls, VideoOverlay, VideoPlayer } from "@/components/video";
 import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
-import { useVideoStore } from "@/stores/videoStore";
-import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import * as React from "react";

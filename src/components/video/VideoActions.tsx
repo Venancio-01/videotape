@@ -1,6 +1,8 @@
 import { useVideoActions } from "@/hooks/useVideoActions";
+import { Text } from "@/components/ui/text";
 import { Heart, MessageCircle, Share } from "lucide-react-native";
 import { Animated, TouchableOpacity, View } from "react-native";
+import React from "react";
 
 interface VideoActionsProps {
   video: {
@@ -12,7 +14,7 @@ interface VideoActionsProps {
 export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
   const [isLiked, setIsLiked] = React.useState(video.isFavorite);
   const [likeAnimation] = React.useState(new Animated.Value(1));
-  const { handleLike, handleComment, handleShare } = useVideoActions({ video });
+  const { handleLike } = useVideoActions({ video });
 
   React.useEffect(() => {
     setIsLiked(video.isFavorite);
@@ -21,7 +23,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
   const onLike = () => {
     setIsLiked(!isLiked);
     handleLike();
-  };
+
     Animated.sequence([
       Animated.timing(likeAnimation, {
         toValue: 1.3,
@@ -34,7 +36,6 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
         useNativeDriver: true,
       }),
     ]).start();
-    onLike();
   };
 
   return (
@@ -52,20 +53,6 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
         <Text className="text-white text-xs">
           {isLiked ? "已收藏" : "收藏"}
         </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleComment} className="items-center">
-        <View className="bg-black/50 rounded-full p-3 mb-1">
-          <MessageCircle className="text-white" size={24} />
-        </View>
-        <Text className="text-white text-xs">评论</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleShare} className="items-center">
-        <View className="bg-black/50 rounded-full p-3 mb-1">
-          <Share className="text-white" size={24} />
-        </View>
-        <Text className="text-white text-xs">分享</Text>
       </TouchableOpacity>
     </View>
   );
