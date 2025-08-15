@@ -5,7 +5,6 @@
 import type {
   Playlist,
   PlaylistWithVideos,
-  Settings,
   Video,
   WatchHistory,
 } from "@/db/schema";
@@ -15,23 +14,6 @@ export interface VideoState {
   // 视频数据
   videos: Video[];
   currentVideo: Video | null;
-
-  // 播放状态
-  playbackState: {
-    isPlaying: boolean;
-    isPaused: boolean;
-    isLoading: boolean;
-    isBuffering: boolean;
-    position: number;
-    duration: number;
-    bufferedPosition: number;
-    volume: number;
-    playbackRate: number;
-    isLooping: boolean;
-    isMuted: boolean;
-    error: string | null;
-    errorCode: string | null;
-  };
 
   // 收藏管理
   favorites: Set<string>;
@@ -74,7 +56,7 @@ export interface PlaybackState {
   isLoading: boolean;
   isBuffering: boolean;
 
-  // 位置信息
+  // 播放进度
   position: number;
   duration: number;
   bufferedPosition: number;
@@ -224,93 +206,4 @@ export interface AppState {
   settings: SettingsState;
   ui: UIState;
   playlist: PlaylistState;
-}
-
-// Store 操作类型
-export interface StoreActions<T> {
-  // 状态访问
-  getState: () => T;
-  setState: (partial: Partial<T> | ((state: T) => Partial<T>)) => void;
-
-  // 状态订阅
-  subscribe: (listener: (state: T, prevState: T) => void) => () => void;
-
-  // 状态选择器
-  select: <U>(selector: (state: T) => U) => U;
-
-  // 状态重置
-  reset: () => void;
-
-  // 状态销毁
-  destroy: () => void;
-}
-
-// 异步操作状态
-export interface AsyncState<T> {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-}
-
-// 分页状态
-export interface PaginationState {
-  page: number;
-  pageSize: number;
-  total: number;
-  hasMore: boolean;
-}
-
-// 搜索状态
-export interface SearchState {
-  query: string;
-  results: any[];
-  loading: boolean;
-  error: string | null;
-  suggestions: string[];
-}
-
-// 缓存状态
-export interface CacheState {
-  size: number;
-  maxSize: number;
-  items: CacheItem[];
-  lastCleanup: number;
-}
-
-export interface CacheItem {
-  key: string;
-  value: any;
-  timestamp: number;
-  size: number;
-  accessCount: number;
-}
-
-// 同步状态
-export interface SyncState {
-  isSyncing: boolean;
-  lastSync: number;
-  pendingChanges: number;
-  error: string | null;
-}
-
-// 调试状态
-export interface DebugState {
-  enabled: boolean;
-  logs: DebugLog[];
-  performance: PerformanceMetrics;
-}
-
-export interface DebugLog {
-  id: string;
-  timestamp: number;
-  level: "debug" | "info" | "warn" | "error";
-  message: string;
-  data?: any;
-}
-
-export interface PerformanceMetrics {
-  stateUpdates: number;
-  renderTime: number;
-  memoryUsage: number;
-  lastUpdate: number;
 }

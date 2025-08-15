@@ -140,11 +140,6 @@ export interface QueueStore extends BaseStore<QueueState> {
   removeFromPlaylist: (playlistId: string, videoIds: string[]) => void;
   setCurrentPlaylist: (playlist: any | null) => void;
 
-  // 播放历史
-  addToHistory: (video: Video) => void;
-  removeFromHistory: (videoId: string) => void;
-  clearHistory: () => void;
-
   // 加载状态
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -177,9 +172,6 @@ export interface SettingsStore extends BaseStore<SettingsState> {
   resetSettings: () => void;
   resetUISettings: () => void;
   resetPlaybackSettings: () => void;
-  resetCacheSettings: () => void;
-  resetPrivacySettings: () => void;
-  resetDeveloperSettings: () => void;
   exportSettings: () => string;
   importSettings: (settings: string) => boolean;
 
@@ -259,90 +251,4 @@ export interface UIStore extends BaseStore<UIState> {
 
   // 状态重置
   resetUIState: () => void;
-}
-
-// Store 创建配置
-export interface StoreConfig<T, A extends BaseStore<T>> {
-  initialState: T;
-  actions: (set: (state: Partial<T>) => void, get: () => T, store: any) => A;
-  middlewares?: StoreMiddleware<T>[];
-  name?: string;
-  devTools?: boolean;
-}
-
-// Store 实例类型
-export type StoreInstance<T, A extends BaseStore<T>> = A & {
-  // 扩展的 store 实例方法
-  getInitialState: () => T;
-  getState: () => T & A;
-  setState: (partial: Partial<T & A>) => void;
-  subscribe: (listener: (state: T & A, prevState: T & A) => void) => () => void;
-  destroy: () => void;
-};
-
-// Store 工厂函数类型
-export type StoreFactory<T, A extends BaseStore<T>> = (
-  config: StoreConfig<T, A>,
-) => StoreInstance<T, A>;
-
-// Store 注册表
-export interface StoreRegistry {
-  video?: VideoStore;
-  playback?: PlaybackStore;
-  queue?: QueueStore;
-  settings?: SettingsStore;
-  ui?: UIStore;
-  playlist?: PlaylistStore;
-}
-
-// Store Hook 类型
-export type StoreHook<T, A extends BaseStore<T>> = () => A & {
-  getState: () => T & A;
-  setState: (partial: Partial<T & A>) => void;
-  subscribe: (listener: (state: T & A, prevState: T & A) => void) => () => void;
-};
-
-// 选择器 Hook 类型
-export type SelectorHook<T, A extends BaseStore<T>, U> = () => U;
-
-// Store 提供者 Props
-export interface StoreProviderProps {
-  children: React.ReactNode;
-  stores?: Partial<StoreRegistry>;
-}
-
-// Store 上下文类型
-export interface StoreContextType {
-  stores: StoreRegistry;
-  initialized: boolean;
-  error: Error | null;
-}
-
-// Store 事件类型
-export type StoreEventType =
-  | "stateChange"
-  | "action"
-  | "error"
-  | "reset"
-  | "destroy"
-  | "hydrate"
-  | "persist"
-  | "sync";
-
-export interface StoreEvent {
-  type: StoreEventType;
-  storeName: string;
-  timestamp: number;
-  data?: any;
-  error?: Error;
-}
-
-// Store 监听器类型
-export type StoreListener = (event: StoreEvent) => void;
-
-// Store 订阅选项
-export interface StoreSubscriptionOptions {
-  storeNames?: string[];
-  eventTypes?: StoreEventType[];
-  filter?: (event: StoreEvent) => boolean;
 }

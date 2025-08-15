@@ -11,7 +11,7 @@ import { H4 } from "@/components/ui/typography";
 import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
 import { Check } from "@/lib/icons/Check";
 import { getItem, setItem } from "@/lib/storage";
-import { useSettingsStore } from "@/stores/settingsStore";
+// 主题设置暂时使用本地存储，不依赖store
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
 import { useCallback, useMemo, useState } from "react";
@@ -50,7 +50,6 @@ export const ThemeSettingItem = () => {
     getItem<"light" | "dark" | "system">("theme"),
   );
   const { colorScheme, setColorScheme } = useColorScheme();
-  const { setTheme: setSettingsTheme } = useSettingsStore();
 
   const { dismiss } = useBottomSheetModal();
 
@@ -82,11 +81,10 @@ export const ThemeSettingItem = () => {
     (value: "light" | "dark" | "system") => {
       setColorScheme(value);
       setItem("theme", value);
-      setSettingsTheme(value);
       setSelectedTheme(value);
       dismiss();
     },
-    [selectedTheme, colorScheme, setColorScheme, setSettingsTheme],
+    [selectedTheme, colorScheme, setColorScheme],
   );
   return (
     <BottomSheet>

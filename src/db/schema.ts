@@ -16,8 +16,6 @@ export const videoTable = sqliteTable("videos", {
   duration: real("duration").notNull(), // 视频时长（秒）
   fileSize: integer("file_size").notNull(), // 文件大小（字节）
   format: text("format").notNull(), // 视频格式（mp4, mov, etc.）
-  resolutionWidth: integer("resolution_width"), // 视频分辨率宽度
-  resolutionHeight: integer("resolution_height"), // 视频分辨率高度
   watchProgress: real("watch_progress").default(0), // 观看进度（秒）
   isFavorite: integer("is_favorite", { mode: "boolean" }).default(false), // 是否收藏
   playCount: integer("play_count").default(0), // 播放次数
@@ -121,10 +119,6 @@ export type Settings = z.infer<typeof SettingsSchema>;
 // 扩展类型，包含关联数据
 export type VideoWithHistory = Video & {
   watchHistory?: WatchHistory; // 观看历史记录
-  resolution?: {
-    width: number;
-    height: number;
-  }; // 视频分辨率
   playlists?: Playlist[]; // 所属的播放列表
 };
 

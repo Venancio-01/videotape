@@ -6,7 +6,6 @@ import type { Video } from "@/db/schema";
 import { MiddlewareCombinations } from "@/middleware";
 import type { VideoFilter, VideoState } from "@/types/stateTypes";
 import type { VideoStore } from "@/types/storeTypes";
-import { StateUtils } from "@/utils/stateUtils";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -15,23 +14,6 @@ const initialState: VideoState = {
   // 视频数据
   videos: [],
   currentVideo: null,
-
-  // 播放状态
-  playbackState: {
-    isPlaying: false,
-    isPaused: false,
-    isLoading: false,
-    isBuffering: false,
-    position: 0,
-    duration: 0,
-    bufferedPosition: 0,
-    volume: 1.0,
-    playbackRate: 1.0,
-    isLooping: false,
-    isMuted: false,
-    error: null,
-    errorCode: null,
-  },
 
   // 收藏管理
   favorites: new Set(),
@@ -138,66 +120,11 @@ export const useVideoStore = create<VideoStore>()(
           },
         })),
 
-      // 播放控制
+      // 当前视频设置
       setCurrentVideo: (video: Video | null) =>
         set((state) => ({
           ...state,
           currentVideo: video,
-          playbackState: {
-            ...state.playbackState,
-            position: 0,
-            duration: video?.duration || 0,
-          },
-        })),
-
-      playVideo: (videoId: string) =>
-        set((state) => {
-          const video = state.videos.find((v) => v.id === videoId);
-          if (!video) return state;
-
-          return {
-            ...state,
-            currentVideo: video,
-            playbackState: {
-              ...state.playbackState,
-              isPlaying: true,
-              isPaused: false,
-              isLoading: false,
-              position: 0,
-              duration: video.duration,
-            },
-          };
-        }),
-
-      pauseVideo: () =>
-        set((state) => ({
-          ...state,
-          playbackState: {
-            ...state.playbackState,
-            isPlaying: false,
-            isPaused: true,
-          },
-        })),
-
-      resumeVideo: () =>
-        set((state) => ({
-          ...state,
-          playbackState: {
-            ...state.playbackState,
-            isPlaying: true,
-            isPaused: false,
-          },
-        })),
-
-      stopVideo: () =>
-        set((state) => ({
-          ...state,
-          playbackState: {
-            ...state.playbackState,
-            isPlaying: false,
-            isPaused: false,
-            position: 0,
-          },
         })),
 
       // 收藏管理
@@ -371,7 +298,6 @@ export const videoSelectors = {
   // 基础选择器
   getAllVideos: (state: VideoState) => state.videos,
   getCurrentVideo: (state: VideoState) => state.currentVideo,
-  getIsPlaying: (state: VideoState) => state.playbackState.isPlaying,
   getIsLoading: (state: VideoState) => state.isLoading,
 
   // 收藏相关
@@ -470,7 +396,7 @@ export const videoSelectors = {
   },
 
   // 观看历史
-  getRecentHistory: (state: VideoState, limit = 10) =>
+  getRecentHistory: (state: VideoStore, limit = 10) =>
     state.watchHistory.slice(0, limit),
 
   // 搜索建议
@@ -491,9 +417,9 @@ export const videoSelectors = {
   },
 };
 
-// 创建记忆化 Hook
+// 创建记忆化 Hook - 使用 Zustand 内置的记忆化
 export const useVideoSelector = <T>(selector: (state: VideoState) => T): T => {
-  return useVideoStore(StateUtils.createSelector(selector));
+  return useVideoStore(selector);
 };
 
 // 预定义的 Hook

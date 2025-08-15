@@ -37,7 +37,6 @@ import {
   Filter,
   FolderOpen,
   GalleryHorizontal,
-  Github,
   Heart,
   Info,
   Italic,

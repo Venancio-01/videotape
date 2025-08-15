@@ -1,11 +1,11 @@
 import { getDatabase } from "@/db/drizzle";
 import type { Playlist, Video } from "@/db/schema";
 import { playlistTable, playlistVideoTable, videoTable } from "@/db/schema";
+import type { DirectoryItem, FileItem } from "@/types/file";
 import type {
   CreatePlaylistOptions,
   CreatePlaylistResult,
-} from "@/playlist/types/playlist";
-import type { DirectoryItem, FileItem } from "@/types/file";
+} from "@/types/playlist";
 import { desc, eq, sql } from "drizzle-orm";
 
 /**
@@ -87,13 +87,11 @@ export class PlaylistService {
                 filePath: video.filePath,
                 thumbnailPath: video.thumbnailPath,
                 duration: video.duration || 0,
-                fileSize: video.fileSize || 0,
-                format: video.format || "unknown",
-                resolutionWidth: video.resolutionWidth || 0,
-                resolutionHeight: video.resolutionHeight || 0,
-                watchProgress: video.watchProgress || 0,
-                isFavorite: video.isFavorite || false,
-                playCount: video.playCount || 0,
+                fileSize: v.fileSize || 0,
+                format: v.format || "unknown",
+                watchProgress: v.watchProgress || 0,
+                isFavorite: v.isFavorite || false,
+                playCount: v.playCount || 0,
               };
 
               const [newVideo] = await tx
@@ -296,8 +294,6 @@ export class PlaylistService {
           duration: videoTable.duration,
           fileSize: videoTable.fileSize,
           format: videoTable.format,
-          resolutionWidth: videoTable.resolutionWidth,
-          resolutionHeight: videoTable.resolutionHeight,
           watchProgress: videoTable.watchProgress,
           isFavorite: videoTable.isFavorite,
           playCount: videoTable.playCount,

@@ -3,15 +3,8 @@
  * 用于展示媒体文件目录结构并支持多选
  */
 
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import { MediaFileService } from "@/services/mediaFileService";
 import type { DirectoryNode } from "@/services/mediaFileService";
 import {
@@ -25,8 +18,14 @@ import {
   Music,
   Video,
 } from "lucide-react-native";
-import { cn } from "@/lib/utils";
-
+import React from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface DirectoryTreeProps {
   treeData: DirectoryNode;
@@ -95,7 +94,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
     return node.isExpanded ? (
       <ChevronDown size={14} className="text-muted-foreground" />
     ) : (
-        <ChevronRight size={14} className="text-muted-foreground" />
+      <ChevronRight size={14} className="text-muted-foreground" />
     );
   };
 
@@ -115,7 +114,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
       if (durationText) parts.push(durationText);
 
       return parts.join(" • ");
-    } if (node.mediaFile) {
+    }
+    if (node.mediaFile) {
       const parts = [];
       if (node.mediaFile.fileSize) {
         parts.push(mediaService.formatFileSize(node.mediaFile.fileSize));
@@ -148,9 +148,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           <View className="w-5 items-center justify-center">
             {getExpandIcon()}
           </View>
-          <View className="w-5 items-center justify-center">
-            {getIcon()}
-          </View>
+          <View className="w-5 items-center justify-center">{getIcon()}</View>
         </View>
 
         <View className="flex-1 justify-center">
@@ -262,7 +260,8 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
 
     if (selectedFileIds.length === 0) {
       return "unchecked";
-    } if (selectedFileIds.length === allFileIds.length) {
+    }
+    if (selectedFileIds.length === allFileIds.length) {
       return "checked";
     }
     return "indeterminate";

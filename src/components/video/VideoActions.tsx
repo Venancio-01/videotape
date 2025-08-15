@@ -1,14 +1,7 @@
 import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
-import { useVideoActions } from "@/hooks/useVideoActions";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
-import {
-  Heart,
-  MessageCircle,
-  Share,
-  Volume2,
-  VolumeX,
-} from "lucide-react-native";
+import { Heart, Volume2, VolumeX } from "lucide-react-native";
 import React from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
 
@@ -17,13 +10,9 @@ interface VideoActionsProps {
   videoRef?: React.RefObject<any>;
 }
 
-export const VideoActions: React.FC<VideoActionsProps> = ({
-  video,
-  videoRef,
-}) => {
+export const VideoActions: React.FC<VideoActionsProps> = ({ video }) => {
   const [isLiked, setIsLiked] = React.useState(video.isFavorite);
   const [likeAnimation] = React.useState(new Animated.Value(1));
-  const { handleLike } = useVideoActions({ video });
 
   const { isMuted, toggleMute } = useVideoPlayback({
     video,
@@ -36,7 +25,6 @@ export const VideoActions: React.FC<VideoActionsProps> = ({
 
   const onLike = () => {
     setIsLiked(!isLiked);
-    handleLike();
 
     Animated.sequence([
       Animated.timing(likeAnimation, {
@@ -74,7 +62,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onMuteToggle} className="items-center">
-        <View className="bg-black/50 rounded-full p-3 mb-1">
+        <View className="rounded-full p-3 mb-1">
           {isMuted ? (
             <VolumeX className="text-white" size={24} />
           ) : (

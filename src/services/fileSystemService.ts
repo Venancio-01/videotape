@@ -3,20 +3,16 @@
  * 基于 Expo File System 的文件操作服务
  */
 
-import {
-  DirectoryItem,
-  type FileItem,
-  type FileOperationResult,
-  type FileSearchOptions,
-  type FileSystemStats,
-  type FileWatchEvent,
-  type IFileSystemService,
-  type IVideoService,
+import type {
+  FileItem,
+  FileOperationResult,
+  FileSearchOptions,
+  FileSystemStats,
+  FileWatchEvent,
+  IFileSystemService,
+  IVideoService,
 } from "@/types/file";
-import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
-import * as Sharing from "expo-sharing";
 
 export class FileSystemService implements IFileSystemService {
   private static instance: FileSystemService;

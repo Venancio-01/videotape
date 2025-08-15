@@ -90,20 +90,14 @@ export const createCombinedMiddleware = <T>(
 
 // 预定义的中间件组合
 export const MiddlewareCombinations = {
+  // 媒体存储中间件
+  mediaStore: createCombinedMiddleware("videoStore"),
+
   // 视频存储中间件
   videoStore: createCombinedMiddleware("videoStore"),
 
   // 播放存储中间件
   playbackStore: createCombinedMiddleware("playbackStore"),
-
-  // 队列存储中间件
-  queueStore: createCombinedMiddleware("queueStore"),
-
-  // 设置存储中间件
-  settingsStore: createCombinedMiddleware("settingsStore"),
-
-  // UI 存储中间件
-  uiStore: createCombinedMiddleware("uiStore"),
 
   // 开发模式中间件（包含所有功能）
   development: <T>(storeName: keyof typeof PersistConfigs) =>

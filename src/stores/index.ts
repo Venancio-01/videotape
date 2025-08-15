@@ -3,32 +3,7 @@
  * 基于 Zustand 构建的高效、轻量级状态管理解决方案
  */
 
-// 导出所有 Store
-export * from "./videoStore";
-export * from "./playbackStore";
-export * from "./queueStore";
-export * from "./settingsStore";
-export * from "./uiStore";
-export * from "./playlistStore";
-
-// 导出所有中间件
-export * from "../middleware/persistMiddleware";
-export * from "../middleware/loggerMiddleware";
-export * from "../middleware/devToolsMiddleware";
-
-// 导出所有 Hooks
-export * from "../hooks/useVideoStore";
-export * from "../hooks/usePlaybackStore";
-export * from "../hooks/useSettingsStore";
-export * from "../hooks/usePlaylistStore";
-
-// 导出工具函数
-export * from "../utils/stateUtils";
-export * from "../utils/persistUtils";
-export * from "../utils/syncUtils";
-export * from "../utils/debugUtils";
-
-// 导出类型定义
-export * from "../types/stateTypes";
-export * from "../types/storeTypes";
-export * from "../types/middlewareTypes";
+// === 核心状态管理 Store ===
+export * from "./mediaStore"; // 统一媒体内容管理（视频 + 播放列表）
+export * from "./playbackStore"; // 播放控制和状态管理
+export * from "./videoStore"; // 视频状态管理

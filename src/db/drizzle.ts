@@ -13,10 +13,11 @@ export const initialize = (): Promise<ExpoSQLiteDatabase> => {
 };
 
 export const getDatabase = (): ExpoSQLiteDatabase => {
-  if (!db) {
-    throw new Error("Database is not initialized. Call initialize() first.");
-  }
   return db;
+};
+
+export const getExpoDatabase = () => {
+  return expoDb;
 };
 
 export const useMigrationHelper = () => {

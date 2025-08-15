@@ -190,8 +190,6 @@ export interface Video {
   duration: number;
   fileSize: number;
   format: string;
-  resolutionWidth?: number;
-  resolutionHeight?: number;
   tags: string[];
   category: string;
   watchProgress: number;
@@ -293,7 +291,6 @@ export interface Settings {
   enableHaptics: boolean;
   skipIntros: boolean;
   skipCredits: boolean;
-  preferredQuality: string;
   subtitleLanguage: string;
   audioLanguage: string;
   maxCacheSize: number;

@@ -2,10 +2,10 @@
  * 媒体文件加载状态组件
  */
 
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { RefreshCw, AlertCircle, CheckCircle } from "lucide-react-native";
 import { cn } from "@/lib/utils";
+import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react-native";
+import type React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export type LoadingState = "loading" | "error" | "success" | "empty";
 
@@ -49,7 +49,7 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
 
   const getStateMessage = () => {
     if (message) return message;
-    
+
     switch (state) {
       case "loading":
         return "正在扫描媒体文件...";
@@ -72,9 +72,11 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
       const formatFileSize = (bytes: number): string => {
         const sizes = ["B", "KB", "MB", "GB"];
         if (bytes === 0) return "0 B";
-        
+
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
-        return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
+        return (
+          Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i]
+        );
       };
 
       const formatDuration = (seconds: number): string => {
@@ -99,7 +101,7 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
   const getRetryButton = () => {
     if (state === "error" && onRetry) {
       return (
-        <TouchableOpacity 
+        <TouchableOpacity
           className="flex-row items-center bg-card px-4 py-2 rounded-lg border border-border"
           onPress={onRetry}
         >
@@ -113,22 +115,20 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
 
   return (
     <View className="flex-1 items-center justify-center p-6">
-      <View className="mb-4">
-        {getStateIcon()}
-      </View>
-      
+      <View className="mb-4">{getStateIcon()}</View>
+
       <View className="items-center mb-6">
         <Text className="text-base font-semibold text-foreground text-center mb-1">
           {getStateMessage()}
         </Text>
-        
+
         {getSecondaryMessage() && (
           <Text className="text-sm text-muted-foreground text-center">
             {getSecondaryMessage()}
           </Text>
         )}
       </View>
-      
+
       {getRetryButton()}
     </View>
   );

@@ -66,18 +66,6 @@ export default function RootLayout() {
                 name="(tabs)"
                 options={{ title: "Videotape", headerShown: false }}
               />
-              <Stack.Screen
-                options={{
-                  headerShadowVisible: false,
-                }}
-                name="upload"
-              />
-              <Stack.Screen
-                options={{
-                  headerShadowVisible: false,
-                }}
-                name="video/[id]"
-              />
             </Stack>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

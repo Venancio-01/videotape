@@ -1,6 +1,8 @@
+import DirectoryTree from "@/components/DirectoryTree";
+import MediaLoadingState, {
+  type LoadingState,
+} from "@/components/MediaLoadingState";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Text } from "@/components/ui/text";
 import {
   Dialog,
   DialogContent,
@@ -9,19 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
+import { useMediaPermissions } from "@/hooks/useMediaPermissions";
+import { type MediaFile, MediaFileService } from "@/services/mediaFileService";
 import { PlaylistService } from "@/services/playlistService";
-import { MediaFileService, type MediaFile } from "@/services/mediaFileService";
 import { Stack, useRouter } from "expo-router";
 import { RefreshCw } from "lucide-react-native";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMediaPermissions } from "@/hooks/useMediaPermissions";
-import DirectoryTree from "@/components/DirectoryTree";
-import MediaLoadingState, {
-  type LoadingState,
-} from "@/components/MediaLoadingState";
 
 export default function CreatePlaylistScreen() {
   const router = useRouter();
@@ -35,9 +35,7 @@ export default function CreatePlaylistScreen() {
   const [showNameDialog, setShowNameDialog] = useState(false);
 
   const mediaService = MediaFileService.getInstance();
-  const {
-    requestMediaPermissions,
-  } = useMediaPermissions();
+  const { requestMediaPermissions } = useMediaPermissions();
 
   // 加载媒体文件和构建目录树
   const loadMediaFiles = async (forceRefresh = false) => {
@@ -51,7 +49,7 @@ export default function CreatePlaylistScreen() {
       }
 
       const tree = await mediaService.buildFlatDirectoryTree(forceRefresh);
-      console.log('🚀 - loadMediaFiles - tree:', tree)
+      console.log("🚀 - loadMediaFiles - tree:", tree);
       setDirectoryTree(tree);
       setMediaStats({
         totalFiles: tree.totalFiles,
@@ -94,8 +92,6 @@ export default function CreatePlaylistScreen() {
       duration: mediaFile.duration,
       fileSize: mediaFile.fileSize || 0,
       format: mediaFile.mimeType?.split("/")[1] || "unknown",
-      resolutionWidth: mediaFile.width,
-      resolutionHeight: mediaFile.height,
       watchProgress: 0,
       isFavorite: false,
       playCount: 0,
@@ -261,7 +257,8 @@ export default function CreatePlaylistScreen() {
             <DialogHeader>
               <DialogTitle>输入播放列表名称</DialogTitle>
               <DialogDescription>
-                请为您选择的 {selectedMediaFiles.length} 个视频文件输入播放列表名称
+                请为您选择的 {selectedMediaFiles.length}{" "}
+                个视频文件输入播放列表名称
               </DialogDescription>
             </DialogHeader>
             <View className="grid gap-4 py-4">

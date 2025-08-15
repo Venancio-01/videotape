@@ -13,6 +13,7 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
 import * as React from "react";
 import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function VideoHome() {
   const { success, error } = useMigrationHelper();
@@ -48,21 +49,26 @@ const VideoItem: React.FC<VideoItemProps> = ({
   onVideoPress,
 }) => {
   const playback = useVideoPlayback({ video, isVisible });
+  const insets = useSafeAreaInsets();
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onVideoPress}
-      className="flex-1 bg-black"
+      className="bg-black"
+      style={{
+        height: height - insets.top - 80,
+        marginTop: insets.top,
+        marginBottom: 80,
+        width: width,
+      }}
     >
       <View className="flex-1 relative">
         <VideoPlayer video={video} playback={playback} />
         <VideoOverlay video={video} />
         <VideoControls
           isPlaying={playback.isPlaying}
-          isMuted={playback.isMuted}
           onPlayPause={playback.togglePlayPause}
-          onToggleMute={playback.toggleMute}
         />
         <VideoActions video={video} />
       </View>
@@ -102,13 +108,12 @@ function ScreenContent() {
   const renderItem = React.useCallback(
     ({ item, index }: { item: Video; index: number }) => {
       return (
-        // <VideoItem
-        //   video={item}
-        //   isVisible={index === currentIndex}
-        //   onVideoPress={() => {
-        //   }}
-        // />
-        <></>
+        <VideoItem
+          video={item}
+          isVisible={index === currentIndex}
+          onVideoPress={() => {}}
+        />
+        // <></>
       );
     },
     [currentIndex],
@@ -148,6 +153,10 @@ function ScreenContent() {
           initialNumToRender={3}
           maxToRenderPerBatch={5}
           windowSize={5}
+          contentContainerStyle={{
+            paddingTop: 0,
+            paddingBottom: 0,
+          }}
         />
       ) : (
         <View className="flex-1 items-center justify-center bg-black">

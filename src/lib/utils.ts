@@ -30,16 +30,3 @@ export function formatFileSize(bytes: number): string {
 
   return `${size.toFixed(1)} ${units[unitIndex]}`;
 }
-
-// 格式化分辨率
-export function formatResolution(width?: number, height?: number): string {
-  if (!width || !height) return "";
-
-  if (width >= 3840) return "4K";
-  if (width >= 2560) return "2K";
-  if (width >= 1920) return "1080p";
-  if (width >= 1280) return "720p";
-  if (width >= 854) return "480p";
-
-  return `${width}x${height}`;
-}

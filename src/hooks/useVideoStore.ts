@@ -7,7 +7,6 @@ import {
   videoSelectors,
 } from "@/stores/videoStore";
 import { useVideoSelector } from "@/stores/videoStore";
-import { useMemo } from "react";
 
 // 基础 Hook
 export const useVideoStore = baseUseVideoStore;
@@ -16,7 +15,6 @@ export const useVideoStore = baseUseVideoStore;
 export const useAllVideos = () => useVideoSelector(videoSelectors.getAllVideos);
 export const useCurrentVideo = () =>
   useVideoSelector(videoSelectors.getCurrentVideo);
-export const useIsPlaying = () => useVideoSelector(videoSelectors.getIsPlaying);
 export const useIsLoading = () => useVideoSelector(videoSelectors.getIsLoading);
 export const useFavoriteVideos = () =>
   useVideoSelector(videoSelectors.getFavoriteVideos);
@@ -32,10 +30,6 @@ export const useVideoActions = () => {
   const updateVideo = useVideoStore((state) => state.updateVideo);
   const setVideos = useVideoStore((state) => state.setVideos);
   const setCurrentVideo = useVideoStore((state) => state.setCurrentVideo);
-  const playVideo = useVideoStore((state) => state.playVideo);
-  const pauseVideo = useVideoStore((state) => state.pauseVideo);
-  const resumeVideo = useVideoStore((state) => state.resumeVideo);
-  const stopVideo = useVideoStore((state) => state.stopVideo);
   const toggleFavorite = useVideoStore((state) => state.toggleFavorite);
   const addToFavorites = useVideoStore((state) => state.addToFavorites);
   const removeFromFavorites = useVideoStore(
@@ -63,10 +57,6 @@ export const useVideoActions = () => {
     updateVideo,
     setVideos,
     setCurrentVideo,
-    playVideo,
-    pauseVideo,
-    resumeVideo,
-    stopVideo,
     toggleFavorite,
     addToFavorites,
     removeFromFavorites,
@@ -144,30 +134,6 @@ export const useVideoFavorites = () => {
     removeFromFavorites,
     favoritesCount,
     isFavorite,
-  };
-};
-
-// 播放相关 Hooks
-export const useVideoPlayback = () => {
-  const currentVideo = useVideoSelector(videoSelectors.getCurrentVideo);
-  const playbackState = useVideoStore((state) => state.playbackState);
-  const playVideo = useVideoStore((state) => state.playVideo);
-  const pauseVideo = useVideoStore((state) => state.pauseVideo);
-  const resumeVideo = useVideoStore((state) => state.resumeVideo);
-  const stopVideo = useVideoStore((state) => state.stopVideo);
-  const updateWatchProgress = useVideoStore(
-    (state) => state.updateWatchProgress,
-  );
-
-  return {
-    currentVideo,
-    playbackState,
-    playVideo,
-    pauseVideo,
-    resumeVideo,
-    stopVideo,
-    updateWatchProgress,
-    hasCurrentVideo: currentVideo !== null,
   };
 };
 
@@ -250,14 +216,13 @@ export const useVideoBatchOperations = () => {
 // 复合 Hook - 提供完整的视频管理功能
 export const useVideoManager = () => {
   const videos = useAllVideos();
-  const currentVideo = useCurrentVideo();
+  const currentVideo = useVideoSelector(videoSelectors.getCurrentVideo);
   const favorites = useVideoSelector(videoSelectors.getFavorites);
   const stats = useVideoStats();
   const actions = useVideoActions();
   const search = useVideoSearch();
   const pagination = useVideoPagination();
   const favoritesManager = useVideoFavorites();
-  const playback = useVideoPlayback();
   const history = useVideoHistory();
   const monitor = useVideoStateMonitor();
   const batchOps = useVideoBatchOperations();
@@ -276,7 +241,6 @@ export const useVideoManager = () => {
     search,
     pagination,
     favoritesManager,
-    playback,
     history,
     monitor,
     batchOps,
