@@ -36,18 +36,6 @@ export default function PlaylistsScreen() {
     db.select().from(playlistTable).orderBy(desc(playlistTable.createdAt)),
   );
 
-  const handleSetCurrentPlaylist = (playlist: Playlist) => {
-    if (currentPlaylistId === playlist.id) {
-      // 如果已经是当前播放列表，则取消设置
-      setCurrentPlaylistId(null);
-      Alert.alert("已取消", "已取消设置当前播放列表");
-    } else {
-      // 设置新的当前播放列表
-      setCurrentPlaylistId(playlist.id);
-      Alert.alert("设置成功", `"${playlist.name}" 已设置为当前播放列表`);
-    }
-  };
-
   const handlePlayPlaylist = async (playlist: Playlist) => {
     if (loadingPlaylists.has(playlist.id)) {
       return;

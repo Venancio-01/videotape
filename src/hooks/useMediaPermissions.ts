@@ -6,7 +6,6 @@
 import { Audio } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
 import { useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
 
 export interface PermissionStatus {
   media: "granted" | "denied" | "undetermined" | "limited";

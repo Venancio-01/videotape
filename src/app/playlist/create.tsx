@@ -3,94 +3,106 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
 import { PlaylistService } from "@/services/playlistService";
-import { NativeModules } from "react-native";
-const { PersistableDirModule } = NativeModules;
+import { MediaFileService, type MediaFile } from "@/services/mediaFileService";
+import { Stack, useRouter } from "expo-router";
+import { Trash2, Video as VideoIcon, RefreshCw } from "lucide-react-native";
+import { useState, useEffect } from "react";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useMediaPermissions } from "@/hooks/useMediaPermissions";
+import DirectoryTree from "@/components/DirectoryTree";
+import MediaLoadingState, {
+  type LoadingState,
+} from "@/components/MediaLoadingState";
 
 // 格式化时长显示
 const formatDuration = (seconds: number): string => {
   if (seconds <= 0) return "0:00";
-  
+
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = Math.floor(seconds % 60);
-  
+
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  } else {
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   }
+
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
-import { Stack, useRouter } from "expo-router";
-import { Trash2, Video as VideoIcon } from "lucide-react-native";
-import { useState } from "react";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreatePlaylistScreen() {
   const router = useRouter();
   const [playlistName, setPlaylistName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedVideos, setSelectedVideos] = useState<
-    Array<{
-      uri: string, 
-      name: string, 
-      size: number,
-      duration: number,
-      width: number,
-      height: number,
-      resolutionWidth: number,
-      resolutionHeight: number,
-      format: string,
-      mimeType: string
-    }>
-  >([]);
+  const [selectedMediaFiles, setSelectedMediaFiles] = useState<MediaFile[]>([]);
+  const [directoryTree, setDirectoryTree] = useState<any>(null);
+  const [loadingState, setLoadingState] = useState<LoadingState>("loading");
+  const [mediaStats, setMediaStats] = useState<any>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 选择视频文件
-  const handleSelectVideos = async () => {
+  const mediaService = MediaFileService.getInstance();
+  const {
+    status,
+    loading: permissionLoading,
+    requestMediaPermissions,
+  } = useMediaPermissions();
+
+  // 加载媒体文件和构建目录树
+  const loadMediaFiles = async (forceRefresh = false) => {
     try {
-      const result = await PersistableDirModule.getVideosFromDir();
-      
-      if (result && result.length > 0) {
-        setSelectedVideos((prev) => [...prev, ...result]);
+      setLoadingState("loading");
+
+      const hasPermission = await requestMediaPermissions();
+      if (!hasPermission) {
+        setLoadingState("error");
+        return;
+      }
+
+      const tree = await mediaService.buildDirectoryTree(forceRefresh);
+      setDirectoryTree(tree);
+      setMediaStats({
+        totalFiles: tree.totalFiles,
+        totalSize: tree.totalSize,
+        totalDuration: tree.totalDuration,
+      });
+
+      if (tree.totalFiles === 0) {
+        setLoadingState("empty");
       } else {
-        Alert.alert("提示", "未找到视频文件，请选择包含视频文件的目录");
+        setLoadingState("success");
       }
     } catch (error) {
-      console.error("选择视频失败:", error);
-      Alert.alert("错误", "选择视频文件失败：" + (error.message || "未知错误"));
+      console.error("加载媒体文件失败:", error);
+      setLoadingState("error");
+    } finally {
+      setRefreshing(false);
     }
   };
 
-  // 移除选中的视频
-  const removeVideo = (index: number) => {
-    setSelectedVideos((prev) => prev.filter((_, i) => i !== index));
+  // 刷新媒体文件
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    mediaService.clearCache();
+    await loadMediaFiles(true);
   };
 
-  // 将原生模块返回的视频转换为 Video 类型
-  const convertAssetToVideo = (
-    asset: {
-      uri: string, 
-      name: string, 
-      size: number,
-      duration: number,
-      width: number,
-      height: number,
-      resolutionWidth: number,
-      resolutionHeight: number,
-      format: string,
-      mimeType: string
-    },
-  ): Video => {
+  // 处理文件选择变化
+  const handleSelectionChange = (selectedFiles: MediaFile[]) => {
+    setSelectedMediaFiles(selectedFiles);
+  };
+
+  // 将 MediaFile 转换为 Video 类型
+  const convertMediaFileToVideo = (mediaFile: MediaFile): Video => {
     return {
-      id: asset.uri,
-      title: asset.name,
-      filePath: asset.uri,
+      id: mediaFile.id,
+      title: mediaFile.filename,
+      filePath: mediaFile.uri,
       thumbnailPath: null,
-      duration: asset.duration,
-      fileSize: asset.size,
-      format: asset.format,
-      resolutionWidth: asset.resolutionWidth,
-      resolutionHeight: asset.resolutionHeight,
+      duration: mediaFile.duration,
+      fileSize: mediaFile.fileSize || 0,
+      format: mediaFile.mimeType?.split("/")[1] || "unknown",
+      resolutionWidth: mediaFile.width,
+      resolutionHeight: mediaFile.height,
       watchProgress: 0,
       isFavorite: false,
       playCount: 0,
@@ -101,7 +113,17 @@ export default function CreatePlaylistScreen() {
 
   // 获取所有选中的视频
   const getAllSelectedVideos = () => {
-    return selectedVideos.map(convertAssetToVideo);
+    return selectedMediaFiles.map(convertMediaFileToVideo);
+  };
+
+  // 移除选中的视频
+  const removeVideo = (index: number) => {
+    setSelectedMediaFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // 清除所有选择
+  const clearSelection = () => {
+    setSelectedMediaFiles([]);
   };
 
   // 创建播放列表
@@ -157,16 +179,33 @@ export default function CreatePlaylistScreen() {
     }
   };
 
+  // 页面加载时自动获取媒体文件
+  useEffect(() => {
+    loadMediaFiles();
+  }, []);
+
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
       <Stack.Screen
         options={{
           title: "创建播放列表",
+          headerRight: () => (
+            <TouchableOpacity
+              className="mr-4"
+              onPress={handleRefresh}
+              disabled={refreshing}
+            >
+              <RefreshCw
+                size={20}
+                className={`text-foreground ${refreshing ? "animate-spin" : ""}`}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
-      <View className="flex-1 p-6">
+      <View className="flex-1">
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-          <View className="space-y-6">
+          <View className="p-6 space-y-6">
             {/* 播放列表名称 */}
             <View>
               <Text className="text-base font-medium mb-2">播放列表名称</Text>
@@ -178,88 +217,77 @@ export default function CreatePlaylistScreen() {
               />
             </View>
 
-            {/* 视频选择区域 */}
-            <View>
-              <Text className="text-base font-medium mb-3">选择视频</Text>
+            {/* 媒体文件选择区域 */}
+            <View className="flex-1">
+              <View className="flex-row justify-between items-center mb-3">
+                <Text className="text-base font-medium">选择媒体文件</Text>
+                {selectedMediaFiles.length > 0 && (
+                  <TouchableOpacity onPress={clearSelection} className="p-1">
+                    <Trash2 size={16} className="text-destructive" />
+                  </TouchableOpacity>
+                )}
+              </View>
 
-              {/* 选择按钮 */}
-              <TouchableOpacity
-                onPress={handleSelectVideos}
-                className="bg-card border border-border rounded-lg p-3 items-center"
-              >
-                <VideoIcon size={20} className="text-primary mb-1" />
-                <Text className="text-sm text-foreground">选择视频目录</Text>
-              </TouchableOpacity>
+              {/* 加载状态 */}
+              {loadingState !== "success" && (
+                <View className="h-64">
+                  <MediaLoadingState
+                    state={loadingState}
+                    stats={mediaStats}
+                    onRetry={loadMediaFiles}
+                  />
+                </View>
+              )}
 
-              {/* 已选择的视频列表 */}
-              {selectedVideos.length > 0 && (
-                <View className="space-y-3">
-                  <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-sm font-medium text-muted-foreground">
-                      已选择视频 ({selectedVideos.length})
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => setSelectedVideos([])}
-                      className="p-1"
-                    >
-                      <Trash2 size={16} className="text-destructive" />
-                    </TouchableOpacity>
-                  </View>
-                  <View className="space-y-2">
-                    {selectedVideos.map((video, index) => (
-                      <View
-                        key={`${video.uri}-${index}`}
-                        className="bg-card border border-border rounded-lg p-3 flex-row justify-between items-center"
-                      >
-                        <View className="flex-1">
-                          <Text
-                            className="text-sm font-medium text-foreground"
-                            numberOfLines={1}
-                          >
-                            {video.name}
-                          </Text>
-                          <Text className="text-xs text-muted-foreground">
-                            {video.format.toUpperCase()} • {video.resolutionWidth}×{video.resolutionHeight} • {formatDuration(video.duration)} • {(video.size / 1024 / 1024).toFixed(1)} MB
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          onPress={() => removeVideo(index)}
-                          className="p-1"
-                        >
-                          <Trash2 size={16} className="text-destructive" />
-                        </TouchableOpacity>
-                      </View>
-                    ))}
-                  </View>
-                  <View className="bg-muted/50 rounded-lg p-3">
-                    <Text className="text-sm font-medium text-foreground">
-                      总计: {getAllSelectedVideos().length} 个视频
-                    </Text>
-                  </View>
+              {/* 目录树 */}
+              {loadingState === "success" && directoryTree && (
+                <View className="border border-border rounded-lg bg-card">
+                  <DirectoryTree
+                    treeData={directoryTree.root}
+                    onSelectionChange={handleSelectionChange}
+                  />
+                </View>
+              )}
+
+              {/* 已选择的文件统计 */}
+              {selectedMediaFiles.length > 0 && (
+                <View className="mt-4 bg-muted/50 rounded-lg p-3">
+                  <Text className="text-sm font-medium text-foreground">
+                    已选择 {selectedMediaFiles.length} 个文件
+                  </Text>
+                  <Text className="text-xs text-muted-foreground mt-1">
+                    总时长:{" "}
+                    {formatDuration(
+                      selectedMediaFiles.reduce(
+                        (sum, file) => sum + file.duration,
+                        0,
+                      ),
+                    )}
+                  </Text>
                 </View>
               )}
             </View>
-
-            {/* 创建按钮 */}
-            <View className="pt-4">
-              <Button
-                onPress={handleCreatePlaylist}
-                disabled={
-                  isLoading ||
-                  !playlistName.trim() ||
-                  getAllSelectedVideos().length === 0
-                }
-                className="w-full"
-              >
-                <Text>
-                  {isLoading
-                    ? "创建中..."
-                    : `创建播放列表${getAllSelectedVideos().length > 0 ? ` (${getAllSelectedVideos().length} 个视频)` : ""}`}
-                </Text>
-              </Button>
-            </View>
           </View>
         </ScrollView>
+
+        {/* 创建按钮 */}
+        <View className="p-6 pt-0">
+          <Button
+            onPress={handleCreatePlaylist}
+            disabled={
+              isLoading ||
+              !playlistName.trim() ||
+              selectedMediaFiles.length === 0
+            }
+            className="w-full"
+          >
+            <Text>
+              {isLoading
+                ? "创建中..."
+                : `创建播放列表${selectedMediaFiles.length > 0 ? ` (${selectedMediaFiles.length} 个文件)` : ""}`}
+            </Text>
+          </Button>
+        </View>
       </View>
     </SafeAreaView>
   );
