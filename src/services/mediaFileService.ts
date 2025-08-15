@@ -49,7 +49,7 @@ export interface DirectoryTree {
 export class MediaFileService {
   private static instance: MediaFileService;
   private cache: Map<string, MediaFile[]> = new Map();
-  private lastRefreshTime: number = 0;
+  private lastRefreshTime = 0;
 
   private constructor() {}
 
@@ -63,7 +63,7 @@ export class MediaFileService {
   /**
    * 获取所有媒体文件
    */
-  async getAllMediaFiles(forceRefresh: boolean = false): Promise<MediaFile[]> {
+  async getAllMediaFiles(forceRefresh = false): Promise<MediaFile[]> {
     const now = Date.now();
     const cacheValid = now - this.lastRefreshTime < 5 * 60 * 1000; // 5分钟缓存
 
@@ -79,32 +79,21 @@ export class MediaFileService {
         sortBy: [[MediaLibrary.SortBy.creationTime, false]],
       });
 
-      // 获取音频文件（可选）
-      const audioAssets = await MediaLibrary.getAssetsAsync({
-        mediaType: MediaLibrary.MediaType.audio,
-        first: 1000,
-        sortBy: [[MediaLibrary.SortBy.creationTime, false]],
-      });
-
       // 转换视频文件
       const videoFiles = this.convertAssetsToMediaFiles(
         videoAssets.assets,
-        "video"
+        "video",
       );
 
-      // 转换音频文件
-      const audioFiles = this.convertAssetsToMediaFiles(
-        audioAssets.assets,
-        "audio"
-      );
-
-      const allFiles = [...videoFiles, ...audioFiles];
+      const allFiles = [...videoFiles];
 
       // 缓存结果
       this.cache.set("all", allFiles);
       this.lastRefreshTime = now;
 
-      console.log(`获取到 ${allFiles.length} 个媒体文件 (${videoFiles.length} 个视频, ${audioFiles.length} 个音频)`);
+      console.log(
+        `获取到 ${allFiles.length} 个媒体文件 (${videoFiles.length} 个视频)`,
+      );
       return allFiles;
     } catch (error) {
       console.error("获取媒体文件失败:", error);
@@ -117,7 +106,7 @@ export class MediaFileService {
    */
   private convertAssetsToMediaFiles(
     assets: MediaLibrary.Asset[],
-    type: "video" | "audio"
+    type: "video" | "audio",
   ): MediaFile[] {
     return assets.map((asset) => ({
       id: asset.id,
@@ -139,9 +128,9 @@ export class MediaFileService {
   /**
    * 构建目录树结构
    */
-  async buildDirectoryTree(forceRefresh: boolean = false): Promise<DirectoryTree> {
+  async buildDirectoryTree(forceRefresh = false): Promise<DirectoryTree> {
     const mediaFiles = await this.getAllMediaFiles(forceRefresh);
-    
+
     const root: DirectoryNode = {
       id: "root",
       name: "所有媒体",
@@ -231,6 +220,100 @@ export class MediaFileService {
   }
 
   /**
+   * 构建扁平化目录树结构（只保留一级父路径）
+   */
+  async buildFlatDirectoryTree(forceRefresh = false): Promise<DirectoryTree> {
+    const mediaFiles = await this.getAllMediaFiles(forceRefresh);
+
+    const root: DirectoryNode = {
+      id: "root",
+      name: "所有媒体",
+      path: "/",
+      type: "directory",
+      isExpanded: true,
+      isSelected: false,
+      itemCount: 0,
+      children: [],
+    };
+
+    // 按一级父目录分组
+    const directoryMap = new Map<string, DirectoryNode>();
+
+    for (const file of mediaFiles) {
+      // 从 URI 提取路径并只保留一级父目录
+      const fullPath = this.extractPathFromUri(file.uri);
+      const pathParts = fullPath.split("/").filter(Boolean);
+
+      let directoryName = "其他文件";
+      let relativePath = file.filename;
+
+      if (pathParts.length > 1) {
+        // 如果有多级路径，使用第一级作为目录名
+        directoryName = pathParts[0];
+        relativePath = `${pathParts.slice(1).join("/")}/${file.filename}`;
+      } else {
+        // 如果只有文件名，放在根目录
+        relativePath = file.filename;
+      }
+
+      // 获取或创建目录节点
+      let dirNode = directoryMap.get(directoryName);
+      if (!dirNode) {
+        dirNode = {
+          id: `dir_${directoryName}`,
+          name: directoryName,
+          path: `/${directoryName}`,
+          type: "directory",
+          isExpanded: true,
+          isSelected: false,
+          itemCount: 0,
+          children: [],
+        };
+        directoryMap.set(directoryName, dirNode);
+
+        if (!root.children) {
+          root.children = [];
+        }
+        root.children.push(dirNode);
+      }
+
+      // 文件节点
+      const fileNode: DirectoryNode = {
+        id: file.id,
+        name: file.filename,
+        path: relativePath,
+        type: "file",
+        mediaFile: file,
+        isExpanded: false,
+        isSelected: false,
+        itemCount: 1,
+      };
+
+      if (!dirNode.children) {
+        dirNode.children = [];
+      }
+      dirNode.children.push(fileNode);
+      dirNode.itemCount++;
+      root.itemCount++;
+    }
+
+    // 计算目录统计信息
+    this.calculateDirectoryStats(root);
+
+    // 按名称排序
+    this.sortDirectoryTree(root);
+
+    const totalStats = this.calculateTotalStats(mediaFiles);
+
+    return {
+      root,
+      totalFiles: totalStats.totalFiles,
+      totalSize: totalStats.totalSize,
+      totalDuration: totalStats.totalDuration,
+    };
+  }
+
+  /**
    * 从 URI 提取路径
    */
   private extractPathFromUri(uri: string): string {
@@ -291,7 +374,7 @@ export class MediaFileService {
         totalSize: stats.totalSize + (file.fileSize || 0),
         totalDuration: stats.totalDuration + file.duration,
       }),
-      { totalFiles: 0, totalSize: 0, totalDuration: 0 }
+      { totalFiles: 0, totalSize: 0, totalDuration: 0 },
     );
   }
 
@@ -320,12 +403,20 @@ export class MediaFileService {
   /**
    * 获取选中的媒体文件
    */
-  getSelectedFiles(node: DirectoryNode): MediaFile[] {
+  getSelectedFiles(
+    node: DirectoryNode,
+    selectedNodes?: Set<string>,
+  ): MediaFile[] {
     const selectedFiles: MediaFile[] = [];
 
     const traverse = (currentNode: DirectoryNode) => {
-      if (currentNode.type === "file" && currentNode.isSelected && currentNode.mediaFile) {
-        selectedFiles.push(currentNode.mediaFile);
+      if (currentNode.type === "file" && currentNode.mediaFile) {
+        const isSelected = selectedNodes
+          ? selectedNodes.has(currentNode.id)
+          : currentNode.isSelected;
+        if (isSelected) {
+          selectedFiles.push(currentNode.mediaFile);
+        }
       }
 
       if (currentNode.children) {
@@ -374,9 +465,9 @@ export class MediaFileService {
   formatFileSize(bytes: number): string {
     const sizes = ["B", "KB", "MB", "GB"];
     if (bytes === 0) return "0 B";
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
   }
 
   /**

@@ -1,11 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Video } from "@/db/schema";
 import { PlaylistService } from "@/services/playlistService";
 import { MediaFileService, type MediaFile } from "@/services/mediaFileService";
 import { Stack, useRouter } from "expo-router";
-import { Trash2, Video as VideoIcon, RefreshCw } from "lucide-react-native";
+import { RefreshCw } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,21 +22,6 @@ import DirectoryTree from "@/components/DirectoryTree";
 import MediaLoadingState, {
   type LoadingState,
 } from "@/components/MediaLoadingState";
-
-// 格式化时长显示
-const formatDuration = (seconds: number): string => {
-  if (seconds <= 0) return "0:00";
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-  }
-
-  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-};
 
 export default function CreatePlaylistScreen() {
   const router = useRouter();
@@ -39,11 +32,10 @@ export default function CreatePlaylistScreen() {
   const [loadingState, setLoadingState] = useState<LoadingState>("loading");
   const [mediaStats, setMediaStats] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showNameDialog, setShowNameDialog] = useState(false);
 
   const mediaService = MediaFileService.getInstance();
   const {
-    status,
-    loading: permissionLoading,
     requestMediaPermissions,
   } = useMediaPermissions();
 
@@ -58,7 +50,8 @@ export default function CreatePlaylistScreen() {
         return;
       }
 
-      const tree = await mediaService.buildDirectoryTree(forceRefresh);
+      const tree = await mediaService.buildFlatDirectoryTree(forceRefresh);
+      console.log('🚀 - loadMediaFiles - tree:', tree)
       setDirectoryTree(tree);
       setMediaStats({
         totalFiles: tree.totalFiles,
@@ -116,14 +109,14 @@ export default function CreatePlaylistScreen() {
     return selectedMediaFiles.map(convertMediaFileToVideo);
   };
 
-  // 移除选中的视频
-  const removeVideo = (index: number) => {
-    setSelectedMediaFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // 清除所有选择
-  const clearSelection = () => {
-    setSelectedMediaFiles([]);
+  // 打开播放列表名称输入对话框
+  const handleShowNameDialog = () => {
+    const allVideos = getAllSelectedVideos();
+    if (allVideos.length === 0) {
+      Alert.alert("错误", "请至少选择一个视频文件");
+      return;
+    }
+    setShowNameDialog(true);
   };
 
   // 创建播放列表
@@ -134,13 +127,9 @@ export default function CreatePlaylistScreen() {
       return;
     }
 
-    const allVideos = getAllSelectedVideos();
-    if (allVideos.length === 0) {
-      Alert.alert("错误", "请至少选择一个视频文件");
-      return;
-    }
-
     setIsLoading(true);
+    setShowNameDialog(false);
+
     try {
       // 准备播放列表数据
       const playlistOptions = {
@@ -148,6 +137,8 @@ export default function CreatePlaylistScreen() {
         description: "",
         thumbnailPath: null,
       };
+
+      const allVideos = getAllSelectedVideos();
 
       // 调用播放列表服务创建播放列表
       const result = await PlaylistService.createPlaylist(
@@ -206,31 +197,19 @@ export default function CreatePlaylistScreen() {
       <View className="flex-1">
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="p-6 space-y-6">
-            {/* 播放列表名称 */}
+            {/* 提示信息 */}
             <View>
-              <Text className="text-base font-medium mb-2">播放列表名称</Text>
-              <Input
-                placeholder="输入播放列表名称"
-                value={playlistName}
-                onChangeText={setPlaylistName}
-                className="bg-card"
-              />
+              <Text className="text-base font-medium mb-2">创建播放列表</Text>
+              <Text className="text-sm text-muted-foreground">
+                请先选择要添加的视频文件，然后点击创建按钮输入播放列表名称
+              </Text>
             </View>
 
             {/* 媒体文件选择区域 */}
-            <View className="flex-1">
-              <View className="flex-row justify-between items-center mb-3">
-                <Text className="text-base font-medium">选择媒体文件</Text>
-                {selectedMediaFiles.length > 0 && (
-                  <TouchableOpacity onPress={clearSelection} className="p-1">
-                    <Trash2 size={16} className="text-destructive" />
-                  </TouchableOpacity>
-                )}
-              </View>
-
+            <View className="flex-1 min-h-[200px]">
               {/* 加载状态 */}
               {loadingState !== "success" && (
-                <View className="h-64">
+                <View className="flex-1">
                   <MediaLoadingState
                     state={loadingState}
                     stats={mediaStats}
@@ -241,7 +220,7 @@ export default function CreatePlaylistScreen() {
 
               {/* 目录树 */}
               {loadingState === "success" && directoryTree && (
-                <View className="border border-border rounded-lg bg-card">
+                <View className="rounded-lg border border-border">
                   <DirectoryTree
                     treeData={directoryTree.root}
                     onSelectionChange={handleSelectionChange}
@@ -255,15 +234,6 @@ export default function CreatePlaylistScreen() {
                   <Text className="text-sm font-medium text-foreground">
                     已选择 {selectedMediaFiles.length} 个文件
                   </Text>
-                  <Text className="text-xs text-muted-foreground mt-1">
-                    总时长:{" "}
-                    {formatDuration(
-                      selectedMediaFiles.reduce(
-                        (sum, file) => sum + file.duration,
-                        0,
-                      ),
-                    )}
-                  </Text>
                 </View>
               )}
             </View>
@@ -273,12 +243,8 @@ export default function CreatePlaylistScreen() {
         {/* 创建按钮 */}
         <View className="p-6 pt-0">
           <Button
-            onPress={handleCreatePlaylist}
-            disabled={
-              isLoading ||
-              !playlistName.trim() ||
-              selectedMediaFiles.length === 0
-            }
+            onPress={handleShowNameDialog}
+            disabled={isLoading || selectedMediaFiles.length === 0}
             className="w-full"
           >
             <Text>
@@ -288,6 +254,44 @@ export default function CreatePlaylistScreen() {
             </Text>
           </Button>
         </View>
+
+        {/* 播放列表名称输入对话框 */}
+        <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>输入播放列表名称</DialogTitle>
+              <DialogDescription>
+                请为您选择的 {selectedMediaFiles.length} 个视频文件输入播放列表名称
+              </DialogDescription>
+            </DialogHeader>
+            <View className="grid gap-4 py-4">
+              <Input
+                placeholder="输入播放列表名称"
+                value={playlistName}
+                onChangeText={setPlaylistName}
+                className="bg-card"
+                autoFocus
+              />
+            </View>
+            <DialogFooter>
+              <View className="grid gap-4 grid-cols-2">
+                <Button
+                  variant="outline"
+                  onPress={() => setShowNameDialog(false)}
+                  disabled={isLoading}
+                >
+                  <Text>取消</Text>
+                </Button>
+                <Button
+                  onPress={handleCreatePlaylist}
+                  disabled={isLoading || !playlistName.trim()}
+                >
+                  <Text>{isLoading ? "创建中..." : "确定"}</Text>
+                </Button>
+              </View>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </View>
     </SafeAreaView>
   );

@@ -3,8 +3,9 @@
  */
 
 import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { RefreshCw, AlertCircle, CheckCircle } from "lucide-react-native";
+import { cn } from "@/lib/utils";
 
 export type LoadingState = "loading" | "error" | "success" | "empty";
 
@@ -30,13 +31,17 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
   const getStateIcon = () => {
     switch (state) {
       case "loading":
-        return <ActivityIndicator size="large" color="#3b82f6" />;
+        return (
+          <View className="w-12 h-12 items-center justify-center">
+            <View className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </View>
+        );
       case "error":
-        return <AlertCircle size={48} className="text-red-500" />;
+        return <AlertCircle size={48} className="text-destructive" />;
       case "success":
         return <CheckCircle size={48} className="text-green-500" />;
       case "empty":
-        return <AlertCircle size={48} className="text-gray-400" />;
+        return <AlertCircle size={48} className="text-muted-foreground" />;
       default:
         return null;
     }
@@ -94,9 +99,12 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
   const getRetryButton = () => {
     if (state === "error" && onRetry) {
       return (
-        <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-          <RefreshCw size={16} className="text-blue-500 mr-2" />
-          <Text style={styles.retryButtonText}>重试</Text>
+        <TouchableOpacity 
+          className="flex-row items-center bg-card px-4 py-2 rounded-lg border border-border"
+          onPress={onRetry}
+        >
+          <RefreshCw size={16} className="text-primary mr-2" />
+          <Text className="text-sm font-medium text-primary">重试</Text>
         </TouchableOpacity>
       );
     }
@@ -104,18 +112,18 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.iconContainer}>
+    <View className="flex-1 items-center justify-center p-6">
+      <View className="mb-4">
         {getStateIcon()}
       </View>
       
-      <View style={styles.textContainer}>
-        <Text style={styles.primaryText}>
+      <View className="items-center mb-6">
+        <Text className="text-base font-semibold text-foreground text-center mb-1">
           {getStateMessage()}
         </Text>
         
         {getSecondaryMessage() && (
-          <Text style={styles.secondaryText}>
+          <Text className="text-sm text-muted-foreground text-center">
             {getSecondaryMessage()}
           </Text>
         )}
@@ -125,49 +133,5 @@ const MediaLoadingState: React.FC<MediaLoadingStateProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-    backgroundColor: "#f9fafb",
-  },
-  iconContainer: {
-    marginBottom: 16,
-  },
-  textContainer: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  primaryText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    textAlign: "center",
-    marginBottom: 4,
-  },
-  secondaryText: {
-    fontSize: 14,
-    color: "#6b7280",
-    textAlign: "center",
-  },
-  retryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-  },
-  retryButtonText: {
-    fontSize: 14,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-});
 
 export default MediaLoadingState;

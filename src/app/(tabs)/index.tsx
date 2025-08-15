@@ -102,13 +102,13 @@ function ScreenContent() {
   const renderItem = React.useCallback(
     ({ item, index }: { item: Video; index: number }) => {
       return (
-        <VideoItem
-          video={item}
-          isVisible={index === currentIndex}
-          onVideoPress={() => {
-            // 可以在这里添加更多交互逻辑
-          }}
-        />
+        // <VideoItem
+        //   video={item}
+        //   isVisible={index === currentIndex}
+        //   onVideoPress={() => {
+        //   }}
+        // />
+        <></>
       );
     },
     [currentIndex],
