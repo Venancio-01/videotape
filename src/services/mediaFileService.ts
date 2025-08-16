@@ -91,12 +91,10 @@ export class MediaFileService {
       this.cache.set("all", allFiles);
       this.lastRefreshTime = now;
 
-      console.log(
-        `获取到 ${allFiles.length} 个媒体文件 (${videoFiles.length} 个视频)`,
-      );
+      // 获取到媒体文件和视频数量
       return allFiles;
     } catch (error) {
-      console.error("获取媒体文件失败:", error);
+      // 获取媒体文件失败
       throw error;
     }
   }

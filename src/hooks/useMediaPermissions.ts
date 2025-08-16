@@ -32,7 +32,7 @@ export function useMediaPermissions() {
         audio: audioStatus.status,
       };
     } catch (error) {
-      console.error("检查权限失败:", error);
+      // 检查权限失败
       return {
         media: "denied",
         audio: "denied",
@@ -49,7 +49,7 @@ export function useMediaPermissions() {
       setStatus((prev) => ({ ...prev, media: status }));
       return status === "granted";
     } catch (error) {
-      console.error("请求媒体权限失败:", error);
+      // 请求媒体权限失败
       setStatus((prev) => ({ ...prev, media: "denied" }));
       return false;
     } finally {
@@ -66,7 +66,7 @@ export function useMediaPermissions() {
       setStatus((prev) => ({ ...prev, audio: status }));
       return status === "granted";
     } catch (error) {
-      console.error("请求音频权限失败:", error);
+      // 请求音频权限失败
       setStatus((prev) => ({ ...prev, audio: "denied" }));
       return false;
     } finally {

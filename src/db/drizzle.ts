@@ -17,10 +17,7 @@ if (isExpoEnvironment) {
     expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
     db = drizzle(expoDb);
   } catch (error) {
-    console.warn(
-      "Failed to initialize database in non-Expo environment:",
-      error,
-    );
+    // Failed to initialize database in non-Expo environment
   }
 }
 

@@ -10,7 +10,7 @@ export function getItem<T>(key: string): T | null {
   try {
     return value ? JSON.parse(value) || null : null;
   } catch (error) {
-    console.error("Error parsing JSON from storage:", error);
+    // Error parsing JSON from storage
     return null;
   }
 }
@@ -19,7 +19,7 @@ export function setItem<T>(key: string, value: T): void {
   try {
     storage.set(key, JSON.stringify(value));
   } catch (error) {
-    console.error("Error setting item in storage:", error);
+    // Error setting item in storage
   }
 }
 
@@ -27,7 +27,7 @@ export function removeItem(key: string): void {
   try {
     storage.delete(key);
   } catch (error) {
-    console.error("Error removing item from storage:", error);
+    // Error removing item from storage
   }
 }
 

@@ -44,7 +44,7 @@ export const usePlaylistActions = (): UsePlaylistActionsReturn => {
       const playlistWithVideos = { ...playlist, videos };
       setCurrentPlaylist(playlistWithVideos);
     } catch (error) {
-      console.error("设置播放列表失败:", error);
+      // 设置播放列表失败
       Alert.alert("错误", "无法设置播放列表");
     } finally {
       setBusyItems((prev) => {
@@ -70,7 +70,7 @@ export const usePlaylistActions = (): UsePlaylistActionsReturn => {
       setCurrentPlaylist(playlistWithVideos);
       router.push("/");
     } catch (error) {
-      console.error("播放播放列表失败:", error);
+      // 播放播放列表失败
       Alert.alert("错误", "无法播放此播放列表");
     } finally {
       setBusyItems((prev) => {
@@ -122,7 +122,7 @@ export const usePlaylistActions = (): UsePlaylistActionsReturn => {
               Alert.alert("错误", result.error || "删除播放列表失败");
             }
           } catch (error) {
-            console.error("删除播放列表失败:", error);
+            // 删除播放列表失败
             Alert.alert("错误", "删除播放列表失败");
           } finally {
             setBusyItems((prev) => {
@@ -157,7 +157,7 @@ export const usePlaylistActions = (): UsePlaylistActionsReturn => {
         Alert.alert("错误", result.error || "撤销删除失败");
       }
     } catch (error) {
-      console.error("撤销删除失败:", error);
+      // 撤销删除失败
       Alert.alert("错误", "撤销删除失败");
     }
   };

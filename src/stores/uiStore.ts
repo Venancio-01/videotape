@@ -142,7 +142,7 @@ export const useUIStore = create<UIStore>()(
             screenOrientation: orientation,
           }));
         } catch (error) {
-          console.error("Failed to set screen orientation:", error);
+          // Failed to set screen orientation
         }
       },
 
@@ -179,7 +179,7 @@ export const useUIStore = create<UIStore>()(
             isOrientationLocked: locked,
           }));
         } catch (error) {
-          console.error("Failed to set orientation lock:", error);
+          // Failed to set orientation lock
         }
       },
 

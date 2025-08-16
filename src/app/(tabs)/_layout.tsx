@@ -48,7 +48,7 @@ export default function TabLayout() {
     const expoDb = getExpoDatabase();
     useDrizzleStudio(expoDb);
   } catch (error) {
-    console.warn("Drizzle Studio not available in current environment:", error);
+    // Drizzle Studio not available in current environment
   }
 
   return (

@@ -92,7 +92,7 @@ export const useVideoPlayback = ({
             });
           }
         } catch (error) {
-          console.error("Error saving progress:", error);
+        // Error saving progress
         }
 
         player.pause();
@@ -120,7 +120,7 @@ export const useVideoPlayback = ({
         player.play();
         setIsPlaying(true);
       } catch (error) {
-        console.error("加载视频失败:", error);
+        // 加载视频失败
         // 不要抛出错误，让用户界面保持可用
       }
     };

@@ -76,7 +76,7 @@ export default function CreatePlaylistScreen() {
         setLoadingState("success");
       }
     } catch (error) {
-      console.error("加载媒体文件失败:", error);
+      // 加载媒体文件失败
       setLoadingState("error");
     } finally {
       setRefreshing(false);
@@ -173,7 +173,7 @@ export default function CreatePlaylistScreen() {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error("创建播放列表失败:", error);
+      // 创建播放列表失败
       Alert.alert("错误", "创建播放列表失败，请重试");
       setIsLoading(false);
     }

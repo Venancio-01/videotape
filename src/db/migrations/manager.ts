@@ -35,7 +35,7 @@ export async function runMigrations(): Promise<void> {
     // 运行未执行的迁移
     for (const migration of migrationFiles.default) {
       if (!executedNames.has(migration.name)) {
-        console.log(`正在执行迁移: ${migration.name}`);
+        // 正在执行迁移
 
         // 在事务中执行迁移
         await db.transaction(async (tx) => {
@@ -45,11 +45,11 @@ export async function runMigrations(): Promise<void> {
           ]);
         });
 
-        console.log(`迁移完成: ${migration.name}`);
+        // 迁移完成
       }
     }
 
-    console.log("所有迁移已完成");
+    // 所有迁移已完成
   } catch (error) {
     throw new MigrationError(
       "运行迁移失败",
@@ -79,7 +79,7 @@ export async function rollbackMigration(migrationName: string): Promise<void> {
       throw new Error(`迁移 ${migrationName} 不支持回滚`);
     }
 
-    console.log(`正在回滚迁移: ${migrationName}`);
+    // 正在回滚迁移
 
     // 在事务中执行回滚
     await db.transaction(async (tx) => {
@@ -87,7 +87,7 @@ export async function rollbackMigration(migrationName: string): Promise<void> {
       await tx.run("DELETE FROM migrations WHERE name = ?", [migrationName]);
     });
 
-    console.log(`回滚完成: ${migrationName}`);
+    // 回滚完成
   } catch (error) {
     throw new MigrationError(
       `回滚迁移 ${migrationName} 失败`,
@@ -140,7 +140,7 @@ export async function resetDatabase(): Promise<void> {
   try {
     const db = getDatabase();
 
-    console.warn("正在重置数据库，这将删除所有数据！");
+    // 正在重置数据库，这将删除所有数据
 
     // 获取所有表名
     const tables = await db
@@ -156,7 +156,7 @@ export async function resetDatabase(): Promise<void> {
     // 重置迁移表
     await db.run("DROP TABLE IF EXISTS migrations");
 
-    console.log("数据库已重置");
+    // 数据库已重置
   } catch (error) {
     throw new MigrationError(
       "重置数据库失败",
@@ -190,7 +190,7 @@ export async function backupDatabase(backupPath: string): Promise<void> {
 
     await db.run("DETACH DATABASE backup_db");
 
-    console.log(`数据库已备份到: ${backupPath}`);
+    // 数据库已备份
   } catch (error) {
     throw new MigrationError(
       "备份数据库失败",
