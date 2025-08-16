@@ -3,7 +3,7 @@
  */
 
 import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react-native";
+import { AlertCircle, CheckCircle, RefreshCw } from "@/components/Icons";
 import type React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

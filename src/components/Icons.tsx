@@ -16,6 +16,7 @@ import {
   Calendar,
   CalendarDays,
   Check,
+  CheckCircle,
   CheckSquare,
   ChevronDown,
   ChevronLeft,
@@ -34,7 +35,10 @@ import {
   Eye,
   EyeOff,
   Fan,
+  File,
   Filter,
+  Folder,
+  FolderClosed,
   FolderOpen,
   GalleryHorizontal,
   Heart,
@@ -44,17 +48,24 @@ import {
   LayoutPanelLeft,
   LifeBuoy,
   List,
+  ListVideo,
   Loader2,
   LogOut,
   type LucideIcon,
   Mail,
   MenuSquare,
   MessageSquare,
+  Minus,
+  Moon,
   MoonStar,
   MoreVertical,
+  Music,
+  Palette,
   Play,
   Plus,
   PlusCircle,
+  RefreshCw,
+  RotateCcw,
   Search,
   Settings,
   SortAsc,
@@ -68,7 +79,13 @@ import {
   Underline,
   UserPlus,
   Users,
+  Video,
+  Volume2,
+  VolumeX,
   X,
+  Maximize2,
+  Minimize2,
+  Smartphone,
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -152,6 +169,23 @@ interopIcon(SortDesc);
 interopIcon(Star);
 interopIcon(Trash2);
 interopIcon(Clock);
+interopIcon(ListVideo);
+interopIcon(Video);
+interopIcon(CheckCircle);
+interopIcon(File);
+interopIcon(Folder);
+interopIcon(FolderClosed);
+interopIcon(Minus);
+interopIcon(Music);
+interopIcon(RefreshCw);
+interopIcon(RotateCcw);
+interopIcon(Volume2);
+interopIcon(VolumeX);
+interopIcon(Maximize2);
+interopIcon(Minimize2);
+interopIcon(Moon);
+interopIcon(Palette);
+interopIcon(Smartphone);
 
 export {
   Activity,
@@ -171,6 +205,7 @@ export {
   Calendar,
   CalendarDays,
   Check,
+  CheckCircle,
   CheckSquare,
   ChevronDown,
   ChevronLeft,
@@ -188,7 +223,11 @@ export {
   Eye,
   EyeOff,
   Fan,
+  File,
   Filter,
+  Folder,
+  FolderClosed,
+  FolderOpen,
   GalleryHorizontal,
   Heart,
   Info,
@@ -197,16 +236,23 @@ export {
   LayoutPanelLeft,
   LifeBuoy,
   List,
+  ListVideo,
   Loader2,
   LogOut,
   Settings,
   Mail,
   MenuSquare,
   MessageSquare,
+  Minus,
+  Moon,
   MoonStar,
   MoreVertical,
+  Music,
+  Palette,
   Plus,
   PlusCircle,
+  RefreshCw,
+  RotateCcw,
   Search,
   SortAsc,
   SortDesc,
@@ -219,8 +265,14 @@ export {
   Underline,
   UserPlus,
   Users,
+  Video,
+  Volume2,
+  VolumeX,
   X,
   Clock,
   FolderOpen,
   Play,
+  Maximize2,
+  Minimize2,
+  Smartphone,
 };

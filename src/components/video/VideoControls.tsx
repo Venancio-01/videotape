@@ -1,4 +1,5 @@
-import { Play } from "lucide-react-native";
+import { Play } from "@/components/Icons";
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 interface VideoControlsProps {
@@ -26,7 +27,7 @@ export const VideoControls: React.FC<VideoControlsProps> = ({
           </View>
         </TouchableOpacity>
       )}
-      
+
       {/* 播放中的点击区域 - 避开右侧按钮区域，非全屏状态 */}
       {isPlaying && !isFullscreen && (
         <TouchableOpacity

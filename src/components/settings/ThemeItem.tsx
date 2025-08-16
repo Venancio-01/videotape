@@ -8,8 +8,7 @@ import {
 import ListItem from "@/components/ui/list-item";
 import { Text } from "@/components/ui/text";
 import { H4 } from "@/components/ui/typography";
-import { Moon, Palette, Smartphone, Sun } from "@/lib/icons";
-import { Check } from "@/lib/icons/Check";
+import { Moon, Palette, Smartphone, Sun, Check } from "@/components/Icons";
 import { getItem, setItem } from "@/lib/storage";
 // 主题设置暂时使用本地存储，不依赖store
 import { useBottomSheetModal } from "@gorhom/bottom-sheet";

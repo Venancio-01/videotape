@@ -22,7 +22,7 @@ import {
 } from "@/services/mediaFileService";
 import { PlaylistService } from "@/services/playlistService";
 import { Stack, useRouter } from "expo-router";
-import { RefreshCw } from "lucide-react-native";
+import { RefreshCw } from "@/components/Icons";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import {

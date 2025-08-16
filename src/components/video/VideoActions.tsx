@@ -1,11 +1,10 @@
-import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
-import { Heart, Volume2, VolumeX, Maximize2, Minimize2, RotateCcw } from "lucide-react-native";
+import { Heart, Volume2, VolumeX, Maximize2, Minimize2, RotateCcw } from "@/components/Icons";
 import React from "react";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Animated, TouchableOpacity, View } from "react-native";
 import { ControlButton } from "./ControlButton";
-import { useUIStore, useScreenOrientation } from "@/stores";
+import { useUIStore } from "@/stores";
 
 interface VideoActionsProps {
   video: Video;
@@ -21,8 +20,6 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const likeAnimation = React.useRef(new Animated.Value(1)).current;
 
-  // 使用UI store中的屏幕方向状态
-  const screenOrientation = useScreenOrientation();
   const { toggleScreenOrientation } = useUIStore();
 
   React.useEffect(() => {
@@ -75,75 +72,72 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
   };
 
   return (
-    <View className="absolute right-4 bottom-24 gap-4 z-20">
-      {!isFullscreen && (
-        <>
-          <View className="items-center">
-            <Animated.View style={{ transform: [{ scale: likeAnimation }] }}>
-              <TouchableOpacity onPress={onLike} className="items-center">
-                <View
-                  className={`
-                    bg-black/50 rounded-full p-3 mb-1 transition-colors
-                    ${isLiked ? 'bg-red-500/50' : ''}
-                  `}
-                >
-                  <Heart
-                    className={isLiked ? "text-red-500" : "text-white"}
-                    size={24}
-                    fill={isLiked ? "hsl(var(--destructive))" : "none"}
-                  />
-                </View>
-                <Text className="text-white text-xs">
-                  {isLiked ? "已收藏" : "收藏"}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </View>
+    <View className="absolute right-4 top-0 bottom-0 justify-center items-center z-20">
+      <View className="flex-col gap-4">
+        {!isFullscreen && (
+          <>
+            <View className="items-center">
+              <Animated.View style={{ transform: [{ scale: likeAnimation }] }}>
+                <TouchableOpacity onPress={onLike} className="items-center">
+                  <View
+                    className={`
+                      bg-black/50 rounded-full p-3 mb-1 transition-colors
+                      ${isLiked ? 'bg-red-500/50' : ''}
+                    `}
+                  >
+                    <Heart
+                      className={isLiked ? "text-red-500" : "text-white"}
+                      size={24}
+                      fill={isLiked ? "hsl(var(--destructive))" : "none"}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
 
-          <ControlButton
-            onPress={onMuteToggle}
-            icon={
-              isMuted ? (
-                <VolumeX className="text-white" size={24} />
-              ) : (
-                <Volume2 className="text-white" size={24} />
-              )
-            }
-            text={isMuted ? "静音" : "有声"}
-          />
+            <ControlButton
+              onPress={onMuteToggle}
+              icon={
+                isMuted ? (
+                  <VolumeX className="text-white" size={24} />
+                ) : (
+                  <Volume2 className="text-white" size={24} />
+                )
+              }
+            />
 
-          {/* 屏幕方向切换按钮 */}
+            {/* 屏幕方向切换按钮 */}
+            <ControlButton
+              onPress={toggleScreenOrientation}
+              icon={
+                <RotateCcw className="text-white" size={24} />
+              }
+            />
+          </>
+        )}
+
+        {/* 全屏按钮 - 在全屏模式下显示方向控制按钮 */}
+        {isFullscreen ? (
           <ControlButton
             onPress={toggleScreenOrientation}
             icon={
               <RotateCcw className="text-white" size={24} />
             }
           />
-        </>
-      )}
+        ) : null}
 
-      {/* 全屏按钮 - 在全屏模式下显示方向控制按钮 */}
-      {isFullscreen ? (
         <ControlButton
-          onPress={toggleScreenOrientation}
+          onPress={onFullscreenToggle}
           icon={
-            <RotateCcw className="text-white" size={24} />
+            isFullscreen ? (
+              <Minimize2 className="text-white" size={24} />
+            ) : (
+              <Maximize2 className="text-white" size={24} />
+            )
           }
+          isActive={isFullscreen}
         />
-      ) : null}
-
-      <ControlButton
-        onPress={onFullscreenToggle}
-        icon={
-          isFullscreen ? (
-            <Minimize2 className="text-white" size={24} />
-          ) : (
-            <Maximize2 className="text-white" size={24} />
-          )
-        }
-        text={isFullscreen ? "退出全屏" : "全屏"}
-        isActive={isFullscreen}
-      />
+      </View>
     </View>
   );
 };

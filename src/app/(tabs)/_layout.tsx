@@ -1,8 +1,5 @@
 import { getExpoDatabase } from "@/db/drizzle";
-import { ListVideo } from "@/lib/icons/ListVideo";
-import { Search } from "@/lib/icons/Search";
-import { Settings } from "@/lib/icons/Settings";
-import { Video } from "@/lib/icons/Video";
+import { ListVideo, Search, Settings, Video } from "@/components/Icons";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import * as NavigationBar from "expo-navigation-bar";
 import { Tabs } from "expo-router";
