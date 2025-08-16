@@ -3,7 +3,7 @@
  * 统一处理权限请求和状态管理
  */
 
-import { Audio } from "expo-av";
+import { AudioModule } from "expo-audio";
 import * as MediaLibrary from "expo-media-library";
 import { useCallback, useEffect, useState } from "react";
 
@@ -24,7 +24,7 @@ export function useMediaPermissions() {
     try {
       const [mediaStatus, audioStatus] = await Promise.all([
         MediaLibrary.getPermissionsAsync(),
-        Audio.getPermissionsAsync(),
+        AudioModule.getRecordingPermissionsAsync(),
       ]);
 
       return {
@@ -61,7 +61,7 @@ export function useMediaPermissions() {
   const requestAudioPermissions = useCallback(async (): Promise<boolean> => {
     try {
       setLoading(true);
-      const { status } = await Audio.requestPermissionsAsync();
+      const { status } = await AudioModule.requestRecordingPermissionsAsync();
 
       setStatus((prev) => ({ ...prev, audio: status }));
       return status === "granted";

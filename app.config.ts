@@ -48,9 +48,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-document-picker",
     "expo-image-picker",
     [
-      "expo-av",
+      "expo-video",
       {
-        microphonePermission: "允许 $(PRODUCT_NAME) 访问您的麦克风来录制音频。",
+        supportsBackgroundPlayback: true,
+        supportsPictureInPicture: true,
       },
     ],
     [

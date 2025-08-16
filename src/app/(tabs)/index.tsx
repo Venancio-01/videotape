@@ -67,7 +67,7 @@ const VideoItem: React.FC<VideoItemProps> = ({
       }}
     >
       <View className="flex-1 relative">
-        <VideoPlayer video={video} playback={playback} onFullscreenChange={onFullscreenChange} />
+        <VideoPlayer video={video} player={playback.player} onFullscreenChange={onFullscreenChange} />
         <VideoOverlay video={video} />
         <VideoControls
           isPlaying={playback.isPlaying}
@@ -76,7 +76,7 @@ const VideoItem: React.FC<VideoItemProps> = ({
         />
         <VideoActions
           video={video}
-          videoRef={playback.videoRef}
+          player={playback.player}
           isMuted={playback.isMuted}
           isFullscreen={isFullscreen}
           onMuteToggle={playback.toggleMute}

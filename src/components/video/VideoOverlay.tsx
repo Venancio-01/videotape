@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { formatDuration, formatFileSize } from "@/utils/videoUtils";
+import { formatDuration } from "@/utils/videoUtils";
 import { View } from "react-native";
 
 interface VideoOverlayProps {
@@ -23,16 +23,6 @@ export const VideoOverlay: React.FC<VideoOverlayProps> = ({ video }) => {
         {video.duration && (
           <Text className="text-white/80 text-sm">
             {formatDuration(video.duration)}
-          </Text>
-        )}
-        {video.fileSize && (
-          <Text className="text-white/80 text-sm">
-            {formatFileSize(video.fileSize)}
-          </Text>
-        )}
-        {video.playCount && video.playCount > 0 && (
-          <Text className="text-white/80 text-sm">
-            播放 {video.playCount} 次
           </Text>
         )}
       </View>

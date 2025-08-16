@@ -8,7 +8,6 @@ import {
 } from "@/components/Icons";
 import type { Video as VideoType } from "@/db/schema";
 import { useUIStore } from "@/stores";
-import type { Video } from "expo-av";
 import * as ScreenOrientation from "expo-screen-orientation";
 import React from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
@@ -16,7 +15,7 @@ import { ControlButton } from "./ControlButton";
 
 interface VideoActionsProps {
   video: VideoType;
-  videoRef?: React.RefObject<Video | null>;
+  player?: any;
   isMuted?: boolean;
   isFullscreen?: boolean;
   onMuteToggle?: () => Promise<void>;
@@ -25,7 +24,7 @@ interface VideoActionsProps {
 
 export const VideoActions: React.FC<VideoActionsProps> = ({
   video,
-  videoRef,
+  player,
   isMuted = false,
   isFullscreen = false,
   onMuteToggle,
@@ -61,21 +60,20 @@ export const VideoActions: React.FC<VideoActionsProps> = ({
   };
 
   const onFullscreenToggle = async () => {
-    if (videoRef.current) {
+    if (player) {
       try {
         const newFullscreenState = !isFullscreen;
 
         if (isFullscreen) {
           // 退出全屏时恢复到用户之前的方向偏好
-          await videoRef.current.dismissFullscreenPlayer();
-          // 等待一下让全屏退出完成
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          await ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.PORTRAIT,
+          );
         } else {
           // 进入全屏时切换到横屏
           await ScreenOrientation.lockAsync(
             ScreenOrientation.OrientationLock.LANDSCAPE,
           );
-          await videoRef.current.presentFullscreenPlayer();
         }
       } catch (error) {
         console.error("Failed to toggle fullscreen:", error);
