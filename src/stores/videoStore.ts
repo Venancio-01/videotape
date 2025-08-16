@@ -324,14 +324,15 @@ export const videoSelectors = {
 
           switch (key) {
             // 移除了category和tags过滤功能
-            case "duration":
+            case "duration": {
               const { min, max } = value as { min: number; max: number };
               return (
                 typeof video.duration === "number" &&
                 video.duration >= min &&
                 video.duration <= max
               );
-            case "size":
+            }
+            case "size": {
               const { min: minSize, max: maxSize } = value as {
                 min: number;
                 max: number;
@@ -341,6 +342,7 @@ export const videoSelectors = {
                 video.fileSize >= minSize &&
                 video.fileSize <= maxSize
               );
+            }
             case "isFavorite":
               return state.favorites.has(video.id) === value;
             case "isWatched":

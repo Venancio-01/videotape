@@ -2,6 +2,7 @@ import type { Video } from "@/db/schema";
 import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useVideoStore } from "@/stores/videoStore";
+import { Audio } from "expo-av";
 import type { AVPlaybackStatus } from "expo-av";
 import type { Video as ExpoVideo } from "expo-av";
 import {
@@ -11,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { AppState } from "react-native";
 
 interface VideoPlaybackHookProps {
   video: Video;
@@ -39,6 +41,7 @@ export const useVideoPlayback = ({
   const [playbackStatus, setPlaybackStatus] = useState<AVPlaybackStatus | null>(
     null,
   );
+  const [wasPlayingBeforeBackground, setWasPlayingBeforeBackground] = useState(false);
 
   // 使用统一的播放状态管理
   const { play, pause, setMuted } = usePlaybackStore();
@@ -46,6 +49,33 @@ export const useVideoPlayback = ({
 
   // 获取视频更新函数
   const { updateVideo } = useVideoStore();
+
+  // 监听应用状态变化
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "background" || nextAppState === "inactive") {
+        // 应用进入后台或非活跃状态
+        if (isPlaying && isVisible) {
+          setWasPlayingBeforeBackground(true);
+          videoRef.current?.pauseAsync();
+          setIsPlaying(false);
+          pause(); // 更新全局状态
+        }
+      } else if (nextAppState === "active") {
+        // 应用回到前台
+        if (wasPlayingBeforeBackground && isVisible) {
+          videoRef.current?.playAsync();
+          setIsPlaying(true);
+          play(); // 更新全局状态
+          setWasPlayingBeforeBackground(false);
+        }
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [isPlaying, isVisible, wasPlayingBeforeBackground, play, pause]);
 
   useEffect(() => {
     if (!isVisible) {
@@ -76,19 +106,28 @@ export const useVideoPlayback = ({
 
     const loadAndPlay = async () => {
       try {
-        console.log("尝试使用原始路径...");
+        // 配置音频会话以启用音频播放
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: true,
+          interruptionModeIOS: 1, // Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: 1, // Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX
+          playThroughEarpieceAndroid: false,
+        });
+
         if (videoRef.current) {
           await videoRef.current.loadAsync(
             { uri: video.filePath },
             {
               shouldPlay: true,
-              isMuted: true,
+              isMuted: isMuted,
               progressUpdateIntervalMillis: 100,
               positionMillis: (video.watchProgress || 0) * 1000,
             },
           );
           setIsPlaying(true);
-          console.log("原始路径加载成功");
         }
       } catch (finalError) {
         console.error("所有加载方式都失败:", finalError);

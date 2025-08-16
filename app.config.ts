@@ -6,7 +6,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: "expostarter",
   newArchEnabled: true,
   version: "1.0.0",
-  orientation: "portrait",
+  orientation: "landscape",
   icon: "./assets/images/icon.png",
   scheme: "ltstarter",
   userInterfaceStyle: "dark",

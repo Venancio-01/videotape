@@ -174,15 +174,15 @@ const createPerformanceMonitor = (config: Partial<PerformanceConfig> = {}) => {
     return {
       totalUpdates,
       slowUpdates,
-      slowUpdateRate: slowUpdateRate.toFixed(2) + "%",
-      avgUpdateTime: avgUpdateTime.toFixed(2) + "ms",
-      recentAvgTime: recentAvgTime.toFixed(2) + "ms",
+      slowUpdateRate: `${slowUpdateRate.toFixed(2)}%`,
+      avgUpdateTime: `${avgUpdateTime.toFixed(2)}ms`,
+      recentAvgTime: `${recentAvgTime.toFixed(2)}ms`,
       maxRecordedTime: Math.max(...stateUpdates.map((u) => u.duration), 0),
       minRecordedTime: Math.min(
         ...stateUpdates.map((u) => u.duration),
         Number.POSITIVE_INFINITY,
       ),
-      sampleRate: (sampleRate * 100).toFixed(1) + "%",
+      sampleRate: `${(sampleRate * 100).toFixed(1)}%`,
     };
   };
 
@@ -277,11 +277,12 @@ export const createStateSerializer = (options: DevToolsConfig["serialize"]) => {
                 return new RegExp(value.value);
               case "BigInt":
                 return BigInt(value.value);
-              case "Error":
+              case "Error": {
                 const error = new Error(value.value.message);
                 error.stack = value.value.stack;
                 error.name = value.value.name;
                 return error;
+              }
               default:
                 return value;
             }

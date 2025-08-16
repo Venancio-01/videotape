@@ -11,7 +11,7 @@ export interface PersistConfig<T> {
   partialize?: (state: T) => Partial<T>;
   onRehydrateStorage?: (
     state?: T,
-  ) => ((state?: T, error?: Error) => void) | void;
+  ) => ((state?: T, error?: Error) => void) | undefined;
   version?: number;
   migrate?: (persistedState: any, version: number) => T;
   merge?: (persistedState: Partial<T>, currentState: T) => T;
@@ -167,6 +167,8 @@ export const PersistConfigs = {
       theme: state.theme || "system",
       colorScheme: state.colorScheme || "light",
       isSidebarOpen: state.isSidebarOpen || false,
+      screenOrientation: state.screenOrientation || "portrait",
+      isOrientationLocked: state.isOrientationLocked || false,
       notifications: state.notifications || [],
     }),
   },

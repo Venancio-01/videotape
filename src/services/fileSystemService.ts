@@ -254,9 +254,8 @@ export class FileSystemService implements IFileSystemService {
 
           if (options.sortOrder === "desc") {
             return valueB > valueA ? 1 : valueB < valueA ? -1 : 0;
-          } else {
-            return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
           }
+          return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
         });
       }
 

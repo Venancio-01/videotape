@@ -15,22 +15,36 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import type { Video } from "@/db/schema";
 import { useMediaPermissions } from "@/hooks/useMediaPermissions";
-import { type MediaFile, MediaFileService } from "@/services/mediaFileService";
+import {
+  type DirectoryTree as DirectoryTreeType,
+  type MediaFile,
+  MediaFileService,
+} from "@/services/mediaFileService";
 import { PlaylistService } from "@/services/playlistService";
 import { Stack, useRouter } from "expo-router";
 import { RefreshCw } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 export default function CreatePlaylistScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [playlistName, setPlaylistName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMediaFiles, setSelectedMediaFiles] = useState<MediaFile[]>([]);
-  const [directoryTree, setDirectoryTree] = useState<any>(null);
+  const [directoryTree, setDirectoryTree] = useState<DirectoryTreeType | null>(
+    null,
+  );
   const [loadingState, setLoadingState] = useState<LoadingState>("loading");
-  const [mediaStats, setMediaStats] = useState<any>(null);
+  const [mediaStats, setMediaStats] = useState<{
+    totalFiles: number;
+    totalSize: number;
+    totalDuration: number;
+  } | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [showNameDialog, setShowNameDialog] = useState(false);
 
@@ -49,7 +63,6 @@ export default function CreatePlaylistScreen() {
       }
 
       const tree = await mediaService.buildFlatDirectoryTree(forceRefresh);
-      console.log("🚀 - loadMediaFiles - tree:", tree);
       setDirectoryTree(tree);
       setMediaStats({
         totalFiles: tree.totalFiles,
@@ -172,7 +185,7 @@ export default function CreatePlaylistScreen() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-background" edges={["top", "bottom"]}>
       <Stack.Screen
         options={{
           title: "创建播放列表",
@@ -191,18 +204,14 @@ export default function CreatePlaylistScreen() {
         }}
       />
       <View className="flex-1">
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
+        >
           <View className="p-6 space-y-6">
-            {/* 提示信息 */}
-            <View>
-              <Text className="text-base font-medium mb-2">创建播放列表</Text>
-              <Text className="text-sm text-muted-foreground">
-                请先选择要添加的视频文件，然后点击创建按钮输入播放列表名称
-              </Text>
-            </View>
-
             {/* 媒体文件选择区域 */}
-            <View className="flex-1 min-h-[200px]">
+            <View className="flex-1">
               {/* 加载状态 */}
               {loadingState !== "success" && (
                 <View className="flex-1">
@@ -216,20 +225,11 @@ export default function CreatePlaylistScreen() {
 
               {/* 目录树 */}
               {loadingState === "success" && directoryTree && (
-                <View className="rounded-lg border border-border">
+                <View className="rounded-lg">
                   <DirectoryTree
                     treeData={directoryTree.root}
                     onSelectionChange={handleSelectionChange}
                   />
-                </View>
-              )}
-
-              {/* 已选择的文件统计 */}
-              {selectedMediaFiles.length > 0 && (
-                <View className="mt-4 bg-muted/50 rounded-lg p-3">
-                  <Text className="text-sm font-medium text-foreground">
-                    已选择 {selectedMediaFiles.length} 个文件
-                  </Text>
                 </View>
               )}
             </View>
@@ -237,7 +237,10 @@ export default function CreatePlaylistScreen() {
         </ScrollView>
 
         {/* 创建按钮 */}
-        <View className="p-6 pt-0">
+        <View
+          className="p-6 pt-0 bg-background"
+          style={{ paddingBottom: insets.bottom + 10 }}
+        >
           <Button
             onPress={handleShowNameDialog}
             disabled={isLoading || selectedMediaFiles.length === 0}

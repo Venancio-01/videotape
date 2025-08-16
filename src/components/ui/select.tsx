@@ -27,7 +27,7 @@ const SelectTrigger = React.forwardRef<
     )}
     {...props}
   >
-    <>{children}</>
+    {children}
     <ChevronDown
       size={16}
       aria-hidden={true}

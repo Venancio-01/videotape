@@ -229,7 +229,7 @@ const Item = React.forwardRef<
           value={value}
           disabled={props.disabled ?? undefined}
         >
-          <>{children}</>
+          {children}
         </Select.Item>
       </Slot.Pressable>
     </ItemContext.Provider>

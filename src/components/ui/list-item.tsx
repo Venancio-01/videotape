@@ -72,7 +72,8 @@ const ListItem: React.FC<ListItemProps> = ({
       return itemRight({
         className: cn("size-5 opacity-70", listItemTextVariants({ variant })),
       });
-    } else if ((props?.onPress && detail) || (href && detail)) {
+    }
+    if ((props?.onPress && detail) || (href && detail)) {
       return (
         <ChevronRight
           className={cn("size-5 opacity-70", listItemTextVariants({ variant }))}
@@ -118,9 +119,8 @@ const ListItem: React.FC<ListItemProps> = ({
         {body}
       </Link>
     );
-  } else {
-    return body;
   }
+  return body;
 };
 
 export default ListItem;

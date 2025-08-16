@@ -224,6 +224,12 @@ export interface UIStore extends BaseStore<UIState> {
   setTheme: (theme: "light" | "dark" | "system") => void;
   setColorScheme: (scheme: "light" | "dark") => void;
 
+  // 屏幕方向管理
+  setScreenOrientation: (orientation: "portrait" | "landscape") => void;
+  toggleScreenOrientation: () => void;
+  setOrientationLocked: (locked: boolean) => void;
+  toggleOrientationLock: () => void;
+
   // 加载状态
   setLoading: (key: string, loading: boolean) => void;
   setMultipleLoading: (states: Record<string, boolean>) => void;

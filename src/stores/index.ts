@@ -6,4 +6,16 @@
 // === 核心状态管理 Store ===
 export * from "./mediaStore"; // 统一媒体内容管理（视频 + 播放列表）
 export * from "./playbackStore"; // 播放控制和状态管理
-export * from "./videoStore"; // 视频状态管理
+export * from "./uiStore"; // UI 状态管理（界面、主题、屏幕方向）
+
+// === 选择性导出以避免冲突 ===
+export {
+  useVideoStore,
+  useVideoSelector,
+  useAllVideos,
+  useCurrentVideo as useVideoCurrentVideo,
+  useFavoriteVideos as useVideoFavoriteVideos,
+  useFilteredVideos as useVideoFilteredVideos,
+  useVideoStats,
+  videoSelectors,
+} from "./videoStore";

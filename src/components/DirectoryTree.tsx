@@ -135,7 +135,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const isIndeterminate = checkboxState === "indeterminate";
 
   return (
-    <View className="bg-card border-b border-border">
+    <View className="bg-card">
       <TouchableOpacity
         className={cn(
           "flex-row items-center py-3 px-4 min-h-[48px] active:bg-accent/50",

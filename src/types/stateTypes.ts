@@ -142,6 +142,10 @@ export interface UIState {
   theme: "light" | "dark" | "system";
   colorScheme: "light" | "dark";
 
+  // 屏幕方向状态
+  screenOrientation: "portrait" | "landscape" | "unknown";
+  isOrientationLocked: boolean;
+
   // 加载状态
   loadingStates: Record<string, boolean>;
 

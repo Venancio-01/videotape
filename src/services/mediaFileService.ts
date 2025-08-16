@@ -322,7 +322,8 @@ export class MediaFileService {
       // 或者: file:///storage/emulated/0/DCIM/Camera/video.mp4
       if (uri.startsWith("file://")) {
         return decodeURIComponent(uri.substring(7)); // 移除 "file://"
-      } else if (uri.startsWith("content://")) {
+      }
+      if (uri.startsWith("content://")) {
         // 对于 content URI，尝试从文件名构建路径
         const filename = uri.split("/").pop() || "unknown";
         return `/DCIM/${filename}`;
@@ -467,7 +468,7 @@ export class MediaFileService {
     if (bytes === 0) return "0 B";
 
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+    return `${Math.round((bytes / 1024 ** i) * 100) / 100} ${sizes[i]}`;
   }
 
   /**

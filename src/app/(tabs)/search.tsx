@@ -3,16 +3,21 @@ import { Text } from "@/components/ui/text";
 import { VideoCard } from "@/components/video";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
+import { cn } from "@/lib/utils";
 import { FlashList } from "@shopify/flash-list";
 import { ilike } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { Stack } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SearchScreen() {
   const db = useDatabase();
   const [searchQuery, setSearchQuery] = useState("");
+  const insets = useSafeAreaInsets();
+  const { colorScheme } = useColorScheme();
 
   const { data: videos } = useLiveQuery(
     db
@@ -48,7 +53,7 @@ export default function SearchScreen() {
             placeholder="搜索视频标题..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor="hsl(var(--muted-foreground))"
+            placeholderClassName={cn("text-muted-foreground")}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery("")}>
@@ -79,7 +84,9 @@ export default function SearchScreen() {
             </Text>
           </View>
         )}
-        ListFooterComponent={<View className="py-4" />}
+        ListFooterComponent={
+          <View style={{ paddingBottom: insets.bottom + 16 }} />
+        }
       />
     </View>
   );

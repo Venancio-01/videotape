@@ -13,7 +13,7 @@ interface VideoOverlayProps {
 
 export const VideoOverlay: React.FC<VideoOverlayProps> = ({ video }) => {
   return (
-    <View className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+    <View className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent z-15">
       <Text className="text-white text-xl font-bold mb-2" numberOfLines={2}>
         {video.title}
       </Text>

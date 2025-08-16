@@ -87,11 +87,11 @@ export class PlaylistService {
                 filePath: video.filePath,
                 thumbnailPath: video.thumbnailPath,
                 duration: video.duration || 0,
-                fileSize: v.fileSize || 0,
-                format: v.format || "unknown",
-                watchProgress: v.watchProgress || 0,
-                isFavorite: v.isFavorite || false,
-                playCount: v.playCount || 0,
+                fileSize: video.fileSize || 0,
+                format: video.format || "unknown",
+                watchProgress: video.watchProgress || 0,
+                isFavorite: video.isFavorite || false,
+                playCount: video.playCount || 0,
               };
 
               const [newVideo] = await tx

@@ -10,7 +10,7 @@ import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
 import { useVideoPlayback } from "@/hooks/useVideoPlayback";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Stack } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import * as React from "react";
 import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,14 +20,14 @@ export default function VideoHome() {
 
   if (error) {
     return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
+      <View className="flex-1 gap-5 p-6 bg-background">
         <Text>Migration error: {error.message}</Text>
       </View>
     );
   }
   if (!success) {
     return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
+      <View className="flex-1 gap-5 p-6 bg-background">
         <Text>Migration is in progress...</Text>
       </View>
     );
@@ -41,25 +41,28 @@ interface VideoItemProps {
   video: Video;
   isVisible: boolean;
   onVideoPress: () => void;
+  onFullscreenChange: (isFullscreen: boolean) => void;
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({
   video,
   isVisible,
   onVideoPress,
+  onFullscreenChange,
 }) => {
   const playback = useVideoPlayback({ video, isVisible });
   const insets = useSafeAreaInsets();
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onVideoPress}
-      className="bg-black"
+      className="bg-background"
       style={{
-        height: height - insets.top - 80,
+        height: height - insets.top - (60 + insets.bottom),
         marginTop: insets.top,
-        marginBottom: 80,
+        marginBottom: 60 + insets.bottom,
         width: width,
       }}
     >
@@ -69,8 +72,16 @@ const VideoItem: React.FC<VideoItemProps> = ({
         <VideoControls
           isPlaying={playback.isPlaying}
           onPlayPause={playback.togglePlayPause}
+          isFullscreen={isFullscreen}
         />
-        <VideoActions video={video} />
+        <VideoActions 
+        video={video} 
+        videoRef={playback.videoRef}
+        isMuted={playback.isMuted}
+        onMuteToggle={playback.toggleMute}
+        onFullscreenChange={onFullscreenChange}
+        onFullscreenStateChange={setIsFullscreen}
+      />
       </View>
     </TouchableOpacity>
   );
@@ -78,10 +89,27 @@ const VideoItem: React.FC<VideoItemProps> = ({
 
 function ScreenContent() {
   const db = useDatabase();
+  const navigation = useNavigation();
   const flatListRef = React.useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
 
   const { data } = useLiveQuery(db.select().from(videoTable));
+
+  // 处理全屏状态变化，隐藏/显示标签栏
+  React.useEffect(() => {
+    if (navigation.setOptions) {
+      navigation.setOptions({
+        tabBarStyle: {
+          display: isFullscreen ? 'none' : 'flex',
+        }
+      });
+    }
+  }, [isFullscreen, navigation]);
+
+  const handleFullscreenChange = React.useCallback((fullscreen: boolean) => {
+    setIsFullscreen(fullscreen);
+  }, []);
 
   const onViewableItemsChanged = React.useCallback(
     ({
@@ -99,8 +127,8 @@ function ScreenContent() {
 
   const viewabilityConfig = React.useMemo(
     () => ({
-      itemVisiblePercentThreshold: 50,
-      minimumViewTime: 300,
+      itemVisiblePercentThreshold: 70,
+      minimumViewTime: 800,
     }),
     [],
   );
@@ -112,11 +140,12 @@ function ScreenContent() {
           video={item}
           isVisible={index === currentIndex}
           onVideoPress={() => {}}
+          onFullscreenChange={handleFullscreenChange}
         />
         // <></>
       );
     },
-    [currentIndex],
+    [currentIndex, handleFullscreenChange],
   );
 
   const getItemLayout = React.useCallback(
@@ -129,7 +158,7 @@ function ScreenContent() {
   );
 
   return (
-    <View className="flex-1 bg-black">
+    <View className="flex-1 bg-background">
       <Stack.Screen
         options={{
           title: "视频",
@@ -146,7 +175,7 @@ function ScreenContent() {
           getItemLayout={getItemLayout}
           snapToInterval={height}
           snapToAlignment="start"
-          decelerationRate="fast"
+          decelerationRate="normal"
           showsVerticalScrollIndicator={false}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
@@ -159,12 +188,14 @@ function ScreenContent() {
           }}
         />
       ) : (
-        <View className="flex-1 items-center justify-center bg-black">
-          <Text className="text-white text-lg mb-2">📹 欢迎使用 Videotape</Text>
-          <Text className="text-white/60 text-center mb-4">
+        <View className="flex-1 items-center justify-center bg-background">
+          <Text className="text-foreground text-lg mb-2">
+            📹 欢迎使用 Videotape
+          </Text>
+          <Text className="text-muted-foreground text-center mb-4">
             您的视频播放器应用
           </Text>
-          <Text className="text-white/60 text-center">
+          <Text className="text-muted-foreground text-center">
             点击右下角的 + 按钮开始添加视频
           </Text>
         </View>

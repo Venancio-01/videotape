@@ -99,6 +99,9 @@ export const MiddlewareCombinations = {
   // 播放存储中间件
   playbackStore: createCombinedMiddleware("playbackStore"),
 
+  // UI 存储中间件
+  uiStore: createCombinedMiddleware("uiStore"),
+
   // 开发模式中间件（包含所有功能）
   development: <T>(storeName: keyof typeof PersistConfigs) =>
     createCombinedMiddleware<T>(storeName, {
