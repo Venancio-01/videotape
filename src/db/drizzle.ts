@@ -6,7 +6,7 @@ import { openDatabaseSync } from "expo-sqlite";
 export const DATABASE_NAME = "videotape.db";
 
 // 检查是否在 Expo 环境中运行
-const isExpoEnvironment = typeof window !== 'undefined' && window.expo;
+const isExpoEnvironment = typeof window !== "undefined" && window.expo;
 
 // 仅在 Expo 环境中初始化数据库
 let expoDb: any = null;
@@ -17,13 +17,18 @@ if (isExpoEnvironment) {
     expoDb = openDatabaseSync(DATABASE_NAME, { enableChangeListener: true });
     db = drizzle(expoDb);
   } catch (error) {
-    console.warn("Failed to initialize database in non-Expo environment:", error);
+    console.warn(
+      "Failed to initialize database in non-Expo environment:",
+      error,
+    );
   }
 }
 
 export const initialize = (): Promise<ExpoSQLiteDatabase> => {
   if (!db) {
-    return Promise.reject(new Error("Database not available in current environment"));
+    return Promise.reject(
+      new Error("Database not available in current environment"),
+    );
   }
   return Promise.resolve(db);
 };

@@ -2,8 +2,8 @@
  * 媒体文件加载状态组件
  */
 
-import { cn } from "@/lib/utils";
 import { AlertCircle, CheckCircle, RefreshCw } from "@/components/Icons";
+import { cn } from "@/lib/utils";
 import type React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

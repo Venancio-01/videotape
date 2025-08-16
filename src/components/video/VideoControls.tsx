@@ -1,5 +1,5 @@
 import { Play } from "@/components/Icons";
-import React from "react";
+import type React from "react";
 import { TouchableOpacity, View } from "react-native";
 
 interface VideoControlsProps {
@@ -20,8 +20,8 @@ export const VideoControls: React.FC<VideoControlsProps> = ({
         <TouchableOpacity
           className="absolute z-10"
           style={{
-            top: '50%',
-            left: '50%',
+            top: "50%",
+            left: "50%",
             marginTop: -24,
             marginLeft: -24,
           }}

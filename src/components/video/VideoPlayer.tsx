@@ -23,6 +23,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         style={{ width, height }}
         contentFit="contain"
         allowsFullscreen={true}
+        nativeControls={false}
         onFullscreenEnter={() => onFullscreenChange?.(true)}
         onFullscreenExit={() => onFullscreenChange?.(false)}
       />

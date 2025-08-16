@@ -3,10 +3,6 @@
  * 用于展示媒体文件目录结构并支持多选
  */
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
-import { MediaFileService } from "@/services/mediaFileService";
-import type { DirectoryNode } from "@/services/mediaFileService";
 import {
   ChevronDown,
   ChevronRight,
@@ -18,6 +14,10 @@ import {
   Music,
   Video,
 } from "@/components/Icons";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
+import { MediaFileService } from "@/services/mediaFileService";
+import type { DirectoryNode } from "@/services/mediaFileService";
 import React from "react";
 import {
   Dimensions,

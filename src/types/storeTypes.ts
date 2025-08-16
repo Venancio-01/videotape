@@ -47,11 +47,6 @@ export interface VideoStore extends BaseStore<VideoState> {
   resumeVideo: () => void;
   stopVideo: () => void;
 
-  // 收藏管理
-  toggleFavorite: (videoId: string) => void;
-  addToFavorites: (videoId: string) => void;
-  removeFromFavorites: (videoId: string) => void;
-  setFavorites: (videoIds: string[]) => void;
 
   // 观看历史
   addToWatchHistory: (history: any) => void;

@@ -1,7 +1,6 @@
 import { Text } from "@/components/ui/text";
 import {
-  VideoActions,
-  VideoControls,
+  EnhancedVideoControls,
   VideoOverlay,
   VideoPlayer,
 } from "@/components/video";
@@ -21,7 +20,9 @@ export default function VideoHome() {
   if (error) {
     return (
       <View className="flex-1 gap-5 p-6 bg-background">
-        <Text>Migration error: {error.message}</Text>
+        <Text>
+          Migration error: {typeof error === "string" ? error : error.message}
+        </Text>
       </View>
     );
   }
@@ -40,46 +41,69 @@ const { width, height } = Dimensions.get("window");
 interface VideoItemProps {
   video: Video;
   isVisible: boolean;
-  onVideoPress: () => void;
   onFullscreenChange: (isFullscreen: boolean) => void;
 }
 
 const VideoItem: React.FC<VideoItemProps> = ({
   video,
   isVisible,
-  onVideoPress,
   onFullscreenChange,
 }) => {
   const playback = useVideoPlayback({ video, isVisible });
   const insets = useSafeAreaInsets();
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [lastTap, setLastTap] = React.useState(0);
+  const controlsRef = React.useRef<{ showControls: () => void }>(null);
+
+  const handleVideoPress = () => {
+    const now = Date.now();
+    const timeDiff = now - lastTap;
+
+    if (timeDiff < 300) {
+      // 双击：暂停/播放
+      playback.togglePlayPause();
+    } else {
+      // 单击：只显示控制栏
+      controlsRef.current?.showControls();
+    }
+
+    setLastTap(now);
+  };
 
   return (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={onVideoPress}
+      onPress={handleVideoPress}
       className="bg-background"
       style={{
-        height: height - insets.top - (60 + insets.bottom),
+        height: height - insets.top - (40 + insets.bottom),
         marginTop: insets.top,
         marginBottom: 60 + insets.bottom,
         width: width,
       }}
     >
       <View className="flex-1 relative">
-        <VideoPlayer video={video} player={playback.player} onFullscreenChange={onFullscreenChange} />
-        <VideoOverlay video={video} />
-        <VideoControls
-          isPlaying={playback.isPlaying}
-          onPlayPause={playback.togglePlayPause}
-          isFullscreen={isFullscreen}
-        />
-        <VideoActions
+        <VideoPlayer
           video={video}
           player={playback.player}
+          onFullscreenChange={onFullscreenChange}
+        />
+        {/* <VideoOverlay video={video} onVideoPress={handleVideoPress} /> */}
+        <EnhancedVideoControls
+          ref={controlsRef}
+          isPlaying={playback.isPlaying}
           isMuted={playback.isMuted}
-          isFullscreen={isFullscreen}
+          currentTime={playback.currentTime}
+          duration={playback.duration}
+          onPlayPause={playback.togglePlayPause}
           onMuteToggle={playback.toggleMute}
+          onSeek={playback.seekTo}
+          onRewind={playback.rewind}
+          onForward={playback.forward}
+          isFullscreen={isFullscreen}
+          showControls={true}
+          video={video}
+          player={playback.player}
           onFullscreenChange={onFullscreenChange}
         />
       </View>
@@ -127,8 +151,8 @@ function ScreenContent() {
 
   const viewabilityConfig = React.useMemo(
     () => ({
-      itemVisiblePercentThreshold: 70,
-      minimumViewTime: 800,
+      itemVisiblePercentThreshold: 85,
+      minimumViewTime: 0,
     }),
     [],
   );
@@ -139,7 +163,6 @@ function ScreenContent() {
         <VideoItem
           video={item}
           isVisible={index === currentIndex}
-          onVideoPress={() => { }}
           onFullscreenChange={handleFullscreenChange}
         />
       );
@@ -174,7 +197,7 @@ function ScreenContent() {
           getItemLayout={getItemLayout}
           snapToInterval={height}
           snapToAlignment="start"
-          decelerationRate="normal"
+          decelerationRate="fast"
           showsVerticalScrollIndicator={false}
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}

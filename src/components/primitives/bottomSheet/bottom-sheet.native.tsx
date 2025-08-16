@@ -1,6 +1,6 @@
+import { X } from "@/components/Icons";
 import * as Slot from "@/components/primitives/slot";
 import { Button } from "@/components/ui";
-import { X } from "@/components/Icons";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
 import type {

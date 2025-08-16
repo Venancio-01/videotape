@@ -4,11 +4,7 @@ import { usePlaybackStore } from "@/stores/playbackStore";
 import { useVideoStore } from "@/stores/videoStore";
 import { AudioModule } from "expo-audio";
 import { useVideoPlayer } from "expo-video";
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
 
 interface VideoPlaybackHookProps {
@@ -20,11 +16,16 @@ export interface VideoPlaybackState {
   isPlaying: boolean;
   isMuted: boolean;
   player: any;
+  currentTime: number;
+  duration: number;
 }
 
 interface VideoPlaybackActions {
   togglePlayPause: () => Promise<void>;
   toggleMute: () => Promise<void>;
+  seekTo: (time: number) => void;
+  rewind: () => void;
+  forward: () => void;
 }
 
 export const useVideoPlayback = ({
@@ -34,6 +35,8 @@ export const useVideoPlayback = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [wasPlayingBeforeBackground, setWasPlayingBeforeBackground] =
     useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const player = useVideoPlayer(video.filePath, (player) => {
     player.loop = true;
@@ -79,7 +82,7 @@ export const useVideoPlayback = ({
       const saveProgress = async () => {
         try {
           pause(); // 暂停全局播放状态
-          
+
           // 更新视频观看进度
           if (video.id) {
             updateVideo(video.id, {
@@ -105,10 +108,10 @@ export const useVideoPlayback = ({
         await AudioModule.setAudioModeAsync({
           allowsRecordingIOS: false,
           staysActiveInBackground: true,
-          interruptionModeIOS: 'doNotMix',
+          interruptionModeIOS: "doNotMix",
           playsInSilentModeIOS: true,
           shouldDuckAndroid: true,
-          interruptionModeAndroid: 'doNotMix',
+          interruptionModeAndroid: "doNotMix",
           playThroughEarpieceAndroid: false,
         });
 
@@ -127,7 +130,7 @@ export const useVideoPlayback = ({
 
   // 监听播放状态变化
   useEffect(() => {
-    const subscription = player.addListener('playingChange', (event) => {
+    const subscription = player.addListener("playingChange", (event) => {
       const isPlaying = event.isPlaying;
       setIsPlaying(isPlaying);
       if (isPlaying) {
@@ -141,6 +144,18 @@ export const useVideoPlayback = ({
       subscription.remove();
     };
   }, [player, play, pause]);
+
+  // 监听时间更新
+  useEffect(() => {
+    const subscription = player.addListener("statusChange", (status) => {
+      setCurrentTime(status.currentTime || 0);
+      setDuration(status.duration || 0);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [player]);
 
   const togglePlayPause = useCallback(async () => {
     if (isPlaying) {
@@ -158,11 +173,31 @@ export const useVideoPlayback = ({
     setMuted(newMutedState); // 更新全局状态
   }, [isMuted, setMuted, player]);
 
+  const seekTo = useCallback(
+    (time: number) => {
+      player.currentTime = Math.max(0, Math.min(duration, time));
+    },
+    [player, duration],
+  );
+
+  const rewind = useCallback(() => {
+    seekTo(Math.max(0, currentTime - 10)); // 后退10秒
+  }, [seekTo, currentTime]);
+
+  const forward = useCallback(() => {
+    seekTo(Math.min(duration, currentTime + 10)); // 前进10秒
+  }, [seekTo, currentTime, duration]);
+
   return {
     isPlaying,
     isMuted,
     player,
+    currentTime,
+    duration,
     togglePlayPause,
     toggleMute,
+    seekTo,
+    rewind,
+    forward,
   };
 };

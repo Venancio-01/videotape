@@ -15,8 +15,6 @@ const initialState: VideoState = {
   videos: [],
   currentVideo: null,
 
-  // 收藏管理
-  favorites: new Set(),
 
   // 搜索和过滤
   searchQuery: "",
@@ -78,13 +76,10 @@ export const useVideoStore = create<VideoStore>()(
       removeVideo: (videoId: string) =>
         set((state) => {
           const newVideos = state.videos.filter((v) => v.id !== videoId);
-          const newFavorites = new Set(state.favorites);
-          newFavorites.delete(videoId);
 
           return {
             ...state,
             videos: newVideos,
-            favorites: newFavorites,
             currentVideo:
               state.currentVideo?.id === videoId ? null : state.currentVideo,
             pagination: {
@@ -127,49 +122,6 @@ export const useVideoStore = create<VideoStore>()(
           currentVideo: video,
         })),
 
-      // 收藏管理
-      toggleFavorite: (videoId: string) =>
-        set((state) => {
-          const newFavorites = new Set(state.favorites);
-          if (newFavorites.has(videoId)) {
-            newFavorites.delete(videoId);
-          } else {
-            newFavorites.add(videoId);
-          }
-
-          return {
-            ...state,
-            favorites: newFavorites,
-          };
-        }),
-
-      addToFavorites: (videoId: string) =>
-        set((state) => {
-          const newFavorites = new Set(state.favorites);
-          newFavorites.add(videoId);
-
-          return {
-            ...state,
-            favorites: newFavorites,
-          };
-        }),
-
-      removeFromFavorites: (videoId: string) =>
-        set((state) => {
-          const newFavorites = new Set(state.favorites);
-          newFavorites.delete(videoId);
-
-          return {
-            ...state,
-            favorites: newFavorites,
-          };
-        }),
-
-      setFavorites: (videoIds: string[]) =>
-        set((state) => ({
-          ...state,
-          favorites: new Set(videoIds),
-        })),
 
       // 观看历史
       addToWatchHistory: (history) =>
@@ -300,12 +252,6 @@ export const videoSelectors = {
   getCurrentVideo: (state: VideoState) => state.currentVideo,
   getIsLoading: (state: VideoState) => state.isLoading,
 
-  // 收藏相关
-  getFavoriteVideos: (state: VideoState) =>
-    state.videos.filter((video) => state.favorites.has(video.id)),
-  getIsFavorite: (videoId: string) => (state: VideoState) =>
-    state.favorites.has(videoId),
-  getFavoritesCount: (state: VideoState) => state.favorites.size,
 
   // 搜索和过滤
   getFilteredVideos: (state: VideoState) => {
@@ -343,8 +289,6 @@ export const videoSelectors = {
                 video.fileSize <= maxSize
               );
             }
-            case "isFavorite":
-              return state.favorites.has(video.id) === value;
             case "isWatched":
               return (
                 state.watchHistory.some((h) => h.videoId === video.id) === value
@@ -428,8 +372,6 @@ export const useVideoSelector = <T>(selector: (state: VideoState) => T): T => {
 export const useAllVideos = () => useVideoSelector(videoSelectors.getAllVideos);
 export const useCurrentVideo = () =>
   useVideoSelector(videoSelectors.getCurrentVideo);
-export const useFavoriteVideos = () =>
-  useVideoSelector(videoSelectors.getFavoriteVideos);
 export const useFilteredVideos = () =>
   useVideoSelector(videoSelectors.getFilteredVideos);
 export const useVideoStats = () =>

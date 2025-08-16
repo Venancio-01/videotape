@@ -15,8 +15,6 @@ export interface VideoState {
   videos: Video[];
   currentVideo: Video | null;
 
-  // 收藏管理
-  favorites: Set<string>;
 
   // 搜索和过滤
   searchQuery: string;
@@ -42,7 +40,6 @@ export interface VideoState {
 export interface VideoFilter {
   duration?: { min: number; max: number };
   size?: { min: number; max: number };
-  isFavorite?: boolean;
   isWatched?: boolean;
   sortBy?: "created_at" | "title" | "duration" | "size" | "play_count";
   sortOrder?: "asc" | "desc";

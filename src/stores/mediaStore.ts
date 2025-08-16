@@ -12,7 +12,6 @@ interface MediaState {
   // === 视频管理 ===
   videos: Video[];
   currentVideo: Video | null;
-  favorites: string[];
   watchHistory: WatchHistory[];
 
   // === 播放列表管理 ===
@@ -40,7 +39,6 @@ interface MediaState {
 const initialState: MediaState = {
   videos: [],
   currentVideo: null,
-  favorites: [],
   watchHistory: [],
   playlists: [],
   currentPlaylist: null,
@@ -98,7 +96,6 @@ export const useMediaStore = create<MediaState>()(
             videos: newVideos,
             currentVideo:
               state.currentVideo?.id === videoId ? null : state.currentVideo,
-            favorites: state.favorites.filter((id) => id !== videoId),
             pagination: { ...state.pagination, total: newVideos.length },
           };
         }),
@@ -121,34 +118,6 @@ export const useMediaStore = create<MediaState>()(
           currentVideo: video,
         })),
 
-      // === 收藏管理 ===
-      toggleFavorite: (videoId: string) =>
-        set((state) => ({
-          ...state,
-          favorites: state.favorites.includes(videoId)
-            ? state.favorites.filter((id) => id !== videoId)
-            : [...state.favorites, videoId],
-        })),
-
-      addToFavorites: (videoId: string) =>
-        set((state) => ({
-          ...state,
-          favorites: state.favorites.includes(videoId)
-            ? state.favorites
-            : [...state.favorites, videoId],
-        })),
-
-      removeFromFavorites: (videoId: string) =>
-        set((state) => ({
-          ...state,
-          favorites: state.favorites.filter((id) => id !== videoId),
-        })),
-
-      setFavorites: (videoIds: string[]) =>
-        set((state) => ({
-          ...state,
-          favorites: videoIds,
-        })),
 
       // === 观看历史 ===
       addToWatchHistory: (history: WatchHistory) =>
@@ -330,7 +299,6 @@ export const mediaSelectors = {
   // === 基础状态 ===
   getVideos: (state: MediaState) => state.videos,
   getCurrentVideo: (state: MediaState) => state.currentVideo,
-  getFavorites: (state: MediaState) => state.favorites,
   getWatchHistory: (state: MediaState) => state.watchHistory,
   getPlaylists: (state: MediaState) => state.playlists,
   getCurrentPlaylist: (state: MediaState) => state.currentPlaylist,
@@ -371,11 +339,6 @@ export const mediaSelectors = {
     historyCount: state.watchHistory.length,
   }),
 
-  // === 便捷方法 ===
-  getFavoriteVideos: (state: MediaState) =>
-    state.videos.filter((video) => state.favorites.includes(video.id)),
-  getIsFavorite: (videoId: string) => (state: MediaState) =>
-    state.favorites.includes(videoId),
 };
 
 // 创建记忆化 Hook - 使用 Zustand 内置的记忆化
@@ -387,7 +350,6 @@ export const useMediaSelector = <T>(selector: (state: MediaState) => T): T => {
 export const useVideos = () => useMediaSelector(mediaSelectors.getVideos);
 export const useCurrentVideo = () =>
   useMediaSelector(mediaSelectors.getCurrentVideo);
-export const useFavorites = () => useMediaSelector(mediaSelectors.getFavorites);
 export const usePlaylists = () => useMediaSelector(mediaSelectors.getPlaylists);
 export const useCurrentPlaylist = () =>
   useMediaSelector(mediaSelectors.getCurrentPlaylist);
@@ -397,5 +359,3 @@ export const useFilteredPlaylists = () =>
   useMediaSelector(mediaSelectors.getFilteredPlaylists);
 export const useMediaStats = () =>
   useMediaSelector(mediaSelectors.getMediaStats);
-export const useFavoriteVideos = () =>
-  useMediaSelector(mediaSelectors.getFavoriteVideos);

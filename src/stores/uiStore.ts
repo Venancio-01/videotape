@@ -119,7 +119,7 @@ export const useUIStore = create<UIStore>()(
       setScreenOrientation: async (orientation: "portrait" | "landscape") => {
         try {
           const currentState = get();
-          
+
           // 如果方向被锁定，先解锁
           if (currentState.isOrientationLocked) {
             await ScreenOrientation.unlockAsync();
@@ -127,9 +127,13 @@ export const useUIStore = create<UIStore>()(
 
           // 设置新的方向
           if (orientation === "portrait") {
-            await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+            await ScreenOrientation.lockAsync(
+              ScreenOrientation.OrientationLock.PORTRAIT_UP,
+            );
           } else {
-            await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+            await ScreenOrientation.lockAsync(
+              ScreenOrientation.OrientationLock.LANDSCAPE,
+            );
           }
 
           // 更新状态
@@ -144,7 +148,10 @@ export const useUIStore = create<UIStore>()(
 
       toggleScreenOrientation: async () => {
         const currentState = get();
-        const newOrientation = currentState.screenOrientation === "portrait" ? "landscape" : "portrait";
+        const newOrientation =
+          currentState.screenOrientation === "portrait"
+            ? "landscape"
+            : "portrait";
         await get().setScreenOrientation(newOrientation);
       },
 
@@ -154,9 +161,13 @@ export const useUIStore = create<UIStore>()(
             // 锁定当前方向
             const currentState = get();
             if (currentState.screenOrientation === "portrait") {
-              await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+              await ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.PORTRAIT_UP,
+              );
             } else {
-              await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+              await ScreenOrientation.lockAsync(
+                ScreenOrientation.OrientationLock.LANDSCAPE,
+              );
             }
           } else {
             // 解锁方向
@@ -249,7 +260,7 @@ export const useUIStore = create<UIStore>()(
 
       // === 通知管理 ===
       addNotification: (
-        notification: Omit<UIState["notifications"][0], "id" | "timestamp">
+        notification: Omit<UIState["notifications"][0], "id" | "timestamp">,
       ) =>
         set((state) => {
           const newNotification: UIState["notifications"][0] = {
@@ -260,7 +271,10 @@ export const useUIStore = create<UIStore>()(
 
           return {
             ...state,
-            notifications: [newNotification, ...state.notifications].slice(0, 10), // 保留最近10条
+            notifications: [newNotification, ...state.notifications].slice(
+              0,
+              10,
+            ), // 保留最近10条
           };
         }),
 
@@ -286,10 +300,10 @@ export const useUIStore = create<UIStore>()(
             label: string;
             onPress: () => void;
           };
-        }
+        },
       ) => {
         const { duration = 3000, action } = options || {};
-        
+
         get().addNotification({
           type,
           title,
@@ -322,24 +336,26 @@ export const uiSelectors = {
   getColorScheme: (state: UIState) => state.colorScheme,
   getScreenOrientation: (state: UIState) => state.screenOrientation,
   getIsOrientationLocked: (state: UIState) => state.isOrientationLocked,
-  
+
   // 界面状态
   getIsSidebarOpen: (state: UIState) => state.isSidebarOpen,
   getIsSearchOpen: (state: UIState) => state.isSearchOpen,
   getIsSettingsOpen: (state: UIState) => state.isSettingsOpen,
-  
+
   // 模态框状态
   getActiveModal: (state: UIState) => state.activeModal,
   getModalData: (state: UIState) => state.modalData,
-  
+
   // 加载状态
-  getLoadingState: (key: string) => (state: UIState) => state.loadingStates[key] || false,
-  getIsLoading: (state: UIState) => Object.values(state.loadingStates).some(Boolean),
-  
+  getLoadingState: (key: string) => (state: UIState) =>
+    state.loadingStates[key] || false,
+  getIsLoading: (state: UIState) =>
+    Object.values(state.loadingStates).some(Boolean),
+
   // 错误状态
   getError: (key: string) => (state: UIState) => state.errors[key],
   getHasErrors: (state: UIState) => Object.values(state.errors).some(Boolean),
-  
+
   // 通知状态
   getNotifications: (state: UIState) => state.notifications,
   getHasNotifications: (state: UIState) => state.notifications.length > 0,
@@ -353,12 +369,18 @@ export const useUISelector = <T>(selector: (state: UIState) => T): T => {
 // 预定义的 Hook
 export const useTheme = () => useUISelector(uiSelectors.getTheme);
 export const useColorScheme = () => useUISelector(uiSelectors.getColorScheme);
-export const useScreenOrientation = () => useUISelector(uiSelectors.getScreenOrientation);
-export const useIsOrientationLocked = () => useUISelector(uiSelectors.getIsOrientationLocked);
-export const useIsSidebarOpen = () => useUISelector(uiSelectors.getIsSidebarOpen);
+export const useScreenOrientation = () =>
+  useUISelector(uiSelectors.getScreenOrientation);
+export const useIsOrientationLocked = () =>
+  useUISelector(uiSelectors.getIsOrientationLocked);
+export const useIsSidebarOpen = () =>
+  useUISelector(uiSelectors.getIsSidebarOpen);
 export const useIsSearchOpen = () => useUISelector(uiSelectors.getIsSearchOpen);
-export const useIsSettingsOpen = () => useUISelector(uiSelectors.getIsSettingsOpen);
+export const useIsSettingsOpen = () =>
+  useUISelector(uiSelectors.getIsSettingsOpen);
 export const useActiveModal = () => useUISelector(uiSelectors.getActiveModal);
 export const useModalData = () => useUISelector(uiSelectors.getModalData);
-export const useNotifications = () => useUISelector(uiSelectors.getNotifications);
-export const useHasNotifications = () => useUISelector(uiSelectors.getHasNotifications);
+export const useNotifications = () =>
+  useUISelector(uiSelectors.getNotifications);
+export const useHasNotifications = () =>
+  useUISelector(uiSelectors.getHasNotifications);

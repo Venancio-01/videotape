@@ -53,21 +53,27 @@ import {
   LogOut,
   type LucideIcon,
   Mail,
+  Maximize2,
   MenuSquare,
   MessageSquare,
+  Minimize2,
   Minus,
   Moon,
   MoonStar,
   MoreVertical,
   Music,
   Palette,
+  Pause,
   Play,
   Plus,
   PlusCircle,
   RefreshCw,
+  Rewind,
   RotateCcw,
   Search,
   Settings,
+  SkipForward,
+  Smartphone,
   SortAsc,
   SortDesc,
   Sparkles,
@@ -83,9 +89,6 @@ import {
   Volume2,
   VolumeX,
   X,
-  Maximize2,
-  Minimize2,
-  Smartphone,
 } from "lucide-react-native";
 import { cssInterop } from "nativewind";
 
@@ -99,6 +102,10 @@ function interopIcon(icon: LucideIcon) {
       },
     },
   });
+  // Add displayName for React dev tools and error handling
+  if (icon && !icon.displayName) {
+    icon.displayName = icon.name || icon.constructor?.name || "Icon";
+  }
 }
 interopIcon(Settings);
 interopIcon(Sun);
@@ -179,8 +186,11 @@ interopIcon(Minus);
 interopIcon(Music);
 interopIcon(RefreshCw);
 interopIcon(RotateCcw);
+interopIcon(SkipForward);
 interopIcon(Volume2);
 interopIcon(VolumeX);
+interopIcon(Rewind);
+interopIcon(Pause);
 interopIcon(Maximize2);
 interopIcon(Minimize2);
 interopIcon(Moon);
@@ -227,7 +237,6 @@ export {
   Filter,
   Folder,
   FolderClosed,
-  FolderOpen,
   GalleryHorizontal,
   Heart,
   Info,
@@ -249,11 +258,14 @@ export {
   MoreVertical,
   Music,
   Palette,
+  Pause,
   Plus,
   PlusCircle,
   RefreshCw,
+  Rewind,
   RotateCcw,
   Search,
+  SkipForward,
   SortAsc,
   SortDesc,
   Sparkles,

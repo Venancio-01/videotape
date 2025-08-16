@@ -17,7 +17,6 @@ export const videoTable = sqliteTable("videos", {
   fileSize: integer("file_size").notNull(), // 文件大小（字节）
   format: text("format").notNull(), // 视频格式（mp4, mov, etc.）
   watchProgress: real("watch_progress").default(0), // 观看进度（秒）
-  isFavorite: integer("is_favorite", { mode: "boolean" }).default(false), // 是否收藏
   playCount: integer("play_count").default(0), // 播放次数
   lastWatchedAt: text("last_watched_at"), // 最后观看时间
   createdAt: text("created_at").default(sql`(CURRENT_TIMESTAMP)`), // 创建时间
@@ -136,7 +135,6 @@ export type VideoWithRelations = Video & {
 // 查询参数类型
 export type VideoSearchParams = {
   query?: string; // 搜索关键词
-  isFavorite?: boolean; // 是否只搜索收藏的视频
   minDuration?: number; // 最小时长（秒）
   maxDuration?: number; // 最大时长（秒）
   sortBy?: "created_at" | "title" | "duration" | "play_count"; // 排序字段
@@ -165,5 +163,4 @@ export type UserStats = {
   totalWatchTime: number; // 总观看时长（秒）
   videosWatched: number; // 已观看视频数
   playlistsCreated: number; // 创建的播放列表数
-  favoriteVideos: number; // 收藏的视频数
 };

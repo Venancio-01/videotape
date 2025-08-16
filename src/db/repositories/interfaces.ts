@@ -25,7 +25,6 @@ export interface IVideoRepository extends IBaseRepository<Video, string> {
   // 高级查询方法
   searchVideosQuery(params: VideoSearchParams): IQuerier<SearchResult<Video>>;
   getVideosByCategoryQuery(category: string): IQuerier<Video[]>;
-  getFavoriteVideosQuery(): IQuerier<Video[]>;
   getRecentVideosQuery(limit?: number): IQuerier<Video[]>;
   getRecommendedVideosQuery(limit?: number): IQuerier<Video[]>;
 
@@ -193,7 +192,6 @@ export interface Video {
   tags: string[];
   category: string;
   watchProgress: number;
-  isFavorite: boolean;
   playCount: number;
   lastWatchedAt?: string;
   description?: string;
@@ -324,7 +322,6 @@ export interface VideoSearchParams {
   query?: string;
   category?: string;
   tags?: string[];
-  isFavorite?: boolean;
   minDuration?: number;
   maxDuration?: number;
   sortBy?: "created_at" | "title" | "duration" | "rating" | "play_count";
@@ -355,7 +352,6 @@ export interface UserStats {
   videosWatched: number;
   playlistsCreated: number;
   bookmarksCreated: number;
-  favoriteVideos: number;
 }
 
 // 选项类型

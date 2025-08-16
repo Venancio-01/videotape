@@ -1,5 +1,4 @@
 import {
-  Heart,
   Maximize2,
   Minimize2,
   RotateCcw,
@@ -30,34 +29,9 @@ export const VideoActions: React.FC<VideoActionsProps> = ({
   onMuteToggle,
   onFullscreenChange,
 }) => {
-  const [isLiked, setIsLiked] = React.useState(video.isFavorite);
-  const likeAnimation = React.useRef(new Animated.Value(1)).current;
-
   const { toggleScreenOrientation } = useUIStore();
 
-  React.useEffect(() => {
-    setIsLiked(video.isFavorite);
-  }, [video.isFavorite]);
-
-
   // 组件卸载时不再强制恢复竖屏，让用户保持当前选择的方向
-
-  const onLike = () => {
-    setIsLiked(!isLiked);
-
-    Animated.sequence([
-      Animated.timing(likeAnimation, {
-        toValue: 1.3,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(likeAnimation, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
 
   const onFullscreenToggle = async () => {
     if (player) {
@@ -82,29 +56,10 @@ export const VideoActions: React.FC<VideoActionsProps> = ({
   };
 
   return (
-    <View className="absolute right-4 top-0 bottom-0 justify-center items-center z-20">
+    <View className="absolute right-4 top-0 bottom-0 justify-center items-center z-25">
       <View className="flex-col gap-4">
         {!isFullscreen && (
           <>
-            <View className="items-center">
-              <Animated.View style={{ transform: [{ scale: likeAnimation }] }}>
-                <TouchableOpacity onPress={onLike} className="items-center">
-                  <View
-                    className={`
-                      bg-black/50 rounded-full p-3 mb-1 transition-colors
-                      ${isLiked ? "bg-red-500/50" : ""}
-                    `}
-                  >
-                    <Heart
-                      className={isLiked ? "text-red-500" : "text-white"}
-                      size={24}
-                      fill={isLiked ? "hsl(var(--destructive))" : "none"}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </Animated.View>
-            </View>
-
             <ControlButton
               onPress={onMuteToggle}
               icon={

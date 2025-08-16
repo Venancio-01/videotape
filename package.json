@@ -113,8 +113,5 @@
     "typescript": "~5.8.3",
     "vitest": "^2.1.8"
   },
-  "trustedDependencies": [
-    "tailwindcss",
-    "nativewind"
-  ]
+  "trustedDependencies": ["tailwindcss", "nativewind"]
 }

@@ -48,7 +48,6 @@ export class VideoRepository implements IVideoRepository {
     const db = this.getDb();
     const {
       query,
-      isFavorite,
       minDuration,
       maxDuration,
       sortBy = "created_at",
@@ -65,10 +64,6 @@ export class VideoRepository implements IVideoRepository {
       whereConditions.push(ilike(videoTable.title, `%${query}%`));
     }
 
-    // 收藏过滤
-    if (isFavorite !== undefined) {
-      whereConditions.push(eq(videoTable.isFavorite, isFavorite));
-    }
 
     // 时长过滤
     if (minDuration !== undefined) {
@@ -118,14 +113,6 @@ export class VideoRepository implements IVideoRepository {
     };
   }
 
-  getFavoriteVideosQuery() {
-    const db = this.getDb();
-    return db
-      .select()
-      .from(videoTable)
-      .where(eq(videoTable.isFavorite, true))
-      .orderBy(desc(videoTable.createdAt));
-  }
 
   getRecentVideosQuery(limit = 20) {
     const db = this.getDb();
