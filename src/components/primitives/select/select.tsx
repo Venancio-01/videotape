@@ -27,7 +27,6 @@ import {
   View,
 } from "react-native";
 import type {
-  RootContext,
   SelectContentProps,
   SelectItemProps,
   SelectOverlayProps,
@@ -38,7 +37,9 @@ import type {
   SelectValueProps,
 } from "./types";
 
-interface IRootContext extends RootContext {
+interface IRootContext {
+  value: { value: string; label: string } | null;
+  onValueChange: (value: { value: string; label: string }) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   triggerPosition: LayoutPosition | null;
@@ -46,6 +47,7 @@ interface IRootContext extends RootContext {
   contentLayout: LayoutRectangle | null;
   setContentLayout: (contentLayout: LayoutRectangle | null) => void;
   nativeID: string;
+  disabled?: boolean;
 }
 
 const RootContext = React.createContext<IRootContext | null>(null);

@@ -113,11 +113,9 @@ Trigger.displayName = "TriggerAlertWebDialog";
 
 function Portal({ forceMount, container, children }: AlertDialogPortalProps) {
   return (
-    <AlertDialog.Portal
-      forceMount={forceMount}
-      children={children}
-      container={container}
-    />
+    <AlertDialog.Portal forceMount={forceMount} container={container}>
+      {children}
+    </AlertDialog.Portal>
   );
 }
 

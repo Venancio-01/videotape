@@ -8,7 +8,7 @@ import {
 import type { Video as VideoType } from "@/db/schema";
 import { useUIStore } from "@/stores";
 import * as ScreenOrientation from "expo-screen-orientation";
-import React from "react";
+import type React from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
 import { ControlButton } from "./ControlButton";
 

@@ -15,7 +15,6 @@ const initialState: VideoState = {
   videos: [],
   currentVideo: null,
 
-
   // 搜索和过滤
   searchQuery: "",
   currentFilter: {},
@@ -121,7 +120,6 @@ export const useVideoStore = create<VideoStore>()(
           ...state,
           currentVideo: video,
         })),
-
 
       // 观看历史
       addToWatchHistory: (history) =>
@@ -251,7 +249,6 @@ export const videoSelectors = {
   getAllVideos: (state: VideoState) => state.videos,
   getCurrentVideo: (state: VideoState) => state.currentVideo,
   getIsLoading: (state: VideoState) => state.isLoading,
-
 
   // 搜索和过滤
   getFilteredVideos: (state: VideoState) => {

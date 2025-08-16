@@ -98,11 +98,9 @@ Trigger.displayName = "TriggerWebDropdownMenu";
 
 function Portal({ forceMount, container, children }: DropdownMenuPortalProps) {
   return (
-    <DropdownMenu.Portal
-      forceMount={forceMount}
-      container={container}
-      children={children}
-    />
+    <DropdownMenu.Portal forceMount={forceMount} container={container}>
+      {children}
+    </DropdownMenu.Portal>
   );
 }
 

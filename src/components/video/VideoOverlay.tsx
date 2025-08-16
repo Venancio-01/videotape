@@ -1,5 +1,5 @@
 import { Text } from "@/components/ui/text";
-import { formatDuration } from "@/utils/videoUtils";
+import { formatDuration } from "@/lib/utils";
 import { TouchableOpacity, View } from "react-native";
 
 interface VideoOverlayProps {

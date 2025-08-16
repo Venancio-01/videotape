@@ -250,7 +250,7 @@ export class VideoMetadataUtils {
     let totalBitrate = 0;
     let bitrateCount = 0;
 
-    metadataList.forEach((metadata) => {
+    for (const metadata of metadataList) {
       stats.totalSize += metadata.fileSize;
       stats.totalDuration += metadata.duration;
 
@@ -258,7 +258,7 @@ export class VideoMetadataUtils {
         totalBitrate += metadata.bitrate;
         bitrateCount++;
       }
-    });
+    }
 
     stats.averageBitrate = bitrateCount > 0 ? totalBitrate / bitrateCount : 0;
 

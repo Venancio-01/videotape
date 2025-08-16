@@ -1,5 +1,3 @@
-import React from "react";
-import { TouchableOpacity, View } from "react-native";
 import {
   Maximize2,
   Minimize2,
@@ -15,6 +13,8 @@ import type { Video as VideoType } from "@/db/schema";
 import { useUIStore } from "@/stores";
 import * as ScreenOrientation from "expo-screen-orientation";
 import type { VideoPlayer as ExpoVideoPlayer } from "expo-video";
+import type React from "react";
+import { TouchableOpacity, View } from "react-native";
 
 interface VideoControlButtonsProps {
   isPlaying: boolean;
@@ -133,7 +133,9 @@ export const VideoControlButtons: React.FC<VideoControlButtonsProps> = ({
 
                 {/* 屏幕方向切换按钮 */}
                 <TouchableOpacity
-                  onPress={(event) => handleControlPress(event, toggleScreenOrientation)}
+                  onPress={(event) =>
+                    handleControlPress(event, toggleScreenOrientation)
+                  }
                   activeOpacity={0.8}
                   className="p-2"
                 >
@@ -145,7 +147,9 @@ export const VideoControlButtons: React.FC<VideoControlButtonsProps> = ({
             {/* 全屏按钮 - 在全屏模式下显示方向控制按钮 */}
             {isFullscreen ? (
               <TouchableOpacity
-                onPress={(event) => handleControlPress(event, toggleScreenOrientation)}
+                onPress={(event) =>
+                  handleControlPress(event, toggleScreenOrientation)
+                }
                 activeOpacity={0.8}
                 className="p-2"
               >
@@ -154,7 +158,9 @@ export const VideoControlButtons: React.FC<VideoControlButtonsProps> = ({
             ) : null}
 
             <TouchableOpacity
-              onPress={(event) => handleControlPress(event, handleFullscreenToggle)}
+              onPress={(event) =>
+                handleControlPress(event, handleFullscreenToggle)
+              }
               activeOpacity={0.8}
               className="p-2"
             >

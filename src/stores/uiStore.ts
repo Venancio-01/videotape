@@ -82,7 +82,7 @@ export const useUIStore = create<UIStore>()(
         })),
 
       // === 模态框管理 ===
-      openModal: (type: UIState["activeModal"], data?: any) =>
+      openModal: (type: UIState["activeModal"], data?: unknown) =>
         set((state) => ({
           ...state,
           activeModal: type,
@@ -96,7 +96,7 @@ export const useUIStore = create<UIStore>()(
           modalData: null,
         })),
 
-      setModalData: (data: any) =>
+      setModalData: (data: unknown) =>
         set((state) => ({
           ...state,
           modalData: data,

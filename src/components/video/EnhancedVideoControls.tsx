@@ -1,10 +1,13 @@
 import type { Video as VideoType } from "@/db/schema";
+import type { VideoPlayer as ExpoVideoPlayer } from "expo-video";
 import React from "react";
 import { View } from "react-native";
-import type { VideoPlayer as ExpoVideoPlayer } from "expo-video";
-import { VideoProgressBar } from "./VideoProgressBar";
+import {
+  ControlsVisibilityManager,
+  type ControlsVisibilityManagerRef,
+} from "./ControlsVisibilityManager";
 import { VideoControlButtons } from "./VideoControlButtons";
-import { ControlsVisibilityManager, type ControlsVisibilityManagerRef } from "./ControlsVisibilityManager";
+import { VideoProgressBar } from "./VideoProgressBar";
 
 interface EnhancedVideoControlsProps {
   isPlaying: boolean;
@@ -77,18 +80,24 @@ export const EnhancedVideoControls = React.forwardRef<
     }, [displayTime]);
 
     // 处理进度条seek
-    const handleProgressSeek = React.useCallback((time: number) => {
-      setDisplayTime(time);
-      onSeek(time);
-    }, [onSeek]);
+    const handleProgressSeek = React.useCallback(
+      (time: number) => {
+        setDisplayTime(time);
+        onSeek(time);
+      },
+      [onSeek],
+    );
 
     const handleFullscreenToggle = React.useCallback(() => {
       onFullscreenChange?.(!isFullscreen);
     }, [isFullscreen, onFullscreenChange]);
 
-    const handleControlsVisibleChange = React.useCallback((visible: boolean) => {
-      // 可以在这里添加额外的控制栏显示逻辑
-    }, []);
+    const handleControlsVisibleChange = React.useCallback(
+      (visible: boolean) => {
+        // 可以在这里添加额外的控制栏显示逻辑
+      },
+      [],
+    );
 
     return (
       <ControlsVisibilityManager

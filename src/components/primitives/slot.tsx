@@ -145,8 +145,8 @@ function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
       // if the handler exists on both, we compose them
       if (slotPropValue && childPropValue) {
         overrideProps[propName] = (...args: unknown[]) => {
-          (childPropValue as Function)(...args);
-          (slotPropValue as Function)(...args);
+          (childPropValue as (...args: unknown[]) => void)(...args);
+          (slotPropValue as (...args: unknown[]) => void)(...args);
         };
       }
       // but if it exists only on the slot, we use only this one

@@ -5,6 +5,7 @@
 import { MiddlewareCombinations } from "@/middleware";
 import type { PlaybackState } from "@/types/stateTypes";
 import type { PlaybackStore } from "@/types/storeTypes";
+import type { Video } from "@/db/schema";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -196,7 +197,7 @@ export const usePlaybackStore = create<PlaybackStore>()(
         })),
 
       // === 队列控制 ===
-      setQueue: (queue: any[]) =>
+      setQueue: (queue: Video[]) =>
         set((state) => ({
           ...state,
           queue,

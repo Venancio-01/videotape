@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { MediaFileService } from "@/services/mediaFileService";
 import type { DirectoryNode } from "@/services/mediaFileService";
+import type { FileItem } from "@/types/file";
 import React from "react";
 import {
   Dimensions,
@@ -29,7 +30,7 @@ import {
 
 interface DirectoryTreeProps {
   treeData: DirectoryNode;
-  onSelectionChange?: (selectedFiles: any[]) => void;
+  onSelectionChange?: (selectedFiles: FileItem[]) => void;
   maxDepth?: number;
 }
 
@@ -281,12 +282,16 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
         newSet.add(node.id);
       } else {
         const allFileIds = getAllFileDescendantIds(node);
-        allFileIds.forEach((id) => newSet.add(id));
+        for (const id of allFileIds) {
+          newSet.add(id);
+        }
       }
     } else {
       // 取消选中：移除节点及其所有子节点
       const allDescendantIds = getAllDescendantIds(node);
-      allDescendantIds.forEach((id) => newSet.delete(id));
+      for (const id of allDescendantIds) {
+        newSet.delete(id);
+      }
       if (node.type === "file") {
         newSet.delete(node.id);
       }

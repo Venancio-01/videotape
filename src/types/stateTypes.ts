@@ -15,7 +15,6 @@ export interface VideoState {
   videos: Video[];
   currentVideo: Video | null;
 
-
   // 搜索和过滤
   searchQuery: string;
   currentFilter: VideoFilter;
@@ -133,7 +132,7 @@ export interface UIState {
 
   // 模态框状态
   activeModal: null | "settings" | "playlist" | "share" | "delete";
-  modalData: any;
+  modalData: Record<string, unknown>;
 
   // 主题状态
   theme: "light" | "dark" | "system";

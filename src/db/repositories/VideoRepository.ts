@@ -64,7 +64,6 @@ export class VideoRepository implements IVideoRepository {
       whereConditions.push(ilike(videoTable.title, `%${query}%`));
     }
 
-
     // 时长过滤
     if (minDuration !== undefined) {
       whereConditions.push(gte(videoTable.duration, minDuration));
@@ -112,7 +111,6 @@ export class VideoRepository implements IVideoRepository {
       }),
     };
   }
-
 
   getRecentVideosQuery(limit = 20) {
     const db = this.getDb();

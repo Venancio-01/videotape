@@ -2,7 +2,7 @@
  * Store 类型定义
  */
 
-import type { Video } from "@/db/schema";
+import type { Playlist, Video, WatchHistory } from "@/db/schema";
 import type { StoreMiddleware } from "./middlewareTypes";
 import type {
   PlaybackState,
@@ -47,9 +47,8 @@ export interface VideoStore extends BaseStore<VideoState> {
   resumeVideo: () => void;
   stopVideo: () => void;
 
-
   // 观看历史
-  addToWatchHistory: (history: any) => void;
+  addToWatchHistory: (history: WatchHistory) => void;
   updateWatchProgress: (
     videoId: string,
     position: number,
@@ -128,12 +127,12 @@ export interface QueueStore extends BaseStore<QueueState> {
   cycleRepeatMode: () => void;
 
   // 播放列表
-  createPlaylist: (playlist: any) => void;
-  updatePlaylist: (playlistId: string, updates: Partial<any>) => void;
+  createPlaylist: (playlist: Playlist) => void;
+  updatePlaylist: (playlistId: string, updates: Partial<Playlist>) => void;
   deletePlaylist: (playlistId: string) => void;
   addToPlaylist: (playlistId: string, videoIds: string[]) => void;
   removeFromPlaylist: (playlistId: string, videoIds: string[]) => void;
-  setCurrentPlaylist: (playlist: any | null) => void;
+  setCurrentPlaylist: (playlist: Playlist | null) => void;
 
   // 加载状态
   setLoading: (loading: boolean) => void;
@@ -179,11 +178,11 @@ export interface SettingsStore extends BaseStore<SettingsState> {
 // 播放列表 Store 接口
 export interface PlaylistStore extends BaseStore<PlaylistState> {
   // 播放列表管理
-  addPlaylist: (playlist: any) => void;
+  addPlaylist: (playlist: Playlist) => void;
   removePlaylist: (playlistId: string) => void;
-  updatePlaylist: (playlistId: string, updates: Partial<any>) => void;
-  setPlaylists: (playlists: any[]) => void;
-  setCurrentPlaylist: (playlist: any | null) => void;
+  updatePlaylist: (playlistId: string, updates: Partial<Playlist>) => void;
+  setPlaylists: (playlists: Playlist[]) => void;
+  setCurrentPlaylist: (playlist: Playlist | null) => void;
 
   // 搜索和过滤
   setSearchQuery: (query: string) => void;
@@ -211,9 +210,12 @@ export interface UIStore extends BaseStore<UIState> {
   setSettingsOpen: (open: boolean) => void;
 
   // 模态框管理
-  openModal: (type: UIState["activeModal"], data?: any) => void;
+  openModal: (
+    type: UIState["activeModal"],
+    data?: Record<string, unknown>,
+  ) => void;
   closeModal: () => void;
-  setModalData: (data: any) => void;
+  setModalData: (data: Record<string, unknown>) => void;
 
   // 主题管理
   setTheme: (theme: "light" | "dark" | "system") => void;
@@ -247,7 +249,7 @@ export interface UIStore extends BaseStore<UIState> {
     type: UIState["notifications"][0]["type"],
     title: string,
     message: string,
-    options?: any,
+    options?: Record<string, unknown>,
   ) => void;
 
   // 状态重置

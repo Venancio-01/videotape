@@ -20,7 +20,7 @@ interface MediaState {
 
   // === 搜索和过滤 ===
   searchQuery: string;
-  currentFilter: any;
+  currentFilter: Record<string, unknown>;
 
   // === 分页 ===
   pagination: {
@@ -43,7 +43,7 @@ const initialState: MediaState = {
   playlists: [],
   currentPlaylist: null,
   searchQuery: "",
-  currentFilter: {},
+  currentFilter: {} as Record<string, unknown>,
   pagination: {
     page: 1,
     pageSize: 20,
@@ -117,7 +117,6 @@ export const useMediaStore = create<MediaState>()(
           ...state,
           currentVideo: video,
         })),
-
 
       // === 观看历史 ===
       addToWatchHistory: (history: WatchHistory) =>
@@ -231,7 +230,7 @@ export const useMediaStore = create<MediaState>()(
           searchQuery: query,
         })),
 
-      setFilter: (filter: any) =>
+      setFilter: (filter: Record<string, unknown>) =>
         set((state) => ({
           ...state,
           currentFilter: { ...state.currentFilter, ...filter },
@@ -245,7 +244,7 @@ export const useMediaStore = create<MediaState>()(
         })),
 
       // === 分页 ===
-      setPagination: (pagination: any) =>
+      setPagination: (pagination: Partial<MediaState["pagination"]>) =>
         set((state) => ({
           ...state,
           pagination: { ...state.pagination, ...pagination },
@@ -335,10 +334,9 @@ export const mediaSelectors = {
   getMediaStats: (state: MediaState) => ({
     totalVideos: state.videos.length,
     totalPlaylists: state.playlists.length,
-    favoriteCount: state.favorites.length,
+    favoriteCount: state.videos.filter(v => v.isFavorite).length,
     historyCount: state.watchHistory.length,
   }),
-
 };
 
 // 创建记忆化 Hook - 使用 Zustand 内置的记忆化

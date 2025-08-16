@@ -110,11 +110,9 @@ Trigger.displayName = "TriggerWebDialog";
 
 function Portal({ forceMount, container, children }: DialogPortalProps) {
   return (
-    <Dialog.Portal
-      forceMount={forceMount}
-      children={children}
-      container={container}
-    />
+    <Dialog.Portal forceMount={forceMount} container={container}>
+      {children}
+    </Dialog.Portal>
   );
 }
 

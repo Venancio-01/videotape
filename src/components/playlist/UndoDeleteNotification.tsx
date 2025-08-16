@@ -1,12 +1,12 @@
 import { Text } from "@/components/ui/text";
-import type { Playlist } from "@/db/schema";
+import type { Playlist, Video } from "@/db/schema";
 import { PlaylistService } from "@/services/playlistService";
 import type * as React from "react";
 import { Alert, TouchableOpacity, View } from "react-native";
 
 interface DeletedPlaylistItem {
   playlist: Playlist;
-  videos: any[];
+  videos: Video[];
   timestamp: number;
 }
 

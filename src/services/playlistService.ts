@@ -127,10 +127,6 @@ export class PlaylistService {
             })
             .where(eq(playlistTable.id, playlistId));
 
-          console.log(
-            `成功创建播放列表: ${playlistId}, 包含 ${processedVideos.length} 个视频`,
-          );
-
           return {
             success: true,
             playlistId,
@@ -228,8 +224,6 @@ export class PlaylistService {
         .set(updateData)
         .where(eq(playlistTable.id, id));
 
-      console.log("更新播放列表:", { id, ...updateData });
-
       return {
         success: true,
         playlistId: id,
@@ -261,8 +255,6 @@ export class PlaylistService {
         // 再删除播放列表
         await tx.delete(playlistTable).where(eq(playlistTable.id, id));
       });
-
-      console.log("删除播放列表:", id);
 
       return {
         success: true,
