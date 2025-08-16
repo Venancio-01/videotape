@@ -190,10 +190,10 @@ export class FileSystemService implements IFileSystemService {
       const info = await FileSystem.getInfoAsync(uri);
       return {
         uri: info.uri,
-        size: info.size,
+        size: info.size || 0,
         exists: info.exists,
         isDirectory: info.isDirectory,
-        modificationTime: info.modificationTime,
+        modificationTime: info.modificationTime || 0,
       };
     } catch (error) {
       throw new Error(`获取文件元数据失败: ${error.message}`);
@@ -578,13 +578,13 @@ export class VideoService implements IVideoService {
       const videos = await this.searchVideos("");
       const categories = new Map<string, FileItem[]>();
 
-      videos.forEach((video) => {
+      for (const video of videos) {
         const category = video.type || "other";
         if (!categories.has(category)) {
           categories.set(category, []);
         }
         categories.get(category)!.push(video);
-      });
+      }
 
       return categories;
     } catch (error) {

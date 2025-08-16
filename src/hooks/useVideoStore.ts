@@ -186,15 +186,21 @@ export const useVideoBatchOperations = () => {
   );
 
   const removeMultiple = (videoIds: string[]) => {
-    videoIds.forEach((id) => removeVideo(id));
+    for (const id of videoIds) {
+      removeVideo(id);
+    }
   };
 
   const addMultipleToFavorites = (videoIds: string[]) => {
-    videoIds.forEach((id) => addToFavorites(id));
+    for (const id of videoIds) {
+      addToFavorites(id);
+    }
   };
 
   const removeMultipleFromFavorites = (videoIds: string[]) => {
-    videoIds.forEach((id) => removeFromFavorites(id));
+    for (const id of videoIds) {
+      removeFromFavorites(id);
+    }
   };
 
   const selectAll = () => videos.map((v) => v.id);

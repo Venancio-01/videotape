@@ -22,5 +22,8 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "svn.ignoreMissingSvnWarning": true
+  "svn.ignoreMissingSvnWarning": true,
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

@@ -145,7 +145,7 @@ export class MediaFileService {
     // 按目录分组
     const directoryMap = new Map<string, DirectoryNode>();
 
-    mediaFiles.forEach((file) => {
+    for (const file of mediaFiles) {
       // 从 URI 提取路径
       const path = this.extractPathFromUri(file.uri);
       const pathParts = path.split("/").filter(Boolean);
@@ -154,7 +154,7 @@ export class MediaFileService {
       let currentPath = "";
       let parent = root;
 
-      pathParts.forEach((part, index) => {
+      for (const [index, part] of pathParts.entries()) {
         currentPath = currentPath ? `${currentPath}/${part}` : `/${part}`;
         const isFile = index === pathParts.length - 1;
 
@@ -200,8 +200,8 @@ export class MediaFileService {
 
           parent = directoryMap.get(currentPath)!;
         }
-      });
-    });
+      }
+    }
 
     // 计算目录统计信息
     this.calculateDirectoryStats(root);
@@ -349,7 +349,7 @@ export class MediaFileService {
     let totalDuration = 0;
 
     if (node.children) {
-      node.children.forEach((child) => {
+      for (const child of node.children) {
         if (child.type === "directory") {
           this.calculateDirectoryStats(child);
           totalSize += child.totalSize || 0;
@@ -358,7 +358,7 @@ export class MediaFileService {
           totalSize += child.mediaFile.fileSize || 0;
           totalDuration += child.mediaFile.duration || 0;
         }
-      });
+      }
     }
 
     node.totalSize = totalSize;
@@ -393,11 +393,11 @@ export class MediaFileService {
       });
 
       // 递归排序子目录
-      node.children.forEach((child) => {
+      for (const child of node.children) {
         if (child.type === "directory") {
           this.sortDirectoryTree(child);
         }
-      });
+      }
     }
   }
 
@@ -421,7 +421,9 @@ export class MediaFileService {
       }
 
       if (currentNode.children) {
-        currentNode.children.forEach(traverse);
+        for (const child of currentNode.children) {
+          traverse(child);
+        }
       }
     };
 
@@ -437,9 +439,9 @@ export class MediaFileService {
 
     if (node.type === "directory" && node.children) {
       // 递归设置子节点选中状态
-      node.children.forEach((child) => {
+      for (const child of node.children) {
         this.toggleNodeSelection(child, isSelected);
-      });
+      }
     }
   }
 

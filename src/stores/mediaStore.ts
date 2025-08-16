@@ -334,7 +334,7 @@ export const mediaSelectors = {
   getMediaStats: (state: MediaState) => ({
     totalVideos: state.videos.length,
     totalPlaylists: state.playlists.length,
-    favoriteCount: state.videos.filter(v => v.isFavorite).length,
+    favoriteCount: state.videos.filter((v) => v.isFavorite).length,
     historyCount: state.watchHistory.length,
   }),
 };

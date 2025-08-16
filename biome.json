@@ -11,6 +11,9 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
       "recommended": true,
       "a11y": {
         "noSvgWithoutTitle": "off",
