@@ -1,23 +1,37 @@
-import type { Video } from "@/db/schema";
-import { Heart, Volume2, VolumeX, Maximize2, Minimize2, RotateCcw } from "@/components/Icons";
-import React from "react";
+import {
+  Heart,
+  Maximize2,
+  Minimize2,
+  RotateCcw,
+  Volume2,
+  VolumeX,
+} from "@/components/Icons";
+import type { Video as VideoType } from "@/db/schema";
+import { useUIStore } from "@/stores";
+import type { Video } from "expo-av";
 import * as ScreenOrientation from "expo-screen-orientation";
+import React from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
 import { ControlButton } from "./ControlButton";
-import { useUIStore } from "@/stores";
 
 interface VideoActionsProps {
-  video: Video;
-  videoRef?: React.RefObject<any>;
+  video: VideoType;
+  videoRef?: React.RefObject<Video | null>;
   isMuted?: boolean;
+  isFullscreen?: boolean;
   onMuteToggle?: () => Promise<void>;
   onFullscreenChange?: (isFullscreen: boolean) => void;
-  onFullscreenStateChange?: (isFullscreen: boolean) => void;
 }
 
-export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isMuted = false, onMuteToggle, onFullscreenChange, onFullscreenStateChange }) => {
+export const VideoActions: React.FC<VideoActionsProps> = ({
+  video,
+  videoRef,
+  isMuted = false,
+  isFullscreen = false,
+  onMuteToggle,
+  onFullscreenChange,
+}) => {
   const [isLiked, setIsLiked] = React.useState(video.isFavorite);
-  const [isFullscreen, setIsFullscreen] = React.useState(false);
   const likeAnimation = React.useRef(new Animated.Value(1)).current;
 
   const { toggleScreenOrientation } = useUIStore();
@@ -26,10 +40,6 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
     setIsLiked(video.isFavorite);
   }, [video.isFavorite]);
 
-  // 监听全屏状态变化
-  React.useEffect(() => {
-    onFullscreenStateChange?.(isFullscreen);
-  }, [isFullscreen, onFullscreenStateChange]);
 
   // 组件卸载时不再强制恢复竖屏，让用户保持当前选择的方向
 
@@ -54,17 +64,19 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
     if (videoRef.current) {
       try {
         const newFullscreenState = !isFullscreen;
+
         if (isFullscreen) {
-          // 退出全屏时不再强制恢复竖屏，保持用户当前选择的方向
+          // 退出全屏时恢复到用户之前的方向偏好
           await videoRef.current.dismissFullscreenPlayer();
+          // 等待一下让全屏退出完成
+          await new Promise((resolve) => setTimeout(resolve, 100));
         } else {
           // 进入全屏时切换到横屏
-          await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+          await ScreenOrientation.lockAsync(
+            ScreenOrientation.OrientationLock.LANDSCAPE,
+          );
           await videoRef.current.presentFullscreenPlayer();
         }
-
-        setIsFullscreen(newFullscreenState);
-        onFullscreenChange?.(newFullscreenState);
       } catch (error) {
         console.error("Failed to toggle fullscreen:", error);
       }
@@ -82,7 +94,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
                   <View
                     className={`
                       bg-black/50 rounded-full p-3 mb-1 transition-colors
-                      ${isLiked ? 'bg-red-500/50' : ''}
+                      ${isLiked ? "bg-red-500/50" : ""}
                     `}
                   >
                     <Heart
@@ -109,9 +121,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
             {/* 屏幕方向切换按钮 */}
             <ControlButton
               onPress={toggleScreenOrientation}
-              icon={
-                <RotateCcw className="text-white" size={24} />
-              }
+              icon={<RotateCcw className="text-white" size={24} />}
             />
           </>
         )}
@@ -120,9 +130,7 @@ export const VideoActions: React.FC<VideoActionsProps> = ({ video, videoRef, isM
         {isFullscreen ? (
           <ControlButton
             onPress={toggleScreenOrientation}
-            icon={
-              <RotateCcw className="text-white" size={24} />
-            }
+            icon={<RotateCcw className="text-white" size={24} />}
           />
         ) : null}
 

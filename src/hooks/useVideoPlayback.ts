@@ -1,10 +1,9 @@
-import type { Video } from "@/db/schema";
+import type { Video as VideoType } from "@/db/schema";
 import { useMediaPermissions } from "@/hooks/useMediaPermissions";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useVideoStore } from "@/stores/videoStore";
-import { Audio } from "expo-av";
+import { Audio, Video } from "expo-av";
 import type { AVPlaybackStatus } from "expo-av";
-import type { Video as ExpoVideo } from "expo-av";
 import {
   type RefObject,
   useCallback,
@@ -15,7 +14,7 @@ import {
 import { AppState } from "react-native";
 
 interface VideoPlaybackHookProps {
-  video: Video;
+  video: VideoType;
   isVisible: boolean;
 }
 
@@ -23,7 +22,7 @@ export interface VideoPlaybackState {
   isPlaying: boolean;
   isMuted: boolean;
   playbackStatus: AVPlaybackStatus | null;
-  videoRef: RefObject<ExpoVideo | null>;
+  videoRef: RefObject<Video | null>;
 }
 
 interface VideoPlaybackActions {
@@ -36,12 +35,13 @@ export const useVideoPlayback = ({
   video,
   isVisible,
 }: VideoPlaybackHookProps): VideoPlaybackState & VideoPlaybackActions => {
-  const videoRef = useRef<ExpoVideo | null>(null);
+  const videoRef = useRef<Video | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackStatus, setPlaybackStatus] = useState<AVPlaybackStatus | null>(
     null,
   );
-  const [wasPlayingBeforeBackground, setWasPlayingBeforeBackground] = useState(false);
+  const [wasPlayingBeforeBackground, setWasPlayingBeforeBackground] =
+    useState(false);
 
   // 使用统一的播放状态管理
   const { play, pause, setMuted } = usePlaybackStore();
@@ -97,6 +97,18 @@ export const useVideoPlayback = ({
             console.error("Error saving progress:", error);
           }
         }
+        // 如果视频正在全屏播放，先退出全屏
+        try {
+          if (videoRef.current) {
+            const status = await videoRef.current.getStatusAsync();
+            if (status.isLoaded && status.isPlaying) {
+              await videoRef.current.dismissFullscreenPlayer();
+            }
+          }
+        } catch (error) {
+          console.error("Error dismissing fullscreen:", error);
+        }
+
         videoRef.current?.pauseAsync();
         setIsPlaying(false);
       };

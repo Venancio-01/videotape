@@ -67,21 +67,21 @@ const VideoItem: React.FC<VideoItemProps> = ({
       }}
     >
       <View className="flex-1 relative">
-        <VideoPlayer video={video} playback={playback} />
+        <VideoPlayer video={video} playback={playback} onFullscreenChange={onFullscreenChange} />
         <VideoOverlay video={video} />
         <VideoControls
           isPlaying={playback.isPlaying}
           onPlayPause={playback.togglePlayPause}
           isFullscreen={isFullscreen}
         />
-        <VideoActions 
-        video={video} 
-        videoRef={playback.videoRef}
-        isMuted={playback.isMuted}
-        onMuteToggle={playback.toggleMute}
-        onFullscreenChange={onFullscreenChange}
-        onFullscreenStateChange={setIsFullscreen}
-      />
+        <VideoActions
+          video={video}
+          videoRef={playback.videoRef}
+          isMuted={playback.isMuted}
+          isFullscreen={isFullscreen}
+          onMuteToggle={playback.toggleMute}
+          onFullscreenChange={onFullscreenChange}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -101,8 +101,8 @@ function ScreenContent() {
     if (navigation.setOptions) {
       navigation.setOptions({
         tabBarStyle: {
-          display: isFullscreen ? 'none' : 'flex',
-        }
+          display: isFullscreen ? "none" : "flex",
+        },
       });
     }
   }, [isFullscreen, navigation]);
@@ -139,10 +139,9 @@ function ScreenContent() {
         <VideoItem
           video={item}
           isVisible={index === currentIndex}
-          onVideoPress={() => {}}
+          onVideoPress={() => { }}
           onFullscreenChange={handleFullscreenChange}
         />
-        // <></>
       );
     },
     [currentIndex, handleFullscreenChange],

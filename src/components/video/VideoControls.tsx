@@ -18,7 +18,13 @@ export const VideoControls: React.FC<VideoControlsProps> = ({
       {/* 中央播放按钮 - 只在暂停时显示，非全屏状态 */}
       {!isPlaying && !isFullscreen && (
         <TouchableOpacity
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
+          className="absolute z-10"
+          style={{
+            top: '50%',
+            left: '50%',
+            marginTop: -24,
+            marginLeft: -24,
+          }}
           onPress={onPlayPause}
           activeOpacity={0.8}
         >

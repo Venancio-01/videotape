@@ -44,8 +44,12 @@ export default function TabLayout() {
     [colorScheme, insets.bottom],
   );
 
-  const expoDb = getExpoDatabase();
-  useDrizzleStudio(expoDb);
+  try {
+    const expoDb = getExpoDatabase();
+    useDrizzleStudio(expoDb);
+  } catch (error) {
+    console.warn("Drizzle Studio not available in current environment:", error);
+  }
 
   return (
     <Tabs screenOptions={screenOptions}>
