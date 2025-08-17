@@ -1,4 +1,4 @@
-import { ListVideo, Search, Settings, Video } from "@/components/Icons";
+import { ListVideo, Settings, Video } from "@/components/Icons";
 import { getExpoDatabase } from "@/db/drizzle";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import * as NavigationBar from "expo-navigation-bar";
@@ -58,25 +58,25 @@ export default function TabLayout() {
         options={{
           title: "视频",
           tabBarIcon: ({ color }) => (
-            <Video className="text-foreground" style={{ color }} />
+            <Video className="text-foreground" />
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="search"
         options={{
           title: "搜索",
           tabBarIcon: ({ color }) => (
-            <Search className="text-foreground" style={{ color }} />
+            <Search className="text-foreground"  />
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="playlists"
         options={{
           title: "播放列表",
           tabBarIcon: ({ color }) => (
-            <ListVideo className="text-foreground" style={{ color }} />
+            <ListVideo className="text-foreground" />
           ),
         }}
       />
@@ -85,7 +85,7 @@ export default function TabLayout() {
         options={{
           title: "设置",
           tabBarIcon: ({ color }) => (
-            <Settings className="text-foreground" style={{ color }} />
+            <Settings className="text-foreground" />
           ),
         }}
       />

@@ -1,9 +1,4 @@
 import { Text } from "@/components/ui/text";
-import {
-  EnhancedVideoControls,
-  VideoOverlay,
-  VideoPlayer,
-} from "@/components/video";
 import { useMigrationHelper } from "@/db/drizzle";
 import { useDatabase } from "@/db/provider";
 import { type Video, videoTable } from "@/db/schema";
@@ -55,25 +50,11 @@ const VideoItem: React.FC<VideoItemProps> = ({
   const [lastTap, setLastTap] = React.useState(0);
   const controlsRef = React.useRef<{ showControls: () => void }>(null);
 
-  const handleVideoPress = () => {
-    const now = Date.now();
-    const timeDiff = now - lastTap;
-
-    if (timeDiff < 300) {
-      // 双击：暂停/播放
-      playback.togglePlayPause();
-    } else {
-      // 单击：只显示控制栏
-      controlsRef.current?.showControls();
-    }
-
-    setLastTap(now);
-  };
 
   return (
     <TouchableOpacity
       activeOpacity={1}
-      onPress={handleVideoPress}
+      onPress={() => controlsRef.current?.showControls()}
       className="bg-background"
       style={{
         height: height - insets.top - (40 + insets.bottom),
@@ -88,7 +69,6 @@ const VideoItem: React.FC<VideoItemProps> = ({
           player={playback.player}
           onFullscreenChange={onFullscreenChange}
         />
-        {/* <VideoOverlay video={video} onVideoPress={handleVideoPress} /> */}
         <EnhancedVideoControls
           ref={controlsRef}
           isPlaying={playback.isPlaying}
